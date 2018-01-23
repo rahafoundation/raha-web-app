@@ -1,0 +1,26 @@
+# dependencies
+/node_modules
+/functions/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+
+# config
+/src/data/*.config.json
+
+# IDE files
+.vscode/
+.idea/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+*.log
+

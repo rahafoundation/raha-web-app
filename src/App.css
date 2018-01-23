@@ -1,0 +1,22 @@
+html, body, .App {
+  height: 100vh;
+}
+
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* align-content: space-around; */
+}
+
+.App-intro {
+  font-size: large;
+  margin: 5vh;
+}
+
+.Title {
+  font-size: 5vh;
+  color: #2A945E;
+  margin: 10vh 0.5vh;
+}
