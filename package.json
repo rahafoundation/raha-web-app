@@ -1,14 +1,15 @@
 {
-  "name": "raha-central-ts",
+  "name": "raha-io",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "dependencies": {
     "firebase": "4.9.0",
     "material-ui": "0.20.0",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "react-firebaseui": "1.0.10",
-    "react-router-dom": "2.8.0",
+    "react-router-dom": "4.2.2",
     "react-scripts-ts": "2.8.0"
   },
   "scripts": {
