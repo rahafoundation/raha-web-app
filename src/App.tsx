@@ -273,7 +273,7 @@ class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
 }
 
 const Splash = () => (
-  <div className="App">
+  <div className="Splash">
     <div>
       <h2><span className="Title">Raha</span><sub>alpha</sub></h2>
     </div>
