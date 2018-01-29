@@ -3,4 +3,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 To start, copy your public firebase config into `src/data/firebase.config.json` and then run `yarn install` then `yarn start`.
 
-To deploy, install firebase-tools (`yarn global add firebase-tools`) and then run `firebase deploy --project=PROJECT`.
+To deploy, install firebase-tools (`yarn global add firebase-tools`) and then run `yarn run build` then `firebase deploy --project=PROJECT`.

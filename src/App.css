@@ -1,6 +1,7 @@
 html, body, .App {
+  margin: 2vh 2vw;
   height: 100vh;
-  max-width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
 }
 
@@ -9,7 +10,6 @@ html, body, .App {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  /* align-content: space-around; */
 }
 
 .App-intro {
@@ -23,8 +23,12 @@ html, body, .App {
   margin: 10vh 0.5vh;
 }
 
+.UserRelations-section {
+  margin: 2vh 0vw;
+}
+
 .Video {
-  margin: 3vh 2vw;
+  margin: 5vh 0vw;
   width: 96vw;
   height: 50vw;
 }

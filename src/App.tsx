@@ -29,25 +29,30 @@ const uiConfig = {
   ]
 };
 
-const getYoutubeUrlVideoId = (url: string) => {
+function getYoutubeUrlVideoId(url: string) {
   const match = url.match(YOUTUBE_URL_REGEX);
   return (match && match[7].length === 11) ? match[7] : false;
-};
+}
 
-class App extends React.Component {
-  constructor(props: any) {
+interface AppState {
+  userData: firebase.firestore.DocumentSnapshot;
+  user: firebase.User;
+  loadedUser: boolean;
+}
+
+class App extends React.Component<{}, AppState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       loadedUser: false,
       user: null,
-      invites: null,
       userData: null
     };
   }
 
   onUserDataUpdate = (userData) => { // TODO this probably does not belong in main App component
     if (userData.size !== 1) {
-      console.error(`Found ${userData.size} users with query ${userData.query}`);
+      // TODO console.error(`Found ${userData.size} users with query ${userData.query}`);
       return;
     }
     userData = userData.docs[0];
@@ -58,11 +63,11 @@ class App extends React.Component {
 
   componentDidMount() {
     auth.onAuthStateChanged(user => {
-      const state = { user };
+      const state = { user } as AppState;
       if (user) {
         db.collection('user_data').where('uid', '==', user.uid).get().then(this.onUserDataUpdate);
       }
-      state['loadedUser'] = true;
+      state.loadedUser = true;
       this.setState(state);
     });
   }
@@ -73,26 +78,30 @@ class App extends React.Component {
         <div>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
-          <Route path="/me" render={() => {
-            if (this.state['loadedUser']) {
-              if (this.state['user'] === null) {
-                return <div><div>You need to </div><Redirect to={{
-                  pathname: '/login'
-                }} /></div>;
+          <Route
+            path="/me"
+            render={() => {
+              if (this.state.loadedUser) {
+                if (this.state.user === null) {
+                  return <div>
+                    <span>You need to </span>
+                    <Redirect to={{ pathname: '/login' }} />
+                  </div>;
+                }
+                return <Profile user={this.state.user} userData={this.state.userData} userName={null} />;
+              } else {
+                return <Loading />;
               }
-              return <Profile user={this.state['user']} userData={this.state['userData']} userName={null} />;
-            } else {
-              return <Loading />;
-            }
-          }} />
-          <Route path="/m/:userName" render={({match}) => <ProfileWithUserName userName={match.params.userName} />} />
+            }}
+          />
+          <Route path="/m/:userName" render={({ match }) => <ProfileWithUserName userName={match.params.userName} />} />
         </div>
       </Router>
     );
   }
 }
 
-class ProfileWithUserName extends React.Component<HasUserName, {}> {
+class ProfileWithUserName extends React.Component<HasUserName, { userData: firebase.firestore.DocumentData }> {
   constructor(props: HasUserName) {
     super(props);
     this.state = {
@@ -106,8 +115,8 @@ class ProfileWithUserName extends React.Component<HasUserName, {}> {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.userName != this.props.userName) {
+  componentWillReceiveProps(nextProps: HasUserName) {
+    if (nextProps.userName !== this.props.userName) {
       this.onPropsChange(nextProps);
     }
   }
@@ -121,21 +130,24 @@ class ProfileWithUserName extends React.Component<HasUserName, {}> {
   }
 
   render() {
-    return <Profile user={null} userData={this.state['userData']} userName={this.props['userName']} />;
+    return <Profile user={null} userData={this.state.userData} userName={this.props.userName} />;
   }
 }
+
 interface HasUserName {
   userName: string;
 }
 
-const groupSnapshotBy = (xs, key) => {
-  return xs.docs.reduce((rv, x) => {
-    const val = x.get(key);
-    (rv[val] = rv[val] || []).push(x);
-    return rv;
-  }, {});
-};
-
+function groupSnapshotBy(xs: firebase.firestore.QuerySnapshot, key: string) {
+  return xs.docs.reduce(
+    (rv, x) => {
+      const val = x.get(key);
+      (rv[val] = rv[val] || []).push(x);
+      return rv;
+    },
+    {}
+  );
+}
 
 class UserRelations extends React.Component<HasUserName, {}> {
   constructor(props: HasUserName) {
@@ -157,8 +169,8 @@ class UserRelations extends React.Component<HasUserName, {}> {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.userName != this.props.userName) {
+  componentWillReceiveProps(nextProps: HasUserName) {
+    if (nextProps.userName !== this.props.userName) {
       this.onPropsChange(nextProps);
     }
   }
@@ -172,36 +184,36 @@ class UserRelations extends React.Component<HasUserName, {}> {
     db.collection('relations').where('to', '==', nextProps.userName).get().then(this.onToUser);
   }
 
+  addSection = (sections, stateKey, typeKey, userNameKey, title) => {
+    if (this.state[stateKey] && this.state[stateKey][typeKey]) {
+      const rows = this.state[stateKey][typeKey].map(s => {
+        const userName = s.get(userNameKey);
+        return <div id={userName} key={userName}><Link to={`/m/${userName}`}>{userName}</Link></div>;
+      });
+      sections.push(
+        <div key={stateKey} className="UserRelations-section">
+          <div>{title}</div>
+          {rows}
+        </div>
+      );
+    }
+  }
+
   render() {
-    if (this.state['fromRelations'] && this.state['fromRelations']['invited']) {
-      const rows = this.state['fromRelations']['invited'].map(s => {
-        const to = s.get('to');
-        return <div><Link key={to} to={`/m/${to}`}>{to}</Link></div>;
-      });
-      return <div>
-        <div>Invited By</div>
-        {rows}
-      </div>;
-    }
-    if (this.state['toRelations'] && this.state['toRelations']['invited']) {
-      const rows = this.state['toRelations']['invited'].map(s => {
-        const to = s.get('from');
-        return <div><Link key={to} to={`/m/${to}`}>{to}</Link></div>;
-      });
-      return <div>
-        <div>Invites</div>
-        {rows}
-      </div>;
-    }
-    return <div></div>;
+    const sections = [];
+    this.addSection(sections, 'fromRelations', 'invited', 'to', 'Invited By');
+    this.addSection(sections, 'toRelations', 'invited', 'from', 'Invites');
+    return <div>{sections}</div>;
   }
 }
 
-const Loading = () => <div>Loading</div>;
+function Loading() {
+  return <div>Loading</div>;
+}
 
-const LogIn = () => (
-  <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-);
+function LogIn() {
+  return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
+}
 
 const Profile = ({ user, userData, userName }) => {
   userData = userData && userData.exists ? userData : null;
@@ -215,30 +227,50 @@ const Profile = ({ user, userData, userName }) => {
     fullName = userData.get('full_name');
     youtubeUrl = userData.get('invite_url');
   }
-  return <div>
-    <div>{fullName}</div>
-    {user && user.photoURL &&
-      <img src={user.photoURL}></img>
-    }
-    {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-    {userName && <UserRelations userName={userName} />}
-  </div>;
+  return (
+    <div>
+      <div>{fullName}</div>
+      {user && user.photoURL &&
+        <img src={user.photoURL} />
+      }
+      {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
+      {userName && <UserRelations userName={userName} />}
+    </div>
+  );
 };
 
-class YoutubeVideo extends React.Component<any, {}> {
-  // TODO this does not update correctly, seems we need to create new embed which React does not do, eg
-  // https://stackoverflow.com/questions/6646413/how-to-change-the-value-of-embed-src-with-javascript
+interface YoutubeVideoProperties {
+  youtubeUrl: string;
+}
+
+class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
+  private videoObject: HTMLObjectElement;
+  private videoEmbed: HTMLEmbedElement;
+
   render() {
     var youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
-    return <div className="Video">
-      <object>
-        <div>Join Video</div>
-        <param name="allowFullScreen" value="true" />
-        <embed className="Youtube" src={`https://www.youtube.com/embed/${youtubeId}?html5=1&amp;rel=0&amp;version=3`} />
-      </object>
-    </div>;
+    return (
+      <div className="Video">
+        <object ref={v => { this.videoObject = v; }} >
+          <div>Join Video</div>
+          <param name="allowFullScreen" value="true" />
+          <embed
+            className="Youtube"
+            ref={v => { this.videoEmbed = v; }}
+            src={`https://www.youtube.com/embed/${youtubeId}?html5=1&amp;rel=0&amp;version=3`}
+          />
+        </object>
+      </div>
+    );
   }
-};
+
+  componentDidUpdate(prevProps: YoutubeVideoProperties, prevState: YoutubeVideoProperties) {
+    if (this.props.youtubeUrl !== prevProps.youtubeUrl) {
+      // This is a hack to make the Youtube video update.
+      this.videoObject.appendChild(this.videoEmbed);
+    }
+  }
+}
 
 const Splash = () => (
   <div className="App">
