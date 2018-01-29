@@ -1,11 +1,10 @@
-html, body, .App {
+html, body, .Splash {
   margin: 2vh 2vw;
-  height: 100vh;
-  max-width: 100vw;
-  overflow-x: hidden;
+  height: 96vh;
+  width: 96vw;
 }
 
-.App {
+.Splash {
   display: flex;
   align-items: center;
   justify-content: center;
