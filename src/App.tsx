@@ -29,10 +29,10 @@ const uiConfig = {
   ]
 };
 
-function getYoutubeUrlVideoId(url: string) {
+const getYoutubeUrlVideoId = (url: string) => {
   const match = url.match(YOUTUBE_URL_REGEX);
   return (match && match[7].length === 11) ? match[7] : false;
-}
+};
 
 interface AppState {
   userData: firebase.firestore.DocumentSnapshot;
@@ -138,7 +138,7 @@ interface HasUserName {
   userName: string;
 }
 
-function groupSnapshotBy(xs: firebase.firestore.QuerySnapshot, key: string) {
+const groupSnapshotBy = (xs: firebase.firestore.QuerySnapshot, key: string) => {
   return xs.docs.reduce(
     (rv, x) => {
       const val = x.get(key);
@@ -147,7 +147,7 @@ function groupSnapshotBy(xs: firebase.firestore.QuerySnapshot, key: string) {
     },
     {}
   );
-}
+};
 
 class UserRelations extends React.Component<HasUserName, {}> {
   constructor(props: HasUserName) {
@@ -169,14 +169,14 @@ class UserRelations extends React.Component<HasUserName, {}> {
     });
   }
 
+  componentWillMount() {
+    this.onPropsChange(this.props);
+  }
+
   componentWillReceiveProps(nextProps: HasUserName) {
     if (nextProps.userName !== this.props.userName) {
       this.onPropsChange(nextProps);
     }
-  }
-
-  componentWillMount() {
-    this.onPropsChange(this.props);
   }
 
   onPropsChange = (nextProps) => {
@@ -207,13 +207,13 @@ class UserRelations extends React.Component<HasUserName, {}> {
   }
 }
 
-function Loading() {
+const Loading = () => {
   return <div>Loading</div>;
-}
+};
 
-function LogIn() {
+const LogIn = () => {
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
-}
+};
 
 const Profile = ({ user, userData, userName }) => {
   userData = userData && userData.exists ? userData : null;
