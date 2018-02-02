@@ -78,6 +78,7 @@ class App extends React.Component<{}, AppState> {
         <div>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
+          <Route path="/invite" component={InviteForm} />
           <Route
             path="/me"
             render={() => {
@@ -214,6 +215,60 @@ const Loading = () => {
 const LogIn = () => {
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
 };
+
+interface InviteState {
+  name: string;
+  errorMessage: string;
+}
+
+class InviteForm extends React.Component<{}, InviteState> {
+    constructor(props: any){
+      super(props);
+      this.state = { name: "", errorMessage: "" };
+    }
+
+    public handleOnChange(event: any) : void {
+      this.setState({ name: event.target.value });
+    }
+
+    public isValidEmail(email: string) : boolean {
+      return email.indexOf("@gmail.com") != -1;
+    }
+
+    public handleOnSubmit(event: any) : void {
+      // TODO send ajax
+      if (this.isValidEmail(this.state.name)) {
+        console.log(this.state.name);
+      } else {
+        this.setState({ errorMessage: "Please enter a valid gmail address" });
+      }
+    }
+
+    public clearErrorMessage(e: any) : void {
+      this.setState({ errorMessage: "" });
+    }
+
+    public render() {
+        return (
+            <div>
+              <b>Invite new users</b>
+              <div>The more users join raha, the better! Type in a trusted friend's gmail address to invite them.</div>
+              <div>
+                <input
+                  onFocus={ e => this.clearErrorMessage(e) }
+                  onChange={ e => this.handleOnChange(e) }
+                  className="InviteInput"
+                />
+              </div>
+              <button className="InviteButton"
+                onClick={ e=> this.handleOnSubmit(e) }>
+                Invite { this.state.name.length > 0 ? this.state.name + '!' : ''}
+              </button>
+              <div className="InviteError">{ this.state.errorMessage }</div>
+            </div>
+        );
+    }
+}
 
 const Profile = ({ user, userData, userName }) => {
   userData = userData && userData.exists ? userData : null;
