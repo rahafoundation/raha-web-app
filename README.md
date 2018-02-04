@@ -6,3 +6,14 @@
 1. Look at [`package.json`](package.json) `scripts` section for the other commands you can run, e.g. `yarn build`.
 1. Get familiar with Firebase, React, and Typescript. Take a look at the [Create React App Guide](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md) - [VS Code Debugging](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#visual-studio-code) is nice.
 1. Look at [`App.tsx`](src/App.tsx) for all of the main logic and assign yourself an [issue](https://github.com/rahafoundation/raha.io/issues)!
+
+For debugging in chrome, `console.log` is convenient. Unfortunately, it's disabled by default by the typescript project config. To enable it, comment out this line in the project `tslint.json` file:
+
+```
+         "no-console": [
+-            true,
++            // true,
+             "log",
+             "error",
+             "debug",
+```
