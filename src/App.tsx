@@ -3,6 +3,7 @@ import * as React from 'react';
 import 'firebase/firestore';
 import {
   BrowserRouter as Router,
+  Switch,
   Link,
   Redirect,
   Route
@@ -76,6 +77,7 @@ class App extends React.Component<{}, AppState> {
     return (
       <Router>
         <div>
+        <Switch>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
           <Route
@@ -95,6 +97,8 @@ class App extends React.Component<{}, AppState> {
             }}
           />
           <Route path="/m/:userName" render={({ match }) => <ProfileWithUserName userName={match.params.userName} />} />
+          <Route component={PageNotFound} />
+        </Switch>
         </div>
       </Router>
     );
@@ -279,6 +283,16 @@ const Splash = () => (
     </div>
     <div className="App-intro">The Human-First Blockchain Movement</div>
     <div className="App-intro">Invite Only</div>
+  </div>
+);
+
+const PageNotFound = () => (
+  <div className="PageNotFound">
+    <div>
+      <h2><span className="Title">Raha</span><sub>alpha</sub></h2>
+    </div>
+    <p><strong>404</strong> page not found</p>
+    <p> ¯\_(ツ)_/¯</p>
   </div>
 );
 
