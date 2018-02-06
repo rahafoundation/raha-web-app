@@ -1,3 +1,7 @@
+## Intro
+
+This is the centralized, realtime stack powering the [raha.io](https://raha.io/) app. Updates from this are sent to the decentralized, tamper-evident [raha.io audit log](https://github.com/rahafoundation/laboratory).
+
 ## Develop locally
 
 1. For Mac users, use [`homebrew`](https://brew.sh/) to [install `yarn`](https://yarnpkg.com/lang/en/docs/install/).

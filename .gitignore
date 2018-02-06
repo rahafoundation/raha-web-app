@@ -7,6 +7,7 @@
 
 # production
 /build
+/functions/lib
 
 # config
 /src/data/*.config.json

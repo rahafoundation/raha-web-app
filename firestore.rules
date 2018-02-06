@@ -1,9 +1,20 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /user_data/{userId} {
+    match /user_data/{user_name} {
+      allow read;
+
+      match /relations/{id} {
+        allow read;
+      }
+    }
+
+    // TODO deprecate this, some /operations can have a
+    // materialized view /user_data/relations for efficiency
+    match /relations/{id} {
       allow read;
     }
-    match /relations/{id} {
+
+    match /operations/{id} {
       allow read;
     }
   }

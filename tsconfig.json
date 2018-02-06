@@ -24,6 +24,7 @@
     "webpack",
     "jest",
     "src/setupTests.ts",
+    "tools",
     "functions"
   ]
 }
