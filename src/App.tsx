@@ -231,14 +231,27 @@ const Profile = ({ user, userData, userName }) => {
   }
   let fullName = user && user.displayName;
   let youtubeUrl = null;
+  let trustLevel = 0;
+  let networkJoinDate = 0;
+  let trustedByLevel2 = 0;
+  let trustedByLevel3 = 0;
   if (userData) {
     userName = userName || userData.get('user_name');
     fullName = userData.get('full_name');
     youtubeUrl = userData.get('invite_url');
+    trustLevel = userData.get('trust_level');
+    networkJoinDate = userData.get('joined');
+    trustedByLevel2 = userData.get('trusted_by_level_2');
+    trustedByLevel3 = userData.get('trusted_by_level_3');
   }
   return (
     <div>
       <div>{fullName}</div>
+      {user && trustLevel && <TrustLevel 
+      trustLevel={trustLevel} 
+      networkJoinDate={networkJoinDate} 
+      trustedByLevel2={trustedByLevel2} 
+      trustedByLevel3={trustedByLevel3}/>}
       {user && user.photoURL &&
         <img src={user.photoURL} />
       }
@@ -247,6 +260,48 @@ const Profile = ({ user, userData, userName }) => {
     </div>
   );
 };
+
+// Based on the FAQ trust is determined by:
+// 1. Time on the network
+// 2. Number of Level 2 and 3 accounts that trust this account
+// 3. Level 3 verification video in last month || invited in first month
+const TrustLevel = ({ trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3 }) => {
+  const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3) => {
+    let millDay = 86400000;
+    if (networkJoinDate > new Date().getTime() - (((trustLevel + 1) * 7) * millDay)) {
+      return <div> Stay active on the network for longer to increase your trust level </div>;
+    }
+    switch (trustLevel) {
+        case 0:
+          if (trustedByLevel2 + trustedByLevel3 < 2) {
+            return <div> Increase your trust by receiving trust from at least {2 - (trustedByLevel2 + trustedByLevel3)} level 2+ accounts </div>;
+          }
+          break;
+        case 1:
+          if (trustedByLevel3 < 3) {
+            return <div> Increase your trust by receiving trust from at least { 3 - (trustedByLevel3)} level 3 accounts </div>;
+          }
+          break;
+        case 2:
+          if (trustedByLevel3 < 5) {
+            return <div> Increase your trust by receiving trust from at least {5 - (trustedByLevel3)} level 3 accounts </div>;
+          }
+          break;
+        case 3:
+          return <div> You are max trust level </div>;
+        default:
+          return null;
+      }
+      return null;
+    };
+    return (
+      <div className="Trust">
+          <div>Trust Level: {trustLevel}</div>
+          { TrustSuggestion(trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3) }
+      </div>
+    );
+  }
+
 
 interface YoutubeVideoProperties {
   youtubeUrl: string;
