@@ -252,7 +252,7 @@ class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
   private videoEmbed: HTMLEmbedElement;
 
   render() {
-    var youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
+    let youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
     return (
       <div className="Video">
         <object ref={v => { this.videoObject = v; }} >
@@ -276,11 +276,11 @@ class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
   }
 }
 
+const RahaTitle = () => <h2><span className="Title">Raha</span><sub>alpha</sub></h2>;
+
 const Splash = () => (
   <div className="Splash">
-    <div>
-      <h2><span className="Title">Raha</span><sub>alpha</sub></h2>
-    </div>
+    <RahaTitle />
     <div className="App-intro">The Human-First Blockchain Movement</div>
     <div className="App-intro">Invite Only</div>
   </div>
@@ -288,9 +288,7 @@ const Splash = () => (
 
 const PageNotFound = () => (
   <div className="PageNotFound">
-    <div>
-      <h2><span className="Title">Raha</span><sub>alpha</sub></h2>
-    </div>
+    <RahaTitle />
     <p><strong>404</strong> page not found</p>
     <p> ¯\_(ツ)_/¯</p>
   </div>
