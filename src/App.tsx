@@ -3,6 +3,7 @@ import * as React from 'react';
 import 'firebase/firestore';
 import {
   BrowserRouter as Router,
+  Switch,
   Link,
   Redirect,
   Route
@@ -29,10 +30,10 @@ const uiConfig = {
   ]
 };
 
-function getYoutubeUrlVideoId(url: string) {
+const getYoutubeUrlVideoId = (url: string) => {
   const match = url.match(YOUTUBE_URL_REGEX);
   return (match && match[7].length === 11) ? match[7] : false;
-}
+};
 
 interface AppState {
   userData: firebase.firestore.DocumentSnapshot;
@@ -76,6 +77,7 @@ class App extends React.Component<{}, AppState> {
     return (
       <Router>
         <div>
+        <Switch>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
           <Route
@@ -95,6 +97,8 @@ class App extends React.Component<{}, AppState> {
             }}
           />
           <Route path="/m/:userName" render={({ match }) => <ProfileWithUserName userName={match.params.userName} />} />
+          <Route component={PageNotFound} />
+        </Switch>
         </div>
       </Router>
     );
@@ -138,7 +142,7 @@ interface HasUserName {
   userName: string;
 }
 
-function groupSnapshotBy(xs: firebase.firestore.QuerySnapshot, key: string) {
+const groupSnapshotBy = (xs: firebase.firestore.QuerySnapshot, key: string) => {
   return xs.docs.reduce(
     (rv, x) => {
       const val = x.get(key);
@@ -147,7 +151,7 @@ function groupSnapshotBy(xs: firebase.firestore.QuerySnapshot, key: string) {
     },
     {}
   );
-}
+};
 
 class UserRelations extends React.Component<HasUserName, {}> {
   constructor(props: HasUserName) {
@@ -169,14 +173,14 @@ class UserRelations extends React.Component<HasUserName, {}> {
     });
   }
 
+  componentWillMount() {
+    this.onPropsChange(this.props);
+  }
+
   componentWillReceiveProps(nextProps: HasUserName) {
     if (nextProps.userName !== this.props.userName) {
       this.onPropsChange(nextProps);
     }
-  }
-
-  componentWillMount() {
-    this.onPropsChange(this.props);
   }
 
   onPropsChange = (nextProps) => {
@@ -207,13 +211,13 @@ class UserRelations extends React.Component<HasUserName, {}> {
   }
 }
 
-function Loading() {
+const Loading = () => {
   return <div>Loading</div>;
-}
+};
 
-function LogIn() {
+const LogIn = () => {
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
-}
+};
 
 const Profile = ({ user, userData, userName }) => {
   userData = userData && userData.exists ? userData : null;
@@ -279,6 +283,16 @@ const Splash = () => (
     </div>
     <div className="App-intro">The Human-First Blockchain Movement</div>
     <div className="App-intro">Invite Only</div>
+  </div>
+);
+
+const PageNotFound = () => (
+  <div className="PageNotFound">
+    <div>
+      <h2><span className="Title">Raha</span><sub>alpha</sub></h2>
+    </div>
+    <p><strong>404</strong> page not found</p>
+    <p> ¯\_(ツ)_/¯</p>
   </div>
 );
 
