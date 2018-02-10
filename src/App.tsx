@@ -35,41 +35,43 @@ const getYoutubeUrlVideoId = (url: string) => {
   return (match && match[7].length === 11) ? match[7] : false;
 };
 
-interface AppState {
-  userData: firebase.firestore.DocumentSnapshot;
-  user: firebase.User;
-  loadedUser: boolean;
+interface AuthData {
+  authFirebaseUser: firebase.User;
+  authMemberData: firebase.firestore.DocumentSnapshot;
+}
+
+interface AppState extends AuthData {
+  isAuthLoaded: boolean;
 }
 
 class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      loadedUser: false,
-      user: null,
-      userData: null
+      authFirebaseUser: null,
+      authMemberData: null,
+      isAuthLoaded: false
     };
   }
 
-  onUserDataUpdate = (userData) => { // TODO this probably does not belong in main App component
-    if (userData.size !== 1) {
-      // TODO console.error(`Found ${userData.size} users with query ${userData.query}`);
+  onAuthMemberUpdate = (querySnap: firebase.firestore.QuerySnapshot) => {
+    // TODO this probably does not belong in main App component
+    if (querySnap.size !== 1) {
+      // TODO console.error(`Found ${authData.size} members with query ${authData.query}`);
       return;
     }
-    userData = userData.docs[0];
+    const authMemberData = querySnap.docs[0];
     this.setState({
-      userData
+      authMemberData
     });
   }
 
   componentDidMount() {
-    auth.onAuthStateChanged(user => {
-      const state = { user } as AppState;
-      if (user) {
-        db.collection('user_data').where('uid', '==', user.uid).get().then(this.onUserDataUpdate);
+    auth.onAuthStateChanged(authFirebaseUser => {
+      if (authFirebaseUser) {
+        db.collection('user_data').where('uid', '==', authFirebaseUser.uid).get().then(this.onAuthMemberUpdate);
       }
-      state.loadedUser = true;
-      this.setState(state);
+      this.setState({ authFirebaseUser, isAuthLoaded: true });
     });
   }
 
@@ -77,69 +79,134 @@ class App extends React.Component<{}, AppState> {
     return (
       <Router>
         <div>
-        <Switch>
-          <Route exact={true} path="/" component={Splash} />
-          <Route path="/login" component={LogIn} />
-          <Route
-            path="/me"
-            render={() => {
-              if (this.state.loadedUser) {
-                if (this.state.user === null) {
+          <Switch>
+            <Route exact={true} path="/" component={Splash} />
+            <Route path="/login" component={LogIn} />
+            <Route
+              path="/me"
+              render={() => {
+                if (!this.state.isAuthLoaded) {
+                  return <Loading />;
+                }
+                if (this.state.authFirebaseUser === null) {
                   return <div>
                     <span>You need to </span>
                     <Redirect to={{ pathname: '/login' }} />
                   </div>;
                 }
-                return <Profile user={this.state.user} userData={this.state.userData} userName={null} />;
-              } else {
-                return <Loading />;
-              }
-            }}
-          />
-          <Route path="/m/:userName" render={({ match }) => <ProfileWithUserName userName={match.params.userName} />} />
-          <Route component={PageNotFound} />
-        </Switch>
+                // toUid: string, toMid: string, creatorMid: string
+                return <Profile
+                  authFirebaseUser={this.state.authFirebaseUser}
+                  authMemberData={this.state.authMemberData}
+                  isMePage={true}
+                />;
+              }}
+            />
+            <Route
+              path="/m/:memberId"
+              render={({ match }) => {
+                if (!this.state.isAuthLoaded) {
+                  return <Loading />;
+                }
+                return <Profile
+                  authFirebaseUser={this.state.authFirebaseUser}
+                  authMemberData={this.state.authMemberData}
+                  memberId={match.params.memberId}
+                />;
+              }}
+            />
+            <Route component={PageNotFound} />
+          </Switch>
         </div>
       </Router>
     );
   }
 }
 
-class ProfileWithUserName extends React.Component<HasUserName, { userData: firebase.firestore.DocumentData }> {
-  constructor(props: HasUserName) {
+interface ProfileProps extends AuthData {
+  isMePage?: boolean;
+  memberId?: string;
+}
+
+interface ProfileState {
+  isMemberDataLoaded: boolean;
+  isMyPage: boolean;
+  memberData: firebase.firestore.DocumentData;
+}
+
+class Profile extends React.Component<ProfileProps, ProfileState> {
+  constructor(props: ProfileProps) {
     super(props);
+    const isMemberDataLoaded = props.isMePage && props.authMemberData ? true : false;
     this.state = {
-      userData: null
+      memberData: isMemberDataLoaded ? props.authMemberData : null,
+      isMemberDataLoaded,
+      isMyPage: props.isMePage
     };
   }
 
-  onUserDataUpdate = (userData) => {
+  onUserDataUpdate = (memberData) => {
     this.setState({
-      userData
+      isMemberDataLoaded: true,
+      memberData
     });
   }
 
-  componentWillReceiveProps(nextProps: HasUserName) {
-    if (nextProps.userName !== this.props.userName) {
-      this.onPropsChange(nextProps);
-    }
+  componentWillReceiveProps(nextProps: ProfileProps) {
+    this.onPropsChange(nextProps);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.onPropsChange(this.props);
   }
 
   onPropsChange = (nextProps) => {
-    db.collection('user_data').doc(nextProps.userName).get().then(this.onUserDataUpdate);
+    const isMemberDataLoaded = nextProps.isMePage && nextProps.authMemberData ? true : false;
+    if (!isMemberDataLoaded && nextProps.memberId) {
+      // TODO probably do not need to query as much, and should change to member_data
+      db.collection('user_data').doc(nextProps.memberId).get().then(this.onUserDataUpdate);
+    }
+    this.setState({
+      memberData: isMemberDataLoaded ? nextProps.authMemberData : null,
+      isMemberDataLoaded
+    });
   }
 
   render() {
-    return <Profile user={null} userData={this.state.userData} userName={this.props.userName} />;
+    if (!this.state.isMemberDataLoaded) {
+      return <Loading />;
+    }
+    const memberData = this.state.memberData;
+    if (!memberData) {
+      if (!this.props.memberId) {
+        // TODO(#8) allow user to request trust from current user, upload their youtube video.
+        return (
+          <div>Thank you for logging in {this.props.authFirebaseUser.displayName}!
+        Now you must find someone you know to trust your account to become a Raha member.</div>
+        );
+      }
+      // TODO make below message nice page
+      return <div>Member "{this.props.memberId}" does not exist</div>;
+    }
+    const memberId = this.props.memberId || memberData.get('user_name'); // TODO fully migrate user_name -> member_id
+    const fullName = memberData.get('full_name');
+    const youtubeUrl = memberData.get('invite_url');
+    // TODO the Trust button still appears when you manually visit your own page,
+    // or if you are not logged in, or if already trusted. Fix!
+    return (
+      <div>
+        <div>{fullName}</div>
+        {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
+        {!this.props.isMePage
+          && <TrustButton
+            toUid={memberData.get('uid')}
+            toMid={memberData.get('user_name')}
+            creatorMid={this.props.authMemberData.get('user_name')}
+          />}
+        {memberId && <MemberRelations memberId={memberId} />}
+      </div>
+    );
   }
-}
-
-interface HasUserName {
-  userName: string;
 }
 
 const groupSnapshotBy = (xs: firebase.firestore.QuerySnapshot, key: string) => {
@@ -153,49 +220,47 @@ const groupSnapshotBy = (xs: firebase.firestore.QuerySnapshot, key: string) => {
   );
 };
 
-class UserRelations extends React.Component<HasUserName, {}> {
-  constructor(props: HasUserName) {
+interface MemberRelationsProps {
+  memberId: string;
+}
+
+class MemberRelations extends React.Component<MemberRelationsProps, {}> {
+  constructor(props: MemberRelationsProps) {
     super(props);
     this.state = {};
   }
 
-  onFromUser = (relations) => {
-    let fromRelations = groupSnapshotBy(relations, 'type');
-    this.setState({
-      fromRelations
-    });
-  }
-
-  onToUser = (relations) => {
-    let toRelations = groupSnapshotBy(relations, 'type');
-    this.setState({
-      toRelations
-    });
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     this.onPropsChange(this.props);
   }
 
-  componentWillReceiveProps(nextProps: HasUserName) {
-    if (nextProps.userName !== this.props.userName) {
+  componentWillReceiveProps(nextProps: MemberRelationsProps) {
+    if (nextProps.memberId !== this.props.memberId) {
       this.onPropsChange(nextProps);
     }
   }
 
-  onPropsChange = (nextProps) => {
-    db.collection('relations').where('from', '==', nextProps.userName).get().then(this.onFromUser);
-    db.collection('relations').where('to', '==', nextProps.userName).get().then(this.onToUser);
+  addGroupedState = (stateKey, snap, groupKey) => {
+    const state = {};
+    state[stateKey] = groupSnapshotBy(snap, groupKey);
+    this.setState(state);
   }
 
-  addSection = (sections, stateKey, typeKey, userNameKey, title) => {
+  onPropsChange = (nextProps) => {
+    db.collection('operations').where('creator_mid', '==', nextProps.memberId).get()
+      .then(ops => this.addGroupedState('opsFromMe', ops, 'op'));
+    db.collection('operations').where('data.to_mid', '==', nextProps.memberId).get()
+      .then(ops => this.addGroupedState('opsToMe', ops, 'op'));
+  }
+
+  addSection = (sections, stateKey, typeKey, memberIdKey, title) => {
     if (this.state[stateKey] && this.state[stateKey][typeKey]) {
       const rows = this.state[stateKey][typeKey].map(s => {
-        const userName = s.get(userNameKey);
-        return <div id={userName} key={userName}><Link to={`/m/${userName}`}>{userName}</Link></div>;
+        const memberId = s.get(memberIdKey);
+        return <div id={memberId} key={memberId}><Link to={`/m/${memberId}`}>{memberId}</Link></div>;
       });
       sections.push(
-        <div key={stateKey} className="UserRelations-section">
+        <div key={stateKey} className="MemberRelations-section">
           <div>{title}</div>
           {rows}
         </div>
@@ -205,8 +270,10 @@ class UserRelations extends React.Component<HasUserName, {}> {
 
   render() {
     const sections = [];
-    this.addSection(sections, 'fromRelations', 'invited', 'to', 'Invited By');
-    this.addSection(sections, 'toRelations', 'invited', 'from', 'Invites');
+    this.addSection(sections, 'opsFromMe', OpCode.REQUEST_INVITE, 'data.to_mid', 'Invited By');
+    this.addSection(sections, 'opsToMe', OpCode.REQUEST_INVITE, 'from', 'Invites');
+    this.addSection(sections, 'opsFromMe', OpCode.TRUST, 'data.to_mid', 'Trusts');
+    this.addSection(sections, 'opsToMe', OpCode.TRUST, 'data.to_uid', 'Trusted by');
     return <div>{sections}</div>;
   }
 }
@@ -219,29 +286,53 @@ const LogIn = () => {
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
 };
 
-const Profile = ({ user, userData, userName }) => {
-  userData = userData && userData.exists ? userData : null;
-  if (!user && !userData) {
-    return <div>User not found</div>;
-  }
-  let fullName = user && user.displayName;
-  let youtubeUrl = null;
-  if (userData) {
-    userName = userName || userData.get('user_name');
-    fullName = userData.get('full_name');
-    youtubeUrl = userData.get('invite_url');
-  }
-  return (
-    <div>
-      <div>{fullName}</div>
-      {user && user.photoURL &&
-        <img src={user.photoURL} />
-      }
-      {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-      {userName && <UserRelations userName={userName} />}
-    </div>
-  );
+enum OpCode {
+  REQUEST_INVITE = 'REQUEST_INVITE',
+  TRUST = 'TRUST',
+  UNTRUST = 'UNTRUST',
+  FLAG = 'FLAG',
+  UNFLAG = 'UNFLAG'
+}
+
+interface Operation {
+  creator_uid: string;
+  creator_mid: string;
+  op: string;
+  created_at: firebase.firestore.FieldValue;
+  data: {};
+  block_sequence: number;
+  op_sequence: number;
+}
+
+const getOperation = (op: OpCode, creatorMid: string, data): Operation => {
+  return {
+    block_sequence: null,
+    created_at: firebase.firestore.FieldValue.serverTimestamp(),
+    creator_uid: auth.currentUser.uid,
+    creator_mid: creatorMid,
+    data,
+    op,
+    op_sequence: null
+  };
 };
+
+const getTrustOperation = (toUid: string, toMid: string, creatorMid: string): Operation => {
+  return getOperation(OpCode.TRUST, creatorMid, { to_uid: toUid, to_mid: toMid });
+};
+
+class TrustButton extends React.Component<{ toUid: string, toMid: string, creatorMid: string }, {}> {
+  onClick = () => {
+    db.collection('operations').add(getTrustOperation(this.props.toUid, this.props.toMid, this.props.creatorMid));
+  }
+
+  render() {
+    return (
+      <button onClick={this.onClick}>
+        Trust this user
+    </button>
+    );
+  }
+}
 
 interface YoutubeVideoProperties {
   youtubeUrl: string;

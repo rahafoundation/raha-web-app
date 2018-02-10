@@ -6,5 +6,10 @@ service cloud.firestore {
     match /relations/{id} {
       allow read;
     }
+    match /operations/{id} {
+      // We should do additional validation for create, but this can also be done later when we decide whether to add it to blockchain
+      allow create if request.auth != null && request.auth.uid == request.resource.data.creator_uid;
+      allow read;
+    }
   }
 }
