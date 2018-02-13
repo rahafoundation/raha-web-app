@@ -193,11 +193,8 @@ class UserRelations extends React.Component<HasUserName, {}> {
   addSection = (sections, stateKey, typeKey, userNameKey, title) => {
     if (this.state[stateKey] && this.state[stateKey][typeKey]) {
       const rows = this.state[stateKey][typeKey].map(s => {
-        let memberId = s.get(userNameKey);
         return (
-          <div id={memberId} key={memberId}>
-            <MemberTile memberId={memberId} />
-          </div>
+          <MemberTile memberId={s.get(userNameKey)} />
         );
       });
       sections.push(
