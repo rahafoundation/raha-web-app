@@ -194,10 +194,11 @@ class UserRelations extends React.Component<HasUserName, {}> {
     if (this.state[stateKey] && this.state[stateKey][typeKey]) {
       const rows = this.state[stateKey][typeKey].map(s => {
         let userName = s.get(userNameKey);
-        let userArr =  userName.split('.');
-        let displayName = userArr[0].charAt(0).toUpperCase() + userArr[0].slice(1) + ' ' + 
-          userArr[1].charAt(0).toUpperCase() + userArr[1].slice(1);
-        return <div id={userName} key={userName}><Link to={`/m/${userName}`}>{displayName}</Link></div>;
+        return (
+          <div id={userName} key={userName}>
+            <Link to={`/m/${userName}`}>{userName.replace('.', ' ')}</Link>
+          </div>
+        );
       });
       sections.push(
         <div key={stateKey} className="UserRelations-section">
