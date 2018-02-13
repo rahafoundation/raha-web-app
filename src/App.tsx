@@ -1,5 +1,6 @@
 import * as firebase from 'firebase';
 import * as React from 'react';
+import CodeOfConduct from './CodeOfConduct';
 import 'firebase/firestore';
 import {
   BrowserRouter as Router,
@@ -80,6 +81,7 @@ class App extends React.Component<{}, AppState> {
         <Switch>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
+          <Route path="/codeOfConduct" component={CodeOfConduct} />
           <Route
             path="/me"
             render={() => {
@@ -191,9 +193,9 @@ class UserRelations extends React.Component<HasUserName, {}> {
   addSection = (sections, stateKey, typeKey, userNameKey, title) => {
     if (this.state[stateKey] && this.state[stateKey][typeKey]) {
       const rows = this.state[stateKey][typeKey].map(s => {
-        var userName = s.get(userNameKey);
-        var userArr =  userName.split('.');
-        var displayName = userArr[0].charAt(0).toUpperCase() + userArr[0].slice(1) + ' ' + 
+        let userName = s.get(userNameKey);
+        let userArr =  userName.split('.');
+        let displayName = userArr[0].charAt(0).toUpperCase() + userArr[0].slice(1) + ' ' + 
           userArr[1].charAt(0).toUpperCase() + userArr[1].slice(1);
         return <div id={userName} key={userName}><Link to={`/m/${userName}`}>{displayName}</Link></div>;
       });
