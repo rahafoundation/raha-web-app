@@ -4,7 +4,7 @@ const CodeOfConduct = () => (
     <div className="CodeOfConduct">
 
         <h2 id="purpose">1. Purpose</h2>
-        <p>A primary goal of RAHA is to be inclusive to the largest number of contributors,
+        <p>A primary goal of Raha is to be inclusive to the largest number of contributors,
         with the most varied and diverse backgrounds possible. As such, we are committed to providing a friendly,
         safe and welcoming environment for all, regardless of gender, sexual orientation, ability, ethnicity,
         socioeconomic status, and religion (or lack thereof).</p>
