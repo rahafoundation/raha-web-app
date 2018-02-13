@@ -196,7 +196,6 @@ class UserRelations extends React.Component<HasUserName, {}> {
         let memberId = s.get(userNameKey);
         return (
           <div id={memberId} key={memberId}>
-            <Link to={`/m/${memberId}`}>{memberId.replace('.', ' ')}</Link>
             <MemberTile memberId={memberId} />
           </div>
         );
@@ -219,8 +218,7 @@ class UserRelations extends React.Component<HasUserName, {}> {
 }
 
 const MemberTile = ({ memberId }) => {
-  return <div/>;
-  // return <div>Stand in for member tile</div>
+  return <Link to={`/m/${memberId}`}>{memberId.replace('.', ' ')}</Link>;
 };
 
 const Loading = () => {
