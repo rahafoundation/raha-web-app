@@ -193,10 +193,11 @@ class UserRelations extends React.Component<HasUserName, {}> {
   addSection = (sections, stateKey, typeKey, userNameKey, title) => {
     if (this.state[stateKey] && this.state[stateKey][typeKey]) {
       const rows = this.state[stateKey][typeKey].map(s => {
-        let userName = s.get(userNameKey);
+        let memberId = s.get(userNameKey);
         return (
-          <div id={userName} key={userName}>
-            <Link to={`/m/${userName}`}>{userName.replace('.', ' ')}</Link>
+          <div id={memberId} key={memberId}>
+            <Link to={`/m/${memberId}`}>{memberId.replace('.', ' ')}</Link>
+            <MemberTile memberId={memberId} />
           </div>
         );
       });
@@ -216,6 +217,11 @@ class UserRelations extends React.Component<HasUserName, {}> {
     return <div>{sections}</div>;
   }
 }
+
+const MemberTile = ({ memberId }) => {
+  return <div/>;
+  // return <div>Stand in for member tile</div>
+};
 
 const Loading = () => {
   return <div>Loading</div>;
