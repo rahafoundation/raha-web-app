@@ -58,6 +58,7 @@ const CodeOfConduct = () => (
         <p>help@raha.io</p>
         <h2 id="license-and-attribution">11. License and attribution</h2>
         <p>This Code of Conduct is distributed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike license</a>.</p>
+        <p>Portions of text dervied from <a href="http://citizencodeofconduct.org/">Citizen Code of Conduct</a>, <a href="https://www.djangoproject.com/conduct/">Django Code of Conduct</a>, and the <a href="http://geekfeminism.wikia.com/wiki/Conference_anti-harassment/Policy">Geek Feminism Anti-Harassment Policy</a>.</p>
 
     </div>
 );
