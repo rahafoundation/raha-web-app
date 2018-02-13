@@ -53,7 +53,7 @@
         "no-switch-case-fall-through": true,
         "no-trailing-whitespace": false,
         "no-unused-expression": true,
-        "no-use-before-declare": true,
+        "no-var-keyword": true,
         "one-line": [
             true,
             "check-catch",
@@ -65,9 +65,7 @@
         "radix": true,
         "semicolon": [true, "always"],
         "switch-default": true,
-
         "trailing-comma": [false],
-
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
             true,
