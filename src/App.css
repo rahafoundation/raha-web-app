@@ -37,9 +37,19 @@ html, body, .Splash {
   height: 100%;
 }
 
-.PageNotFound{
+.PageNotFound {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+.MemberThumbnail {
+  margin: 5px 0vw;
+  width: 96vw;
+  height: 5vw;
+}
+
+.SectionTitle {
+  font-weight: 600;
 }
