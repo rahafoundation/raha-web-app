@@ -70,11 +70,11 @@ export class App extends React.Component<{}, AppState> {
     return (
       <Provider store={store}>
         <Router>
-          <div>
+          <div className="Container">
             <Switch>
               <Route exact={true} path="/" component={Splash} />
               <Route path="/login" component={LogIn} />
-              <Route path="/codeOfConduct" component={CodeOfConduct} />
+              <Route path="/code-of-conduct" component={CodeOfConduct} />
               <Route
                 path="/me"
                 render={() => {
@@ -455,12 +455,12 @@ const MemberThumbnail = connect(
   null
 )(MemberThumbnailComp);
 
-const RahaTitle = () => <h2><span className="Title">Raha</span><sub>alpha</sub></h2>;
+const RahaTitle = () => <h2 className="Title"><span className="Green">Raha.io</span> Network</h2>;
 
 const Splash = () => (
   <div className="Splash">
     <RahaTitle />
-    <div className="App-intro">The Human-First Blockchain Movement</div>
+    <div className="App-intro">Trusted Identity and Equal Opportunity</div>
     <div className="App-intro">Invite Only</div>
   </div>
 );
@@ -468,7 +468,7 @@ const Splash = () => (
 const PageNotFound = () => (
   <div className="PageNotFound">
     <RahaTitle />
-    <p><strong>404</strong> page not found</p>
+    <p><strong>404</strong> page not found, go <Link to="/">home</Link>.</p>
     <p>¯\_(ツ)_/¯</p>
   </div>
 );
