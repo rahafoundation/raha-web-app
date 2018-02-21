@@ -29,6 +29,7 @@
             "static-before-instance",
             "variables-before-functions"
         ],
+        "prefer-const": true,
         "no-any": true,
         "no-arg": true,
         "no-bitwise": true,

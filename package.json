@@ -9,8 +9,10 @@
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "react-firebaseui": "1.0.10",
+    "react-redux": "5.0.7",
     "react-router-dom": "4.2.2",
-    "react-scripts-ts": "2.8.0"
+    "react-scripts-ts": "2.8.0",
+    "redux": "4.0.0"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -23,6 +25,8 @@
     "@types/node": "8.5.7",
     "@types/react": "16.0.34",
     "@types/react-dom": "16.0.3",
+    "@types/react-redux": "5.0.7",
+    "@types/redux": "4.0.0",
     "jest-localstorage-mock": "^2.1.0"
   }
 }

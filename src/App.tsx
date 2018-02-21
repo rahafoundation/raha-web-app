@@ -1,7 +1,5 @@
 import * as firebase from 'firebase';
 import * as React from 'react';
-import CodeOfConduct from './CodeOfConduct';
-import 'firebase/firestore';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,15 +7,17 @@ import {
   Redirect,
   Route
 } from 'react-router-dom';
-import { FirebaseAuth } from 'react-firebaseui';
 
+import { FirebaseAuth } from 'react-firebaseui';
+import { Provider, connect } from 'react-redux';
+
+import { fetchMemberIfNeeded } from './actions';
+import store from './store';
 import './App.css';
 
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
 
-firebase.initializeApp(require('./data/firebase.config.json'));
-const auth = firebase.auth();
-const db = firebase.firestore();
+import { db, auth } from './firebaseInit';
 
 const uiConfig = {
   signInFlow: 'popup',
@@ -36,170 +36,248 @@ const getYoutubeUrlVideoId = (url: string) => {
   return (match && match[7].length === 11) ? match[7] : false;
 };
 
-interface AppState {
-  userData: firebase.firestore.DocumentSnapshot;
-  user: firebase.User;
-  loadedUser: boolean;
+interface AuthData {
+  authFirebaseUser: firebase.User;
+  authMemberData: firebase.firestore.DocumentSnapshot;
 }
 
-class App extends React.Component<{}, AppState> {
+interface AppState extends AuthData {
+  isAuthLoaded: boolean;
+}
+
+export class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      loadedUser: false,
-      user: null,
-      userData: null
+      authFirebaseUser: null,
+      authMemberData: null,
+      isAuthLoaded: false
     };
   }
 
-  onUserDataUpdate = (userData) => { // TODO this probably does not belong in main App component
-    if (userData.size !== 1) {
-      // TODO console.error(`Found ${userData.size} users with query ${userData.query}`);
-      return;
-    }
-    userData = userData.docs[0];
-    this.setState({
-      userData
-    });
-  }
-
   componentDidMount() {
-    auth.onAuthStateChanged(user => {
-      const state = { user } as AppState;
-      if (user) {
-        db.collection('user_data').where('uid', '==', user.uid).get().then(this.onUserDataUpdate);
+    auth.onAuthStateChanged(async authFirebaseUser => {
+      if (authFirebaseUser) {
+        const authMemberData = await db.collection('members').doc(authFirebaseUser.uid).get();
+        this.setState({ authMemberData });
       }
-      state.loadedUser = true;
-      this.setState(state);
+      this.setState({ authFirebaseUser, isAuthLoaded: true });
     });
   }
 
   render() {
     return (
-      <Router>
-        <div>
-        <Switch>
-          <Route exact={true} path="/" component={Splash} />
-          <Route path="/login" component={LogIn} />
-          <Route path="/codeOfConduct" component={CodeOfConduct} />
-          <Route
-            path="/me"
-            render={() => {
-              if (this.state.loadedUser) {
-                if (this.state.user === null) {
-                  return <div>
-                    <span>You need to </span>
-                    <Redirect to={{ pathname: '/login' }} />
-                  </div>;
-                }
-                return <Profile user={this.state.user} userData={this.state.userData} userName={null} />;
-              } else {
-                return <Loading />;
-              }
-            }}
-          />
-          <Route path="/m/:userName" render={({ match }) => <ProfileWithUserName userName={match.params.userName} />} />
-          <Route component={PageNotFound} />
-        </Switch>
-        </div>
-      </Router>
+      <Provider store={store}>
+        <Router>
+          <div>
+            <Switch>
+              <Route exact={true} path="/" component={Splash} />
+              <Route path="/login" component={LogIn} />
+              <Route
+                path="/me"
+                render={() => {
+                  if (!this.state.isAuthLoaded) {
+                    return <Loading />;
+                  }
+                  if (this.state.authFirebaseUser === null) {
+                    return <div>
+                      <span>You need to </span>
+                      <Redirect to={{ pathname: '/login' }} />
+                    </div>;
+                  }
+                  // toUid: string, toMid: string, creatorMid: string
+                  return <Profile
+                    authFirebaseUser={this.state.authFirebaseUser}
+                    authMemberData={this.state.authMemberData}
+                    isMePage={true}
+                  />;
+                }}
+              />
+              <Route
+                path="/m/:memberId"
+                render={({ match }) => {
+                  if (!this.state.isAuthLoaded || (this.state.authFirebaseUser && !this.state.authMemberData)) {
+                    return <Loading />;
+                  }
+                  // TODO(#33) if the redux selectedMemberUid is valid, use that instead of a memberId
+                  return <Profile
+                    authFirebaseUser={this.state.authFirebaseUser}
+                    authMemberData={this.state.authMemberData}
+                    memberId={match.params.memberId}
+                  />;
+                }}
+              />
+              <Route component={PageNotFound} />
+            </Switch>
+          </div>
+        </Router>
+      </Provider>
     );
   }
 }
 
-class ProfileWithUserName extends React.Component<HasUserName, { userData: firebase.firestore.DocumentData }> {
-  constructor(props: HasUserName) {
+interface ProfileProps extends AuthData {
+  isMePage?: boolean;
+  memberId?: string;
+}
+
+interface ProfileState {
+  isMemberDataLoaded: boolean;
+  isMyPage: boolean;
+  memberData: firebase.firestore.DocumentData;
+}
+
+class Profile extends React.Component<ProfileProps, ProfileState> {
+  constructor(props: ProfileProps) {
     super(props);
-    this.state = {
-      userData: null
-    };
+    this.state = {} as ProfileState;
   }
 
-  onUserDataUpdate = (userData) => {
-    this.setState({
-      userData
-    });
+  componentWillReceiveProps(nextProps: ProfileProps) { // WTODO needed???
+    this.onPropsChange(nextProps);
   }
 
-  componentWillReceiveProps(nextProps: HasUserName) {
-    if (nextProps.userName !== this.props.userName) {
-      this.onPropsChange(nextProps);
-    }
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     this.onPropsChange(this.props);
   }
 
-  onPropsChange = (nextProps) => {
-    db.collection('user_data').doc(nextProps.userName).get().then(this.onUserDataUpdate);
+  onPropsChange = async (nextProps) => {
+    const isMyPage = nextProps.isMePage || nextProps.memberId === nextProps.authMemberData.get('mid');
+    let isMemberDataLoaded;
+    let memberData;
+    if (isMyPage) {
+      isMemberDataLoaded = true;
+      memberData = nextProps.authMemberData;
+    } else {
+      isMemberDataLoaded = this.state.memberData && this.state.memberData.get('mid') === nextProps.memberId;
+      memberData = isMemberDataLoaded ? this.state.memberData : null;
+      if (!isMemberDataLoaded) {
+        // TODO(#33) should not be querying firestore outside of actions.ts
+        const memberQuery = await db.collection('members').where('mid', '==', nextProps.memberId).get();
+        memberData = memberQuery.docs[0];
+        isMemberDataLoaded = true;
+      }
+    }
+    this.setState({ isMemberDataLoaded, isMyPage, memberData });
+  }
+
+  canTrustThisUser() {
+    return this.props.authMemberData !== null && this.props.authMemberData.get('mid') !== this.props.memberId;
   }
 
   render() {
-    return <Profile user={null} userData={this.state.userData} userName={this.props.userName} />;
+    if (!this.state.isMemberDataLoaded) {
+      return <Loading />;
+    }
+    const memberData = this.state.memberData;
+    if (!memberData) {
+      if (!this.props.memberId) {
+        // TODO(#8) allow user to request trust from current user, upload their youtube video.
+        return (
+          <div>Thank you for logging in {this.props.authFirebaseUser.displayName}!
+        Now you must find someone you know to trust your account to become a Raha member.</div>
+        );
+      }
+      // TODO make below message nice page
+      return <div>Member "{this.props.memberId}" does not exist</div>;
+    }
+    const fullName = memberData.get('full_name');
+    const youtubeUrl = memberData.get('video_url');
+    return (
+      <div>
+        <div>{fullName}</div>
+        {this.canTrustThisUser()
+          && <TrustButton
+            toUid={memberData.get('uid')}
+            toMid={memberData.get('mid')}
+            creatorMid={this.props.authMemberData.get('mid')}
+          />}
+        {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
+        <MemberRelations uid={memberData.id} />
+      </div>
+    );
   }
 }
 
-interface HasUserName {
-  userName: string;
+type OpCodeToDocs = Map<string, firebase.firestore.DocumentSnapshot>;
+
+interface MemberRelationsProps {
+  uid: string;
 }
 
-const groupSnapshotBy = (xs: firebase.firestore.QuerySnapshot, key: string) => {
-  return xs.docs.reduce(
-    (rv, x) => {
-      const val = x.get(key);
-      (rv[val] = rv[val] || []).push(x);
-      return rv;
-    },
-    {}
-  );
-};
+interface MemberRelationsState {
+  ops: OpCodeToDocs;
+  trustedByUids: Map<string, string>;
+  trustsUids: Map<string, string>;
+  invitedByUids: Map<string, string>;
+  invitedUids: Map<string, string>;
+}
 
-class UserRelations extends React.Component<HasUserName, {}> {
-  constructor(props: HasUserName) {
+class MemberRelations extends React.Component<MemberRelationsProps, MemberRelationsState> {
+  constructor(props: MemberRelationsProps) {
     super(props);
-    this.state = {};
+    this.state = { ops: null, trustedByUids: null, trustsUids: null, invitedByUids: null, invitedUids: null };
   }
 
-  onFromUser = (relations) => {
-    let fromRelations = groupSnapshotBy(relations, 'type');
-    this.setState({
-      fromRelations
-    });
-  }
-
-  onToUser = (relations) => {
-    let toRelations = groupSnapshotBy(relations, 'type');
-    this.setState({
-      toRelations
-    });
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     this.onPropsChange(this.props);
   }
 
-  componentWillReceiveProps(nextProps: HasUserName) {
-    if (nextProps.userName !== this.props.userName) {
+  componentWillReceiveProps(nextProps: MemberRelationsProps) {
+    if (nextProps.uid !== this.props.uid) {
       this.onPropsChange(nextProps);
     }
   }
 
-  onPropsChange = (nextProps) => {
-    db.collection('relations').where('from', '==', nextProps.userName).get().then(this.onFromUser);
-    db.collection('relations').where('to', '==', nextProps.userName).get().then(this.onToUser);
+  addOpsGroup = async (fieldPath, uid) => {
+    const snap = await db.collection('operations').where(fieldPath, '==', uid).orderBy('op_seq').get();
+    return snap.docs.reduce((res, s) => res.set(s.id, s), new Map());
   }
 
-  addSection = (sections, stateKey, typeKey, userNameKey, title) => {
-    if (this.state[stateKey] && this.state[stateKey][typeKey]) {
-      const rows = this.state[stateKey][typeKey].map(s => {
-        return (
-          <MemberTile memberId={s.get(userNameKey)} />
-        );
+  getKeysForOps = (
+    documents: Map<string, firebase.firestore.DocumentSnapshot>,
+    opCode: OpCode, idKey: string
+  ): Map<string, string> => {
+    const res = new Map();
+    documents.forEach((opDoc, opId) => {
+      if (opDoc.get('op_code') === opCode) {
+        const uid = opDoc.get(idKey);
+        if (uid !== null) {
+          res.set(uid, opId);
+        }
+      }
+    });
+    return res;
+  }
+
+  onPropsChange = async (props) => {
+    const [sentOps, receivedOps] = await Promise.all([
+      this.addOpsGroup('creator_uid', props.uid),
+      this.addOpsGroup('data.to_uid', props.uid)
+    ]);
+    const trustedByUids = this.getKeysForOps(receivedOps, OpCode.TRUST, 'creator_uid');
+    const trustsUids = this.getKeysForOps(sentOps, OpCode.TRUST, 'data.to_uid');
+    const invitedByUids = this.getKeysForOps(sentOps, OpCode.REQUEST_INVITE, 'data.to_uid');
+    const invitedUids = this.getKeysForOps(receivedOps, OpCode.REQUEST_INVITE, 'creator_uid');
+    // By default you trust the person your requested invite from.
+    invitedByUids.forEach((doc, uid) => trustsUids.set(uid, doc));
+    // People who request invite from you are saying that they trust you.
+    invitedUids.forEach((doc, uid) => trustedByUids.set(uid, doc));
+    // TODO handle untrust,  vote
+    this.setState({ ops: Object.assign(sentOps, receivedOps), trustedByUids, trustsUids, invitedByUids, invitedUids });
+  }
+
+  addSection = (sections, sectionUids, title) => {
+    if (sectionUids.size > 0) {
+      // TODO(#14) should intially get memberUid, then do db.batch() for all additional member info (pic, full_name)
+      // const ops = this.state.ops;
+      const rows = Array.from(sectionUids.entries()).map((opIdAndUid: Array<string>) => {
+        const [uid, opId] = opIdAndUid;
+        return <MemberThumbnail applied={true} key={uid} uid={uid} />;
       });
       sections.push(
-        <div key={stateKey} className="UserRelations-section">
-          <div>{title}</div>
+        <div key={title} className="MemberRelations-section">
+          <div className="SectionTitle">{`${title} (${rows.length})`}</div>
           {rows}
         </div>
       );
@@ -208,15 +286,15 @@ class UserRelations extends React.Component<HasUserName, {}> {
 
   render() {
     const sections = [];
-    this.addSection(sections, 'fromRelations', 'invited', 'to', 'Invited By');
-    this.addSection(sections, 'toRelations', 'invited', 'from', 'Invites');
+    if (this.state.ops) {
+      this.addSection(sections, this.state.invitedByUids, 'Invited By');
+      this.addSection(sections, this.state.invitedUids, 'Invites');
+      this.addSection(sections, this.state.trustedByUids, 'Trusted by');
+      this.addSection(sections, this.state.trustsUids, 'Trusts');
+    }
     return <div>{sections}</div>;
   }
 }
-
-const MemberTile = ({ memberId }) => {
-  return <Link to={`/m/${memberId}`}>{memberId.replace('.', ' ')}</Link>;
-};
 
 const Loading = () => {
   return <div>Loading</div>;
@@ -226,84 +304,76 @@ const LogIn = () => {
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
 };
 
-const Profile = ({ user, userData, userName }) => {
-  userData = userData && userData.exists ? userData : null;
-  if (!user && !userData) {
-    return <div>User not found</div>;
-  }
-  let fullName = user && user.displayName;
-  let youtubeUrl = null;
-  let trustLevel = 0;
-  let networkJoinDate = 0;
-  let trustedByLevel2 = 0;
-  let trustedByLevel3 = 0;
-  if (userData) {
-    userName = userName || userData.get('user_name');
-    fullName = userData.get('full_name');
-    youtubeUrl = userData.get('invite_url');
-    trustLevel = userData.get('trust_level');
-    networkJoinDate = userData.get('joined');
-    trustedByLevel2 = userData.get('trusted_by_level_2');
-    trustedByLevel3 = userData.get('trusted_by_level_3');
-  }
-  return (
-    <div>
-      <div>{fullName}</div>
-      {user && trustLevel && <TrustLevel 
-      trustLevel={trustLevel} 
-      networkJoinDate={networkJoinDate} 
-      trustedByLevel2={trustedByLevel2} 
-      trustedByLevel3={trustedByLevel3}/>}
-      {user && user.photoURL &&
-        <img src={user.photoURL} />
-      }
-      {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-      {userName && <UserRelations userName={userName} />}
-    </div>
-  );
+// TODO code duplication in functions/srs/index.ts, decomp.
+enum OpCode {
+  ADMIN = 'ADMIN',
+  FLAG = 'FLAG',
+  REQUEST_INVITE = 'REQUEST_INVITE',
+  TRUST = 'TRUST',
+  UNADMIN = 'UNADMIN',
+  UNFLAG = 'UNFLAG',
+  UNTRUST = 'UNTRUST',
+  VOTE = 'VOTE'
+}
+
+interface ToId {
+  to_mid: string;
+  to_uid: string;
+}
+
+interface RequestInviteOpData extends ToId {
+  video_url: string;
+  full_name: string;
+}
+
+interface TrustOpData extends ToId { }
+
+interface Operation {
+  applied: false;
+  block_at: Date;
+  block_seq: number;
+  created_at: Date; // firebase.firestore.FieldValue;
+  creator_mid: string;
+  creator_uid: string;
+  data: (TrustOpData | RequestInviteOpData);
+  op_code: OpCode;
+  op_seq: number;
+}
+
+const getOperation = (opCode: OpCode, creatorMid: string, data): Operation => {
+  return {
+    applied: false,
+    block_at: null,
+    block_seq: null,
+    created_at: new Date(),
+    creator_uid: auth.currentUser.uid,
+    creator_mid: creatorMid,
+    data,
+    op_code: opCode,
+    op_seq: null
+  };
 };
 
-// Based on the FAQ trust is determined by:
-// 1. Time on the network
-// 2. Number of Level 2 and 3 accounts that trust this account
-// 3. Level 3 verification video in last month || invited in first month
-const TrustLevel = ({ trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3 }) => {
-  const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3) => {
-    let millDay = 86400000;
-    if (networkJoinDate > new Date().getTime() - (((trustLevel + 1) * 7) * millDay)) {
-      return <div> Stay active on the network for longer to increase your trust level </div>;
-    }
-    switch (trustLevel) {
-        case 0:
-          if (trustedByLevel2 + trustedByLevel3 < 2) {
-            return <div> Increase your trust by receiving trust from at least {2 - (trustedByLevel2 + trustedByLevel3)} level 2+ accounts </div>;
-          }
-          break;
-        case 1:
-          if (trustedByLevel3 < 3) {
-            return <div> Increase your trust by receiving trust from at least { 3 - (trustedByLevel3)} level 3 accounts </div>;
-          }
-          break;
-        case 2:
-          if (trustedByLevel3 < 5) {
-            return <div> Increase your trust by receiving trust from at least {5 - (trustedByLevel3)} level 3 accounts </div>;
-          }
-          break;
-        case 3:
-          return <div> You are max trust level </div>;
-        default:
-          return null;
-      }
-      return null;
-    };
-    return (
-      <div className="Trust">
-          <div>Trust Level: {trustLevel}</div>
-          { TrustSuggestion(trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3) }
-      </div>
-    );
+const getTrustOperation = (toUid: string, toMid: string, creatorMid: string): Operation => {
+  return getOperation(OpCode.TRUST, creatorMid, { to_uid: toUid, to_mid: toMid });
+};
+
+// TODO(#8) instead of only trust, should be multi-functional button
+class TrustButton extends React.Component<{ toUid: string, toMid: string, creatorMid: string }, {}> {
+  onClick = () => {
+    const trustOp = getTrustOperation(this.props.toUid, this.props.toMid, this.props.creatorMid);
+    // TODO support this
+    alert(`This operation for upserting ${JSON.stringify(trustOp)} not supported yet.`);
   }
 
+  render() {
+    return (
+      <button onClick={this.onClick}>
+        Trust
+      </button>
+    );
+  }
+}
 
 interface YoutubeVideoProperties {
   youtubeUrl: string;
@@ -314,7 +384,8 @@ class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
   private videoEmbed: HTMLEmbedElement;
 
   render() {
-    let youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
+    const youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
+    // TODO Chrome console errors with this object embed, investigate.
     return (
       <div className="Video">
         <object ref={v => { this.videoObject = v; }} >
@@ -338,6 +409,39 @@ class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
   }
 }
 
+interface MemberThumbnailProps {
+  uid: string;
+  applied: boolean;
+  memberData?: firebase.firestore.DocumentData;
+}
+
+// TODO(#14) improve this thumbnail
+class MemberThumbnailComp extends React.Component<MemberThumbnailProps, {}> {
+  componentDidMount() {
+    fetchMemberIfNeeded(this.props.uid); // TODO memberUid;
+  }
+  render() {
+    const memberDoc = this.props.memberData && this.props.memberData.doc;
+    if (!memberDoc) {
+      return <div className="MemberThumbnail"><Loading /></div>;
+    }
+    const mid = memberDoc.get('mid');
+    const name = memberDoc.get('full_name');
+    return (
+      <div className="MemberThumbnail">
+        <Link to={`/m/${mid}`}>{name}</Link>
+      </div>
+    );
+  }
+}
+
+const MemberThumbnail = connect(
+  (state, ownProps: MemberThumbnailProps) => {
+    return { memberData: state.uidToMembers[ownProps.uid] };
+  },
+  null
+)(MemberThumbnailComp);
+
 const RahaTitle = () => <h2><span className="Title">Raha</span><sub>alpha</sub></h2>;
 
 const Splash = () => (
@@ -352,8 +456,6 @@ const PageNotFound = () => (
   <div className="PageNotFound">
     <RahaTitle />
     <p><strong>404</strong> page not found</p>
-    <p> ¯\_(ツ)_/¯</p>
+    <p>¯\_(ツ)_/¯</p>
   </div>
 );
-
-export default App;
