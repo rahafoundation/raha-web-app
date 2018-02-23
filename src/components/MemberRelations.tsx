@@ -63,6 +63,7 @@ class MemberRelations extends React.Component<MemberRelationsProps, MemberRelati
       this.addOpsGroup('creator_uid', props.uid),
       this.addOpsGroup('data.to_uid', props.uid)
     ]);
+    debugger;
     const trustedByUids = this.getKeysForOps(receivedOps, OpCode.TRUST, 'creator_uid');
     const trustsUids = this.getKeysForOps(sentOps, OpCode.TRUST, 'data.to_uid');
     const invitedByUids = this.getKeysForOps(sentOps, OpCode.REQUEST_INVITE, 'data.to_uid');

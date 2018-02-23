@@ -1,25 +1,20 @@
 import * as firebase from 'firebase';
 import * as React from 'react';
-import { OpCode } from './operations';
 import { Provider } from 'react-redux';
 import {
   BrowserRouter as Router,
   Switch,
-  Link,
   Redirect,
   Route
 } from 'react-router-dom';
-
+import { db, auth } from './firebaseInit';
 import CodeOfConduct from './components/CodeOfConduct';
 import LogIn from './components/LogIn';
 import PageNotFound from './components/PageNotFound';
 import Profile from './components/Profile';
 import Splash from './components/Splash';
-
 import store from './store';
 import './App.css';
-
-import { db, auth } from './firebaseInit';
 
 const Loading = () => {
   return <div>Loading</div>;
