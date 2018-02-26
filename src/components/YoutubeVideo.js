@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-    // eslint-disable-next-line no-useless-escape
+// eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
 
 const getYoutubeUrlVideoId = (url: string) => {

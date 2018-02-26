@@ -88,16 +88,11 @@ function ackPostOp(uid: string) {
   }
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export function postOperation(op: Operation) {
   return async dispatch => {
     let opDoc = db.collection('operations').doc();
     dispatch(postOp(opDoc.id, op));
-    await sleep(500);
-    // WTODO await opDoc.set(op);
+    await opDoc.set(op);
     dispatch(ackPostOp(opDoc.id));
   }
 }
