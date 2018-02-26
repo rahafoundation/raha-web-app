@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 
+    // eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
 
 const getYoutubeUrlVideoId = (url: string) => {
@@ -11,10 +12,8 @@ interface YoutubeVideoProperties {
   youtubeUrl: string;
 }
 
-export default class YoutubeVideo extends React.Component<YoutubeVideoProperties, {}> {
-  private videoObject: HTMLObjectElement;
-  private videoEmbed: HTMLEmbedElement;
-
+// TODO should load thumbnail so user sees something faster
+export default class YoutubeVideo extends Component {
   render() {
     const youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
     // TODO Chrome console errors with this object embed, investigate.

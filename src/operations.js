@@ -1,14 +1,14 @@
 import { auth } from './firebaseInit';  // TODO pass in auth.currentUser.uid
 
-export enum OpCode {
-  ADMIN = 'ADMIN',
-  FLAG = 'FLAG',
-  REQUEST_INVITE = 'REQUEST_INVITE',
-  TRUST = 'TRUST',
-  UNADMIN = 'UNADMIN',
-  UNFLAG = 'UNFLAG',
-  UNTRUST = 'UNTRUST',
-  VOTE = 'VOTE'
+export const OpCode = {
+  ADMIN: 'ADMIN',
+  FLAG: 'FLAG',
+  REQUEST_INVITE: 'REQUEST_INVITE',
+  TRUST: 'TRUST',
+  UNADMIN: 'UNADMIN',
+  UNFLAG: 'UNFLAG',
+  UNTRUST: 'UNTRUST',
+  VOTE: 'VOTE'
 }
 
 interface ToId {
@@ -49,6 +49,6 @@ const getOperation = (opCode: OpCode, creatorMid: string, data): Operation => {
   };
 };
 
-export const getTrustOperation = (toUid: string, toMid: string, creatorMid: string): Operation => {
+export const getTrustOperation = (toUid: string, toMid: string, creatorUid: string, creatorMid: string): Operation => {
   return getOperation(OpCode.TRUST, creatorMid, { to_uid: toUid, to_mid: toMid });
 };
