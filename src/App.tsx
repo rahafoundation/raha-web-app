@@ -15,6 +15,7 @@ import LogIn from './components/LogIn';
 import PageNotFound from './components/PageNotFound';
 import Profile from './components/Profile';
 import Splash from './components/Splash';
+import InviteForm from './components/InviteForm';
 
 import store from './store';
 import './App.css';
@@ -60,6 +61,7 @@ class App extends React.Component<{}, AppState> {
               <Route exact={true} path="/" component={Splash} />
               <Route path="/login" component={LogIn} />
               <Route path="/code-of-conduct" component={CodeOfConduct} />
+              <Route path="/invite" component={InviteForm} />
               <Route
                 path="/me"
                 render={() => {

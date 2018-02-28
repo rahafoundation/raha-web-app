@@ -91,6 +91,18 @@ html, body {
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
 }
 
+.InviteInput .ExtraWidth {
+  width: 96vw;
+}
+
+.InviteVideoContainer {
+  width: 250px;
+}
+
+.InviteVideoContainer .Video {
+  width: 100%;
+}
+
 .InviteError {
   margin: .75rem 0;
   color: #d9534f;
@@ -112,4 +124,3 @@ html, body {
 .SectionTitle {
   font-weight: 600;
 }
->>>>>>> master
