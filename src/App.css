@@ -1,14 +1,24 @@
-html, body, .Splash {
+html, body {
   margin: 2vh 2vw;
   height: 96vh;
   width: 96vw;
 }
 
+.Container {
+  position: absolute;
+  top: 2vw;
+  right: 2vw;
+  bottom: 2vw;
+  left: 2vw;
+}
+
 .Splash {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  text-align: center;
 }
 
 .App-intro {
@@ -16,9 +26,12 @@ html, body, .Splash {
   margin: 5vh;
 }
 
+.Green {
+  color: #2A945E;
+}
+
 .Title {
   font-size: 5vh;
-  color: #2A945E;
   margin: 10vh 0.5vh;
 }
 
@@ -82,3 +95,21 @@ html, body, .Splash {
   margin: .75rem 0;
   color: #d9534f;
 }
+
+.PageNotFound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.MemberThumbnail {
+  margin: 5px 0vw;
+  width: 96vw;
+  height: 5vw;
+}
+
+.SectionTitle {
+  font-weight: 600;
+}
+>>>>>>> master

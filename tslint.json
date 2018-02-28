@@ -14,9 +14,9 @@
             "check-space"
         ],
         "curly": true,
-        "eofline": false,
+        "eofline": true,
         "forin": true,
-        "indent": [ true, "spaces" ],
+        "indent": [ true, "spaces", 2 ],
         "interface-name": [true, "never-prefix"],
         "jsdoc-format": true,
         "jsx-no-lambda": false,
@@ -29,6 +29,7 @@
             "static-before-instance",
             "variables-before-functions"
         ],
+        "prefer-const": true,
         "no-any": true,
         "no-arg": true,
         "no-bitwise": true,
@@ -53,7 +54,7 @@
         "no-switch-case-fall-through": true,
         "no-trailing-whitespace": false,
         "no-unused-expression": true,
-        "no-use-before-declare": true,
+        "no-var-keyword": true,
         "one-line": [
             true,
             "check-catch",
@@ -65,9 +66,7 @@
         "radix": true,
         "semicolon": [true, "always"],
         "switch-default": true,
-
         "trailing-comma": [false],
-
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
             true,
