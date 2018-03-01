@@ -4,25 +4,17 @@ import YoutubeVideo from './YoutubeVideo';
 import { FirebaseAuth } from 'react-firebaseui';
 import { auth } from '../firebaseInit';
 
-interface InviteState {
-  name: string;
-  videoUrl: string;
-  errorMessage: string;
-}
-
-interface PendingInvite {
-  name: string;
-  videoUrl: string;
-}
-
 const inviteStateToPendingInvite = (invite: InviteState) => {
-  return {name: invite.name, videoUrl: invite.videoUrl}
+  return {
+    name: invite.name,
+    videoUrl: invite.videoUrl
+  }
 }
 
 class InviteForm extends React.Component<{}, InviteState> {
-    constructor(props: InviteState){
+    constructor(props: InviteState) {
       super(props);
-      this.state = {name: "", videoUrl: "", errorMessage: ""} as InviteState;
+      this.state = {name: "", videoUrl: "", errorMessage: ""};
     }
 
     handleOnChange(event: any) : void {
