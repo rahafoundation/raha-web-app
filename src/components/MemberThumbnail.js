@@ -1,24 +1,25 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import { fetchMemberIfNeeded } from '../actions';
+import { fetchMemberIfNeeded, OpMeta } from '../actions';
 
 const Loading = () => {
   return <div>Loading</div>;
 };
 
-interface MemberThumbnailProps {
+interface Props {
   uid: string;
-  applied: boolean;
+  opMeta: OpMeta;
   memberData?: firebase.firestore.DocumentData;
 }
 
 // TODO(#14) improve this thumbnail
-class MemberThumbnail extends React.Component<MemberThumbnailProps, {}> {
+class MemberThumbnail extends Component<Props> {
   componentDidMount() {
-    fetchMemberIfNeeded(this.props.uid); // TODO memberUid;
+    this.props.fetchMemberIfNeeded(this.props.uid);
   }
+
   render() {
     const memberDoc = this.props.memberData && this.props.memberData.doc;
     if (!memberDoc) {
@@ -27,7 +28,7 @@ class MemberThumbnail extends React.Component<MemberThumbnailProps, {}> {
     const mid = memberDoc.get('mid');
     const name = memberDoc.get('full_name');
     return (
-      <div className="MemberThumbnail">
+      <div className={'MemberThumbnail ' + (this.props.opMeta.inDb ? 'Green' : 'Grey')}>
         <Link to={`/m/${mid}`}>{name}</Link>
       </div>
     );
@@ -35,8 +36,10 @@ class MemberThumbnail extends React.Component<MemberThumbnailProps, {}> {
 }
 
 export default connect(
-  (state, ownProps: MemberThumbnailProps) => {
+  (state, ownProps) => {
     return { memberData: state.uidToMembers[ownProps.uid] };
   },
-  null
+  {
+    fetchMemberIfNeeded
+  }
 )(MemberThumbnail);

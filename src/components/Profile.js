@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
-import { TrustButton } from './TrustButton';
 import { db } from '../firebaseInit';
 
 interface ProfileProps {
@@ -17,13 +16,13 @@ interface ProfileState {
   memberData: firebase.firestore.DocumentData;
 }
 
-class Profile extends React.Component<ProfileProps, ProfileState> {
+class Profile extends Component<ProfileProps, ProfileState> {
   constructor(props: ProfileProps) {
     super(props);
-    this.state = {} as ProfileState;
+    this.state = {};
   }
 
-  componentWillReceiveProps(nextProps: ProfileProps) { // WTODO needed???
+  componentWillReceiveProps(nextProps: ProfileProps) {
     this.onPropsChange(nextProps);
   }
 
@@ -31,7 +30,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
     this.onPropsChange(this.props);
   }
 
-  onPropsChange = async (nextProps) => {
+  onPropsChange = async (nextProps) => { // TODO use redux
     const isMyPage = nextProps.isMePage
       || (nextProps.authMemberData && nextProps.memberId === nextProps.authMemberData.get('mid'));
     let isMemberDataLoaded;
@@ -50,10 +49,6 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
       }
     }
     this.setState({ isMemberDataLoaded, isMyPage, memberData });
-  }
-
-  canTrustThisUser() {
-    return this.props.authMemberData !== null && this.props.authMemberData.get('mid') !== this.props.memberId;
   }
 
   render() {
@@ -76,13 +71,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
     const youtubeUrl = memberData.get('video_url');
     return (
       <div>
-        <div>{fullName}</div>
-        {this.canTrustThisUser()
-          && <TrustButton
-            toUid={memberData.get('uid')}
-            toMid={memberData.get('mid')}
-            creatorMid={this.props.authMemberData.get('mid')}
-          />}
+        <div className="Green MemberName">{fullName}</div>
         {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
         <MemberRelations uid={memberData.id} />
       </div>

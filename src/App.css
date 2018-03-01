@@ -1,15 +1,13 @@
 html, body {
-  margin: 2vh 2vw;
+  margin: 2vh auto;
   height: 96vh;
   width: 96vw;
 }
 
 .Container {
-  position: absolute;
-  top: 2vw;
-  right: 2vw;
-  bottom: 2vw;
-  left: 2vw;
+  display: flex;
+  align-items: left;
+  max-width: 300px;
 }
 
 .Splash {
@@ -57,12 +55,37 @@ html, body {
   flex-direction: column;
 }
 
+.MemberName {
+  font-weight: 600;
+  margin: 5px 0;
+}
+
 .MemberThumbnail {
-  margin: 5px 0vw;
-  width: 96vw;
-  height: 5vw;
+  font-weight: 600;
+  margin: 5px 0;
+  height: 25px;
 }
 
 .SectionTitle {
-  font-weight: 600;
+  font-weight: 400;
+}
+
+.Grey {
+  color: grey;
+}
+
+.TrustButton {
+    background-color: #2A945E;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+a, a:visited, a:hover, a:active {
+  color: inherit;
+  text-decoration: inherit;
 }

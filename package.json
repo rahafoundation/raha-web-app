@@ -1,32 +1,28 @@
 {
   "name": "raha-io",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "Apache-2.0",
   "dependencies": {
-    "firebase": "4.9.0",
-    "material-ui": "0.20.0",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
-    "react-firebaseui": "1.0.10",
-    "react-redux": "5.0.7",
-    "react-router-dom": "4.2.2",
-    "react-scripts-ts": "2.8.0",
-    "redux": "4.0.0-beta.2"
+    "firebase": "^4.9.0",
+    "material-ui": "^0.20.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-firebaseui": "^1.0.10",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.1",
+    "redux": "^4.0.0-beta.2",
+    "redux-thunk": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom --setupTestFrameworkScriptFile=jest-localstorage-mock",
-    "eject": "react-scripts-ts eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom --setupTestFrameworkScriptFile=jest-localstorage-mock",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "@types/jest": "22.0.1",
-    "@types/node": "8.5.7",
-    "@types/react": "16.0.34",
-    "@types/react-dom": "16.0.3",
-    "@types/react-redux": "5.0.7",
-    "@types/redux": "3.6.0",
+    "flow-bin": "^0.66.0",
     "jest-localstorage-mock": "^2.1.0"
   }
 }
