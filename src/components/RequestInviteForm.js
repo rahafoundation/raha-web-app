@@ -58,7 +58,7 @@ class RequestInviteForm extends Component<Props> {
       return (
         <div>
           <b>Invite new users</b>
-          <div>The more users join raha, the better! Type in a trusted friend's gmail address to invite them.</div>
+          <div>The more users join raha, the better! Type in a trusted friends gmail address to invite them.</div>
           <div>
             <input
               onChange={ e => this.setFullName(e) }
