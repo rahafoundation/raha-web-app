@@ -7,7 +7,7 @@ import {
   Route
 } from 'react-router-dom';
 import { getAuthMemberData } from '../connectors';
-import InviteForm from './InviteForm';
+import RequestInviteForm from './RequestInviteForm';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
 import PageNotFound from './PageNotFound';
@@ -28,7 +28,7 @@ class AppRouter extends Component {
             <Route exact={true} path="/" component={Splash} />
             <Route path="/login" component={LogIn} />
             <Route path="/code-of-conduct" component={CodeOfConduct} />
-            <Route path="/invite" component={InviteForm} />
+            <Route path="/request-invite" component={RequestInviteForm} />
             <Route
               path="/me"
               render={() => {
