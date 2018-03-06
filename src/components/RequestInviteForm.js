@@ -44,7 +44,7 @@ class RequestInviteForm extends Component<Props> {
       this.props.fetchMemberIfNeeded(event.target.value);
     }
 
-    handleOnSubmit(event: any) : void {
+    async handleOnSubmit(event: any) : void {
       event.stopPropagation();
 
       if (this.state.videoUrl.length <= 0) {
@@ -63,7 +63,7 @@ class RequestInviteForm extends Component<Props> {
         let videoUrl = this.state.videoUrl;
 
         let requestOp = getRequestInviteOperation(toUid, toMid, creatorMid, fullName, videoUrl);
-        this.props.postOperation(requestOp);
+        await this.props.postOperation(requestOp);
       }
     }
 
