@@ -75,7 +75,7 @@ class RequestInviteForm extends Component<Props> {
       return (
         <div>
           <b>Request Invite</b>
-          <div>We're excited to have you! To sign up, all we need are:</div>
+          <div>We are excited to have you! To sign up, all we need are:</div>
           <div>
             <ul>
               <li>your full name (we get this from Google)</li>
