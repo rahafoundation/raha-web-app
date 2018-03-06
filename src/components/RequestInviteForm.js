@@ -1,51 +1,68 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAuthMemberData } from '../connectors';
+import { auth, db } from '../firebaseInit';
 import { getRequestInviteOperation } from '../operations';
-import { postOperation } from '../actions';
+import { postOperation, fetchMemberIfNeeded } from '../actions';
 import YoutubeVideo from './YoutubeVideo';
 
 interface Props {
-  toUid: string;
+  partialAuthData: Map<string, string>;
   toMid: string;
-  fullName: string;
-  videoUrl: string;
+}
+
+const getNumberSuffix = (len: number) => {
+    const exclusiveMax = Math.pow(10, len);
+    return (Math.floor(Math.random() * exclusiveMax) + exclusiveMax).toString().substring(1);
+}
+
+const getUserName = (fullName: string) => {
+    return fullName.trim().toLowerCase().replace(/\s+/g, '.') + '#' + getNumberSuffix(4);
+}
+
+const getPartialAuthData = (firebaseAuth) => {
+  return {
+    displayName: firebaseAuth.currentUser ? firebaseAuth.currentUser.displayName : ""
+  }
 }
 
 class RequestInviteForm extends Component<Props> {
-    constructor(props: InviteState) {
+    constructor(props) {
       super(props);
-      this.state = {fullName: "", videoUrl: "", errorMessage: ""};
-    }
-
-    setFullName(event: any) : void {
-      this.setState({ fullName: event.target.value })
+      this.state = {
+        videoUrl: "",
+        toUid: "",
+        errorMessage: ""
+      };
     }
 
     setVideoURL(event: any) : void {
       this.setState({ videoUrl: event.target.value })
     }
 
+    setToUid(event: any): void {
+      this.setState({ toUid: event.target.value })
+      this.props.fetchMemberIfNeeded(event.target.value);
+    }
+
     handleOnSubmit(event: any) : void {
       event.stopPropagation();
 
-      if (this.state.fullName.length <= 0) {
-        this.setState({ errorMessage: "Please enter you name" });
+      if (this.state.videoUrl.length <= 0) {
+        this.setState({ errorMessage: "Please enter a valid video url" });
       }
 
-      else if (this.state.videoUrl.length <= 0) {
-        this.setState({ errorMessage: "Please enter a valid url" });
+      else if (this.state.toUid.length <= 0 || !this.props.members[this.state.toUid]) {
+        this.setState({ errorMessage: "Please enter a valid friend's uid" });
       }
 
       else {
-        let requestOp = getRequestInviteOperation(
-          this.props.toUid,
-          this.props.toMid,
-          this.props.authMemberData.id,
-          this.props.authMemberData.get('mid'),
-          this.state.fullName,
-          this.state.videoUrl
-        );
+        let toUid = this.state.toUid;
+        let toMid = this.props.members[toUid].doc.get("mid");
+        let fullName = this.props.partialAuthData.displayName;
+        let creatorMid = getUserName(fullName);
+        let videoUrl = this.state.videoUrl;
+
+        let requestOp = getRequestInviteOperation(toUid, toMid, creatorMid, fullName, videoUrl);
         this.props.postOperation(requestOp);
       }
     }
@@ -57,19 +74,33 @@ class RequestInviteForm extends Component<Props> {
     render() {
       return (
         <div>
-          <b>Invite new users</b>
-          <div>The more users join raha, the better! Type in a trusted friends gmail address to invite them.</div>
+          <b>Request Invite</b>
+          <div>We're excited to have you! To sign up, all we need are:</div>
+          <div>
+            <ul>
+              <li>your full name (we get this from Google)</li>
+              <li>your invite video url</li>
+              <li>member id of friend on raha</li>
+            </ul>
+          </div>
           <div>
             <input
-              onChange={ e => this.setFullName(e) }
-              placeholder="Your full name (e.g. John Doe)"
+              value={this.props.partialAuthData.displayName}
               className="InviteInput ExtraWidth"
+              disabled
             />           
           </div>
           <div>
             <input
               onChange={ e => this.setVideoURL(e) }
               placeholder="VideoUrl"
+              className="InviteInput ExtraWidth"
+            />           
+          </div>
+          <div>
+            <input
+              onChange={ e => this.setToUid(e) }
+              placeholder="Trusted raha friend's uid"
               className="InviteInput ExtraWidth"
             />           
           </div>
@@ -86,8 +117,11 @@ class RequestInviteForm extends Component<Props> {
     }
 }
 
-function mapStateToProps(state) {
-  return { authMemberData: getAuthMemberData(state) };
+function mapStateToProps(state, ownProps) {
+  return {
+    partialAuthData: getPartialAuthData(auth),
+    members: state.uidToMembers
+  };
 }
 
-export default connect(mapStateToProps, { postOperation })(RequestInviteForm);
+export default connect(mapStateToProps, { postOperation, fetchMemberIfNeeded })(RequestInviteForm);

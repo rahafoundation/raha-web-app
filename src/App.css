@@ -70,7 +70,7 @@ html, body {
 
 .InviteInput {
   display: block;
-  /*width: 50%;*/
+  width: 50%;
   margin: .75rem 0;
   padding: .5rem .75rem;
   font-size: 1rem;
