@@ -2,21 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { auth, db } from '../firebaseInit';
 import { getRequestInviteOperation } from '../operations';
+import { getMemberId } from '../members';
 import { postOperation, fetchMemberIfNeeded } from '../actions';
 import YoutubeVideo from './YoutubeVideo';
 
 interface Props {
   partialAuthData: Map<string, string>;
   toMid: string;
-}
-
-const getNumberSuffix = (len: number) => {
-    const exclusiveMax = Math.pow(10, len);
-    return (Math.floor(Math.random() * exclusiveMax) + exclusiveMax).toString().substring(1);
-}
-
-const getUserName = (fullName: string) => {
-    return fullName.trim().toLowerCase().replace(/\s+/g, '.') + '#' + getNumberSuffix(4);
 }
 
 const getPartialAuthData = (firebaseAuth) => {
@@ -59,7 +51,7 @@ class RequestInviteForm extends Component<Props> {
         let toUid = this.state.toUid;
         let toMid = this.props.members[toUid].doc.get("mid");
         let fullName = this.props.partialAuthData.displayName;
-        let creatorMid = getUserName(fullName);
+        let creatorMid = getMemberId(fullName);
         let videoUrl = this.state.videoUrl;
 
         let requestOp = getRequestInviteOperation(toUid, toMid, creatorMid, fullName, videoUrl);
