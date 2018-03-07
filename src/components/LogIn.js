@@ -7,8 +7,9 @@ const UI_CONFIG = {
   signInFlow: 'popup',
   signInSuccessUrl: '/me',
   signInOptions: [
+    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    firebase.auth.GithubAuthProvider.PROVIDER_ID,
   ]
 };
 
