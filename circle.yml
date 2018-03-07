@@ -14,4 +14,4 @@ test:
   pre:
     - cp src/data/firebase.prod.json src/data/firebase.config.json
   override:
-    - CI=true yarn test -t src
+    - yarn test
