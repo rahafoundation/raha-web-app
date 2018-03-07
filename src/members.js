@@ -4,6 +4,5 @@ const getNumberSuffix = (len: number) => {
 }
 
 export const getMemberId = (displayName: string) => {
-    return displayName.trim().toLowerCase().replace(/\s+/g, '.') + '#' + getNumberSuffix(4);
+    return displayName.trim().toLowerCase().replace(/\s+/g, '.') + '$' + getNumberSuffix(4);
 }
-
