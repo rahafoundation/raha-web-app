@@ -27,16 +27,16 @@ class RequestInviteForm extends Component<Props> {
       };
     }
 
-    setVideoURL(event: any) : void {
+    setVideoURL = async (event: any) : void => {
       this.setState({ videoUrl: event.target.value })
     }
 
-    setToUid(event: any): void {
+    setToUid = async (event: any) : void => {
       this.setState({ toUid: event.target.value })
       this.props.fetchMemberIfNeeded(event.target.value);
     }
 
-    async handleOnSubmit(event: any) : void {
+    handleOnSubmit = async (event: any) : void => {
       event.stopPropagation();
 
       if (this.state.videoUrl.length <= 0) {
@@ -84,20 +84,20 @@ class RequestInviteForm extends Component<Props> {
           </div>
           <div>
             <input
-              onChange={ e => this.setVideoURL(e) }
+              onChange={this.setVideoURL}
               placeholder="VideoUrl"
               className="InviteInput ExtraWidth"
             />           
           </div>
           <div>
             <input
-              onChange={ e => this.setToUid(e) }
+              onChange={this.setToUid}
               placeholder="Trusted raha friend's uid"
               className="InviteInput ExtraWidth"
             />           
           </div>
           <button className="InviteButton"
-            onClick={ e=> this.handleOnSubmit(e) }>
+            onClick={this.handleOnSubmit}>
             Invite me!
           </button>
           <div className="InviteError">{ this.state.errorMessage }</div>
