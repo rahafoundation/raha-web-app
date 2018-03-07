@@ -6,6 +6,7 @@ import {
   Redirect,
   Route
 } from 'react-router-dom';
+import { auth } from '../firebaseInit';
 import { getAuthMemberData } from '../connectors';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
@@ -26,6 +27,11 @@ class AppRouter extends Component {
           <Switch>
             <Route exact={true} path="/" component={Splash} />
             <Route path="/login" component={LogIn} />
+            <Route path="/logout" render={() => {
+              auth.signOut();
+              return <Redirect to="/" />
+            }}
+            />
             <Route path="/code-of-conduct" component={CodeOfConduct} />
             <Route
               path="/me"
@@ -36,7 +42,7 @@ class AppRouter extends Component {
                 if (this.props.authFirebaseUser === null) {
                   return <div>
                     <span>You need to </span>
-                    <Redirect to={{ pathname: '/login' }} />
+                    <Redirect to="/login" />
                   </div>;
                 }
                 // toUid: string, toMid: string, creatorMid: string
