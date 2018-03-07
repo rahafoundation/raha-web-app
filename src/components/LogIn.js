@@ -7,11 +7,8 @@ const UI_CONFIG = {
   signInFlow: 'popup',
   signInSuccessUrl: '/me',
   signInOptions: [
-    {
-      authMethod: 'https://accounts.google.com',
-      clientId: '677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com',
-      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID
-    }
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    firebase.auth.FacebookAuthProvider.PROVIDER_ID
   ]
 };
 
