@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
+import { Link } from 'react-router-dom';
 import { db } from '../firebaseInit';
 
 interface ProfileProps {
@@ -52,16 +53,18 @@ class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   render() {
-    if (!this.state.isMemberDataLoaded) {
+    if (!this.state.memberData) {
       return <Loading />;
     }
     const memberData = this.state.memberData;
-    if (!memberData) {
+    if (!memberData || !memberData.get('mid')) {
       if (!this.props.memberId) {
         // TODO(#8) allow user to request trust from current user, upload their youtube video.
         return (
-          <div>Thank you for logging in {this.props.authFirebaseUser.displayName}!
-          Now you must find someone you know to trust your account to become a Raha member.</div>
+          <div>
+            <div>Thank you for logging in {this.props.authFirebaseUser.displayName}!</div>
+            <div>To become a Raha member, go to <Link className="Green" to="/request-invite">Request Invite</Link></div>
+          </div>
         );
       }
       // TODO make below message nice page

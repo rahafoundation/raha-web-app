@@ -28,8 +28,8 @@ class MemberThumbnail extends Component<Props> {
     const mid = memberDoc.get('mid');
     const name = memberDoc.get('full_name');
     return (
-      <div className={'MemberThumbnail ' + (this.props.opMeta.inDb ? 'Green' : 'Grey')}>
-        <Link to={`/m/${mid}`}>{name}</Link>
+      <div className="MemberThumbnail">
+        <Link className={this.props.opMeta.inDb ? 'Green' : 'Grey'} to={`/m/${mid}`}>{name}</Link>
       </div>
     );
   }
