@@ -22,6 +22,8 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "flow-bin": "^0.66.0",
     "jest-localstorage-mock": "^2.1.0"
   }
