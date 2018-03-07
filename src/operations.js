@@ -52,3 +52,13 @@ const getOperation = (opCode: OpCode, creatorMid: string, data): Operation => {
 export const getTrustOperation = (toUid: string, toMid: string, creatorUid: string, creatorMid: string): Operation => {
   return getOperation(OpCode.TRUST, creatorMid, { to_uid: toUid, to_mid: toMid });
 };
+
+export const getRequestInviteOperation = (
+  toUid: string,
+  toMid: string,
+  creatorMid: string,
+  fullName: string,
+  videoUrl: string
+): Operation => {
+  return getOperation(OpCode.REQUEST_INVITE, creatorMid, { to_uid: toUid, to_mid: toMid, video_url: videoUrl, full_name: fullName});
+};
