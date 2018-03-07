@@ -8,7 +8,7 @@ import YoutubeVideo from './YoutubeVideo';
 
 interface Props {
   partialAuthData: Map<string, string>;
-  toMid: string;
+  members: Map<string, any>;
 }
 
 const getPartialAuthData = (firebaseAuth) => {
@@ -17,7 +17,7 @@ const getPartialAuthData = (firebaseAuth) => {
   }
 }
 
-class RequestInviteForm extends Component<Props> {
+export class RequestInviteForm extends Component<Props> {
     constructor(props) {
       super(props);
       this.state = {
@@ -78,7 +78,7 @@ class RequestInviteForm extends Component<Props> {
           <div>
             <input
               value={this.props.partialAuthData.displayName}
-              className="InviteInput ExtraWidth"
+              className="InviteInput ExtraWidth DisplayNameInput"
               disabled
             />           
           </div>
@@ -86,14 +86,14 @@ class RequestInviteForm extends Component<Props> {
             <input
               onChange={this.setVideoURL}
               placeholder="VideoUrl"
-              className="InviteInput ExtraWidth"
+              className="InviteInput ExtraWidth VideoUrlInput"
             />           
           </div>
           <div>
             <input
               onChange={this.setToUid}
               placeholder="Trusted raha friend's uid"
-              className="InviteInput ExtraWidth"
+              className="InviteInput ExtraWidth UidInput"
             />           
           </div>
           <button className="InviteButton"
