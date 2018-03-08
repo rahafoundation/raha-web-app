@@ -24,9 +24,6 @@ including why they are necessary and how to interpret them:
 * http://oss-watch.ac.uk/resources/cla
 * http://www.harmonyagreements.org/guide.html
 
-Initial inspiration for this contributor document came from Stellar's
-[CONTRIBUTING.md](https://github.com/stellar/stellar-core/blob/master/CONTRIBUTING.md).
-
 ## Submitting code to Raha
 All code changes to Raha must be submitted as pull requests on the relevant
 Raha Github repository. After being reviewed and approved by a Raha Foundation
@@ -37,3 +34,6 @@ community to have a conversation around the best way to solve a problem before
 you go through the work of creating a patch for it. Relatively minor code and
 documentation fixes probably don't need an issue, however. For now - use your
 discretion. :)
+
+Initial inspiration for this contributor document came from Stellar's
+[CONTRIBUTING.md](https://github.com/stellar/stellar-core/blob/master/CONTRIBUTING.md).
