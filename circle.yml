@@ -12,6 +12,6 @@ dependencies:
 
 test:
   pre:
-    - cp src/data/firebase.prod.json src/data/firebase.config.json
+    - cp src/data/firebase.test.json src/data/firebase.config.json
   override:
     - yarn test
