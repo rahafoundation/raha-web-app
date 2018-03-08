@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import { RequestInviteForm } from './RequestInviteForm';
+import { IntlProvider } from 'react-intl'
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -15,8 +16,8 @@ function setup() {
     members: {},
     fetchMemberIfNeeded: async () => { {} }
   };
-
-  const enzymeWrapper = mount(<RequestInviteForm {...props} />);
+  
+  const enzymeWrapper = mount(<IntlProvider locale="en"><RequestInviteForm {...props} /></IntlProvider>);
 
   return {
     props,

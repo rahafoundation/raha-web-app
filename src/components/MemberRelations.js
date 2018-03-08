@@ -4,9 +4,11 @@ import { OpCode } from '../operations';
 import { db } from '../firebaseInit';
 import { fetchOperations, OpMeta } from '../actions';
 import { getAuthMemberData } from '../connectors';
+import { FormattedMessage } from 'react-intl';
 import MemberThumbnail from './MemberThumbnail';
 import TrustLevel from './TrustLevel';
 import TrustButton from './TrustButton';
+import STRINGS from '../strings';
 
 interface Props {
   uid: string;
@@ -47,7 +49,8 @@ class MemberRelations extends Component<Props, State> {
       });
       sections.push(
         <div key={title} className="MemberRelations-section">
-          <div className="SectionTitle">{`${title} (${rows.length})`}</div>
+          <div className="SectionTitle">
+          <FormattedMessage {...title}  values={{value: rows.length}}/> </div>
           {rows}
         </div>
       );
@@ -77,10 +80,10 @@ class MemberRelations extends Component<Props, State> {
       if (this.canTrustThisUser()) {
         sections.push(<TrustButton key="Trust Button" toUid={this.props.uid} toMid={this.props.mid} />);
       }
-      this.addSection(sections, this.props.invitedByUids, 'Invited By');
-      this.addSection(sections, this.props.invitedUids, 'Invites');
-      this.addSection(sections, this.props.trustedByUids, 'Trusted by');
-      this.addSection(sections, this.props.trustsUids, 'Trusts');
+      this.addSection(sections, this.props.invitedByUids, STRINGS.invited_by);
+      this.addSection(sections, this.props.invitedUids, STRINGS.invites);
+      this.addSection(sections, this.props.trustedByUids, STRINGS.trusted_by);
+      this.addSection(sections, this.props.trustsUids, STRINGS.trusts);
       // Grab and calculate these values based on this.state.trustedByUids and redux store.getState().uidToMembers.
     }
     return <div>{sections}</div>;
