@@ -30,11 +30,10 @@ class AppRouter extends Component {
             <Route path="/login" component={LogIn} />
             <Route path="/logout" render={() => {
               auth.signOut();
-              return <Redirect to="/" />
+              return <Redirect to="/" />;
             }}
             />
             <Route path="/code-of-conduct" component={CodeOfConduct} />
-            <Route path="/request-invite" component={RequestInviteForm} />
             <Route
               path="/me"
               render={() => {
@@ -42,10 +41,12 @@ class AppRouter extends Component {
                   return <Loading />;
                 }
                 if (this.props.authFirebaseUser === null) {
-                  return <div>
-                    <span>You need to </span>
-                    <Redirect to="/login" />
-                  </div>;
+                  return (
+                    <div>
+                      <span>You need to </span>
+                      <Redirect to="/login" />
+                    </div>
+                  );
                 }
                 // toUid: string, toMid: string, creatorMid: string
                 return <Profile
@@ -53,6 +54,12 @@ class AppRouter extends Component {
                   authMemberData={this.props.authMemberData}
                   isMePage={true}
                 />;
+              }}
+            />
+            <Route
+              path="/m/:memberId/invite"
+              render={({ match }) => {
+                return <RequestInviteForm memberId={match.params.memberId}/>;
               }}
             />
             <Route
@@ -78,6 +85,9 @@ class AppRouter extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
+  // TODO handle ownProps.memberId to load correct uid
+  // using some redux fetchMemberByMid
+  // 
   const authIsLoaded = state.auth.isLoaded;
   const authFirebaseUser = state.auth.firebaseUser;
   let authMemberData = getAuthMemberData(state);

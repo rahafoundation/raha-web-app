@@ -43,7 +43,7 @@ class Profile extends Component<ProfileProps, ProfileState> {
       isMemberDataLoaded = this.state.memberData && this.state.memberData.get('mid') === nextProps.memberId;
       memberData = isMemberDataLoaded ? this.state.memberData : null;
       if (!isMemberDataLoaded) {
-        // TODO(#33) should not be querying firestore outside of actions.ts
+        // TODO(#33) should not be querying firestore outside of actions.ts, use fetchMemberByMidIfNeeded
         const memberQuery = await db.collection('members').where('mid', '==', nextProps.memberId).get();
         memberData = memberQuery.docs[0];
         isMemberDataLoaded = true;

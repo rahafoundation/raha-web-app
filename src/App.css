@@ -4,10 +4,15 @@ html, body {
   width: 96vw;
 }
 
+input, textarea {
+  width: 100%;
+  display: block
+}
+
 .Container {
-  display: flex;
   align-items: left;
-  max-width: 300px;
+  max-width: 40rem;
+  margin: auto;
 }
 
 .Splash {
@@ -50,8 +55,8 @@ html, body {
 
 .InviteButton {
   color: #fff;
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #2A945E;
+  border-color: #2A945E;
   display: inline-block;
   font-weight: 400;
   line-height: 1.25;
@@ -69,10 +74,9 @@ html, body {
 }
 
 .InviteInput {
-  display: block;
-  width: 50%;
+  max-width: 30rem;
   margin: .75rem 0;
-  padding: .5rem .75rem;
+  padding: .5rem 0;
   font-size: 1rem;
   line-height: 1.25;
   color: #464a4c;
@@ -87,10 +91,6 @@ html, body {
   -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-}
-
-.InviteInput .ExtraWidth {
-  width: 96vw;
 }
 
 .InviteVideoContainer {
@@ -132,7 +132,7 @@ html, body {
   color: grey;
 }
 
-.TrustButton {
+.ActionButton {
     background-color: #2A945E;
     border: none;
     color: white;

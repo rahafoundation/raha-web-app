@@ -29,13 +29,21 @@ function receiveMember(uid: string, doc: firebase.firestore.DocumentData) {
   };
 }
 
-async function fetchMember(dispatch, uid: string) {
+async function fetchMemberByUid(dispatch, uid: string) {
   dispatch(requestMember(uid));
   const payload = await db.collection('members').doc(uid).get();
   dispatch(receiveMember(uid, payload));
 }
 
-function shouldFetchMember(getState, uid: string) {
+async function fetchMemberByMid(dispatch, mid: string) {
+  // dispatch(requestMemberByMid(uid));
+  const memberQuery = await db.collection('members').where('mid', '==', mid).get();
+  // TODO error handling
+  const member = memberQuery.docs[0];
+  dispatch(receiveMember(member.id, member));
+}
+
+function shouldFetchMemberByUid(getState, uid: string) {
   const member = getState().uidToMembers[uid];
   if (!member) {
     return true;
@@ -48,10 +56,23 @@ function shouldFetchMember(getState, uid: string) {
   return oneDayAgo > member.receivedAt;  // Re-fetch if over a day old. TODO improve this.
 }
 
-export function fetchMemberIfNeeded(uid: string) {
+function shouldFetchMemberByMid(getState, mid: string) {
+  const memberUid = getState().midToUid[mid];  // TODO add to reducers.js
+  return !memberUid || !memberUid.isFetching;
+}
+
+export function fetchMemberByUidIfNeeded(uid: string) {
   return (dispatch, getState) => {
-    if (shouldFetchMember(getState, uid)) {
-      fetchMember(dispatch, uid);
+    if (shouldFetchMemberByUid(getState, uid)) {
+      fetchMemberByUid(dispatch, uid);
+    }
+  }
+}
+
+export function fetchMemberByMidIfNeeded(mid: string) {
+  return (dispatch, getState) => {
+    if (shouldFetchMemberByMid(getState, mid)) {  // TODO implement
+      fetchMemberByMid(dispatch, mid); // TODO implement
     }
   }
 }
@@ -124,7 +145,7 @@ function setFirebaseUser(firebaseUser: firebase.User) {
 
 export function authSetFirebaseUser(firebaseUser: firebase.User) {
   return dispatch => {
-    if (firebaseUser) dispatch(fetchMemberIfNeeded(firebaseUser.uid));
+    if (firebaseUser) dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid));
     dispatch(setFirebaseUser(firebaseUser));
   }
 }
