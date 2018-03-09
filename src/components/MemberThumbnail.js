@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import { fetchMemberIfNeeded, OpMeta } from '../actions';
+import { fetchMemberByUidIfNeeded, OpMeta } from '../actions';
 
 const Loading = () => {
   return <div>Loading</div>;
@@ -17,7 +17,7 @@ interface Props {
 // TODO(#14) improve this thumbnail
 class MemberThumbnail extends Component<Props> {
   componentDidMount() {
-    this.props.fetchMemberIfNeeded(this.props.uid);
+    this.props.fetchMemberByUidIfNeeded(this.props.uid);
   }
 
   render() {
@@ -40,6 +40,6 @@ export default connect(
     return { memberData: state.uidToMembers[ownProps.uid] };
   },
   {
-    fetchMemberIfNeeded
+    fetchMemberByUidIfNeeded
   }
 )(MemberThumbnail);

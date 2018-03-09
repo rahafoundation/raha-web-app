@@ -15,7 +15,7 @@ function setup() {
       displayName: "John Doe"
     },
     members: {},
-    fetchMemberIfNeeded: async () => { {} }
+    fetchMemberByUidIfNeeded: async () => { {} }
   };
   
   const enzymeWrapper = mountWithIntl(<RequestInviteForm {...props} />);

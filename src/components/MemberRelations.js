@@ -7,7 +7,7 @@ import { getAuthMemberData } from '../connectors';
 import { FormattedMessage } from 'react-intl';
 import MemberThumbnail from './MemberThumbnail';
 import TrustLevel from './TrustLevel';
-import TrustButton from './TrustButton';
+import ActionButton from './ActionButton';
 import STRINGS from '../strings';
 
 interface Props {
@@ -78,7 +78,7 @@ class MemberRelations extends Component<Props, State> {
         />
       );
       if (this.canTrustThisUser()) {
-        sections.push(<TrustButton key="Trust Button" toUid={this.props.uid} toMid={this.props.mid} />);
+        sections.push(<ActionButton key="Trust Button" toUid={this.props.uid} toMid={this.props.mid} />);
       }
       this.addSection(sections, this.props.invitedByUids, STRINGS.invited_by);
       this.addSection(sections, this.props.invitedUids, STRINGS.invites);
