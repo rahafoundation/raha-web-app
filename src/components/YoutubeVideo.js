@@ -5,7 +5,7 @@ import STRINGS from '../strings';
 // eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
 
-const getYoutubeUrlVideoId = (url: string) => {
+export function getYoutubeUrlVideoId(url: string) {
   const match = url.match(YOUTUBE_URL_REGEX);
   return (match && match[7].length === 11) ? match[7] : false;
 };

@@ -1,63 +1,44 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
-import { Link } from 'react-router-dom';
-import { db } from '../firebaseInit';
+import { Link, Redirect } from 'react-router-dom';
+import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
+import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 
-interface ProfileProps {
-  isMePage?: boolean;
-  memberId?: string;
-  authFirebaseUser: firebase.User;
-  authMemberData: firebase.firestore.DocumentSnapshot;
+interface Props {
+  isMyProfile?: boolean;
+  memberId: string;
+  authMemberDoc: firebase.firestore.DocumentSnapshot;
+  memberDoc: firebase.firestore.DocumentSnapshot;
 }
 
-interface ProfileState {
-  isMemberDataLoaded: boolean;
-  isMyPage: boolean;
-  memberData: firebase.firestore.DocumentData;
-}
-
-class Profile extends Component<ProfileProps, ProfileState> {
-  constructor(props: ProfileProps) {
-    super(props);
-    this.state = {};
-  }
-
-  componentWillReceiveProps(nextProps: ProfileProps) {
-    this.onPropsChange(nextProps);
-  }
-
-  componentDidMount() {
-    this.onPropsChange(this.props);
-  }
-
-  onPropsChange = async (nextProps) => { // TODO use redux
-    const isMyPage = nextProps.isMePage
-      || (nextProps.authMemberData && nextProps.memberId === nextProps.authMemberData.get('mid'));
-    let isMemberDataLoaded;
-    let memberData;
-    if (isMyPage) {
-      isMemberDataLoaded = true;
-      memberData = nextProps.authMemberData;
-    } else {
-      isMemberDataLoaded = this.state.memberData && this.state.memberData.get('mid') === nextProps.memberId;
-      memberData = isMemberDataLoaded ? this.state.memberData : null;
-      if (!isMemberDataLoaded) {
-        // TODO(#33) should not be querying firestore outside of actions.ts, use fetchMemberByMidIfNeeded
-        const memberQuery = await db.collection('members').where('mid', '==', nextProps.memberId).get();
-        memberData = memberQuery.docs[0];
-        isMemberDataLoaded = true;
-      }
+class Profile extends Component<Props> {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.memberId) {
+      this.props.fetchMemberByMidIfNeeded(nextProps.memberId);
+    } else if (nextProps.isMyProfile && nextProps.authFirebaseUser) {
+      this.props.fetchMemberByUidIfNeeded(nextProps.authFirebaseUser.uid);
     }
-    this.setState({ isMemberDataLoaded, isMyPage, memberData });
   }
 
   render() {
-    if (!this.state.memberData) {
+    const { authFirebaseUser, authIsLoaded, isMyProfile, memberDoc } = this.props;
+    if (!authIsLoaded) {
       return <Loading />;
     }
-    const memberData = this.state.memberData;
-    if (!memberData || !memberData.get('mid')) {
+    if (isMyProfile && !authFirebaseUser) {
+      return (
+        <div>
+          <span>You need to </span>
+          <Redirect to="/login" />
+        </div>
+      );
+    }
+    if (!memberDoc) {
+      return <Loading />;
+    }
+    if (!memberDoc || !memberDoc.get('mid')) {
       if (!this.props.memberId) {
         // TODO(#8) allow user to request trust from current user, upload their youtube video.
         return (
@@ -70,20 +51,30 @@ class Profile extends Component<ProfileProps, ProfileState> {
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
     }
-    const fullName = memberData.get('full_name');
-    const youtubeUrl = memberData.get('video_url');
+    const fullName = memberDoc.get('full_name');
+    const youtubeUrl = memberDoc.get('video_url');
     return (
       <div>
         <div className="Green MemberName">{fullName}</div>
         {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-        <MemberRelations uid={memberData.id} />
+        <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')}/>
       </div>
     );
   }
 }
 
 const Loading = () => {
-  return <div>Loading</div>;
+  return <div>Loading</div>;  // TODO make work
 };
 
-export default Profile;
+function mapStateToProps(state, ownProps) {
+  const isMyProfile = ownProps.match.path === '/me';
+  const memberId = isMyProfile ? null : ownProps.match.params.memberId;
+  const authIsLoaded = state.auth.isLoaded;
+  const authFirebaseUser = state.auth.firebaseUser;
+  const authMemberDoc = getAuthMemberDoc(state);  // TODO will we use this?
+  const memberDoc = isMyProfile ? authMemberDoc : getMemberDocByMid(state, memberId);
+  return { authFirebaseUser, authMemberDoc, authIsLoaded, isMyProfile, memberDoc, memberId };
+}
+
+export default connect(mapStateToProps, { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded })(Profile);

@@ -11,7 +11,7 @@ const Loading = () => {
 interface Props {
   uid: string;
   opMeta: OpMeta;
-  memberData?: firebase.firestore.DocumentData;
+  memberDoc?: firebase.firestore.DocumentData;
 }
 
 // TODO(#14) improve this thumbnail
@@ -21,7 +21,7 @@ class MemberThumbnail extends Component<Props> {
   }
 
   render() {
-    const memberDoc = this.props.memberData && this.props.memberData.doc;
+    const memberDoc = this.props.memberDoc && this.props.memberDoc.memberDoc;
     if (!memberDoc) {
       return <div className="MemberThumbnail"><Loading /></div>;
     }
@@ -37,7 +37,7 @@ class MemberThumbnail extends Component<Props> {
 
 export default connect(
   (state, ownProps) => {
-    return { memberData: state.uidToMembers[ownProps.uid] };
+    return { memberDoc: state.members.byUid[ownProps.uid] };
   },
   {
     fetchMemberByUidIfNeeded

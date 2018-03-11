@@ -5,46 +5,51 @@ import { Operation } from './operations';
 // member_actions.js
 
 export const RECEIVE_MEMBER = 'RECEIVE_MEMBER';
-export const REQUEST_MEMBER = 'REQUEST_MEMBER';
+export const REQUEST_MEMBER_BY_MID = 'REQUEST_MEMBER_BY_MID';
+export const REQUEST_MEMBER_BY_UID = 'REQUEST_MEMBER_BY_UID';
 
-function requestMember(uid: string) {
+function requestMemberByMid(mid: string) {
   return {
-    type: REQUEST_MEMBER,
-    value: {
-      uid,
-      isFetching: true
-    }
+    type: REQUEST_MEMBER_BY_MID,
+    mid,
   };
 }
 
-function receiveMember(uid: string, doc: firebase.firestore.DocumentData) {
+function requestMemberByUid(uid: string) {
+  return {
+    type: REQUEST_MEMBER_BY_UID,
+    uid,
+  };
+}
+
+function receiveMember(memberDoc: firebase.firestore.DocumentData, id: string, byMid: boolean) {
   return {
     type: RECEIVE_MEMBER,
-    value: {
-      doc,
-      isFetching: false,
-      receivedAt: Date.now(),
-      uid
-    }
+    id,
+    byMid,
+    memberDoc,
+    receivedAt: Date.now(),
   };
-}
-
-async function fetchMemberByUid(dispatch, uid: string) {
-  dispatch(requestMember(uid));
-  const payload = await db.collection('members').doc(uid).get();
-  dispatch(receiveMember(uid, payload));
 }
 
 async function fetchMemberByMid(dispatch, mid: string) {
-  // dispatch(requestMemberByMid(uid));
+  dispatch(requestMemberByMid(mid));
   const memberQuery = await db.collection('members').where('mid', '==', mid).get();
-  // TODO error handling
-  const member = memberQuery.docs[0];
-  dispatch(receiveMember(member.id, member));
+  if (memberQuery.docs.length > 1) {
+    alert(`Found multiple matching member ${mid}, please email bugs@raha.io`);
+  }
+  const memberDoc = memberQuery.docs.length === 1 ? memberQuery.docs[0] : null;
+  dispatch(receiveMember(memberDoc, mid, true));
 }
 
-function shouldFetchMemberByUid(getState, uid: string) {
-  const member = getState().uidToMembers[uid];
+async function fetchMemberByUid(dispatch, uid: string) {
+  dispatch(requestMemberByUid(uid));
+  const memberDoc = await db.collection('members').doc(uid).get();
+  // TODO error handling
+  dispatch(receiveMember(memberDoc, uid, false));
+}
+
+function shouldFetchMember(member) {
   if (!member) {
     return true;
   }
@@ -56,9 +61,14 @@ function shouldFetchMemberByUid(getState, uid: string) {
   return oneDayAgo > member.receivedAt;  // Re-fetch if over a day old. TODO improve this.
 }
 
+function shouldFetchMemberByUid(getState, uid: string) {
+  const member = getState().members.byUid[uid];
+  return shouldFetchMember(member);
+}
+
 function shouldFetchMemberByMid(getState, mid: string) {
-  const memberUid = getState().midToUid[mid];  // TODO add to reducers.js
-  return !memberUid || !memberUid.isFetching;
+  const member = getState().members.byMid[mid];
+  return shouldFetchMember(member);
 }
 
 export function fetchMemberByUidIfNeeded(uid: string) {
@@ -71,8 +81,8 @@ export function fetchMemberByUidIfNeeded(uid: string) {
 
 export function fetchMemberByMidIfNeeded(mid: string) {
   return (dispatch, getState) => {
-    if (shouldFetchMemberByMid(getState, mid)) {  // TODO implement
-      fetchMemberByMid(dispatch, mid); // TODO implement
+    if (shouldFetchMemberByMid(getState, mid)) {
+      fetchMemberByMid(dispatch, mid);
     }
   }
 }
