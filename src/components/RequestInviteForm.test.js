@@ -4,6 +4,7 @@ import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import { RequestInviteForm } from './RequestInviteForm';
 import { IntlProvider } from 'react-intl'
+import { mountWithIntl } from '../helpers/intl-enzyme-test-helper.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -17,7 +18,7 @@ function setup() {
     fetchMemberIfNeeded: async () => { {} }
   };
   
-  const enzymeWrapper = mount(<IntlProvider locale="en"><RequestInviteForm {...props} /></IntlProvider>);
+  const enzymeWrapper = mountWithIntl(<RequestInviteForm {...props} />);
 
   return {
     props,
