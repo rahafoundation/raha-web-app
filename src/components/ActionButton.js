@@ -17,7 +17,7 @@ class ActionButton extends Component<Props> {
   state = {}
 
   onTrustClick = () => {
-    const trustOp = getTrustOperation(this.props.toUid, this.props.toMid, this.props.authMemberDoc.id, this.props.authMemberDoc.get('mid'));
+    const trustOp = getTrustOperation(this.props.authMemberDoc.get('mid'), this.props.authMemberDoc.id, this.props.toMid, this.props.toUid);
     this.props.postOperation(trustOp);
   }
 
