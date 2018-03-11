@@ -9,6 +9,8 @@ import React from 'react';
 import { IntlProvider, intlShape } from 'react-intl';
 import { mount, shallow } from 'enzyme';
 
+// TODO make sure this file not included in prod bundle
+
 // You can pass your messages to the IntlProvider. Optional: remove if unneeded.
 // const messages = require('../locale/en'); // en.json
 

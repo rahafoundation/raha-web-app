@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import { RequestInvite } from './RequestInvite';
+import { mountWithIntl } from '../helpers/intl-enzyme-test-helper';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -30,7 +31,7 @@ function setup() {
     fetchMemberByUidIfNeeded: async () => {},
   };
 
-  const enzymeWrapper = mount(<RequestInvite {...props} />);
+  const enzymeWrapper = mountWithIntl(<RequestInvite {...props} />);
 
   return {
     props,
