@@ -6,6 +6,20 @@
         { "fieldPath": "applied", "mode": "ASCENDING" },
         { "fieldPath": "op_seq", "mode": "ASCENDING" }
       ]
+    },
+    {
+      "collectionId": "operations",
+      "fields": [
+        { "fieldPath": "creator_uid", "mode": "ASCENDING" },
+        { "fieldPath": "op_seq", "mode": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionId": "operations",
+      "fields": [
+        { "fieldPath": "data.to_uid", "mode": "ASCENDING" },
+        { "fieldPath": "op_seq", "mode": "ASCENDING" }
+      ]
     }
   ]
 }

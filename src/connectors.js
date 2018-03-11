@@ -1,11 +1,16 @@
-export function getAuthMemberData(state) {
-  let authMemberData = null;
+function getMemberDoc(member) {
+  return member && member.memberDoc ? member.memberDoc : null;
+}
+
+export function getAuthMemberDoc(state) {
   const authFirebaseUser = state.auth.firebaseUser;
-  if (authFirebaseUser) {
-    const member = state.uidToMembers[authFirebaseUser.uid];
-    if (member.doc) {
-      authMemberData = member.doc;
-    }
-  }
-  return authMemberData;
+  return authFirebaseUser ? getMemberDoc(state.members.byUid[authFirebaseUser.uid]) : null;
+}
+
+export function getMemberDocByUid(state, uid: string) {
+  return getMemberDoc(state.members.byUid[uid]);
+}
+
+export function getMemberDocByMid(state, mid: string) {
+  return getMemberDoc(state.members.byMid[mid]);
 }

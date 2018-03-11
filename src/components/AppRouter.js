@@ -1,97 +1,31 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import {
-  BrowserRouter,
-  Switch,
-  Redirect,
-  Route
-} from 'react-router-dom';
-import { auth } from '../firebaseInit';
-import { getAuthMemberData } from '../connectors';
-import RequestInviteForm from './RequestInviteForm';
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
+import LogOut from './LogOut';
 import PageNotFound from './PageNotFound';
 import Profile from './Profile';
+import RequestInvite from './RequestInvite';
 import Splash from './Splash';
 import '../App.css';
 
-const Loading = () => {
-  return <div>Loading</div>;
-};
-
-class AppRouter extends Component {
-  render() {
-    return (
-      <BrowserRouter>
-        <div className="Container">
-          <Switch>
-            <Route exact={true} path="/" component={Splash} />
-            <Route path="/login" component={LogIn} />
-            <Route path="/logout" render={() => {
-              auth.signOut();
-              return <Redirect to="/" />;
-            }}
-            />
-            <Route path="/code-of-conduct" component={CodeOfConduct} />
-            <Route
-              path="/me"
-              render={() => {
-                if (!this.props.authIsLoaded) {
-                  return <Loading />;
-                }
-                if (this.props.authFirebaseUser === null) {
-                  return (
-                    <div>
-                      <span>You need to </span>
-                      <Redirect to="/login" />
-                    </div>
-                  );
-                }
-                // toUid: string, toMid: string, creatorMid: string
-                return <Profile
-                  authFirebaseUser={this.props.authFirebaseUser}
-                  authMemberData={this.props.authMemberData}
-                  isMePage={true}
-                />;
-              }}
-            />
-            <Route
-              path="/m/:memberId/invite"
-              render={({ match }) => {
-                return <RequestInviteForm memberId={match.params.memberId}/>;
-              }}
-            />
-            <Route
-              path="/m/:memberId"
-              render={({ match }) => {
-                if (!this.props.authIsLoaded || (this.props.authFirebaseUser && !this.props.authMemberData)) {
-                  return <Loading />;
-                }
-                // TODO(#33) if the redux selectedMemberUid is valid, use that instead of a memberId
-                return <Profile
-                  authFirebaseUser={this.props.authFirebaseUser}
-                  authMemberData={this.props.authMemberData}
-                  memberId={match.params.memberId}
-                />;
-              }}
-            />
-            <Route component={PageNotFound} />
-          </Switch>
-        </div>
-      </BrowserRouter>
-    );
-  }
+function AppRouter() {
+  return (
+    <BrowserRouter>
+      <div className="Container">
+        <Switch>
+          <Route exact={true} path="/" component={Splash} />
+          <Route path="/login" component={LogIn} />
+          <Route path="/logout" component={LogOut} />
+          <Route path="/code-of-conduct" component={CodeOfConduct} />
+          <Route path="/me" component={Profile} />
+          <Route path="/m/:memberId/invite" component={RequestInvite} />
+          <Route path="/m/:memberId" component={Profile} />
+          <Route component={PageNotFound} />
+        </Switch>
+      </div>
+    </BrowserRouter>
+  );
 }
 
-function mapStateToProps(state, ownProps) {
-  // TODO handle ownProps.memberId to load correct uid
-  // using some redux fetchMemberByMid
-  // 
-  const authIsLoaded = state.auth.isLoaded;
-  const authFirebaseUser = state.auth.firebaseUser;
-  let authMemberData = getAuthMemberData(state);
-  return { authFirebaseUser, authMemberData, authIsLoaded };
-}
-
-export default connect(mapStateToProps, {})(AppRouter);
+export default AppRouter;

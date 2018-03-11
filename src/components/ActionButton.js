@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { getAuthMemberData } from '../connectors';
+import { getAuthMemberDoc } from '../connectors';
 import { getTrustOperation } from '../operations';
 import { postOperation } from '../actions';
 
@@ -17,7 +17,7 @@ class ActionButton extends Component<Props> {
   state = {}
 
   onTrustClick = () => {
-    const trustOp = getTrustOperation(this.props.toUid, this.props.toMid, this.props.authMemberData.id, this.props.authMemberData.get('mid'));
+    const trustOp = getTrustOperation(this.props.toUid, this.props.toMid, this.props.authMemberDoc.id, this.props.authMemberDoc.get('mid'));
     this.props.postOperation(trustOp);
   }
 
@@ -29,7 +29,7 @@ class ActionButton extends Component<Props> {
     if (this.state.invite) {
       return <Redirect to={`/m/${this.props.toMid}/invite`} />
     }
-    if (this.props.authMemberData.id && this.props.authMemberData.get('mid')) {
+    if (this.props.authMemberDoc.id && this.props.authMemberDoc.get('mid')) {
       return <button className="ActionButton" onClick={this.onTrustClick}>Trust</button>;
     } else {
       return <button className="ActionButton" onClick={this.onInviteClick}>Share Invite Video to Join</button>;
@@ -38,7 +38,7 @@ class ActionButton extends Component<Props> {
 }
 
 function mapStateToProps(state) {
-  return { authMemberData: getAuthMemberData(state) };
+  return { authMemberDoc: getAuthMemberDoc(state) };
 }
 
 export default connect(mapStateToProps, { postOperation })(ActionButton);

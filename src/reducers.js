@@ -1,16 +1,73 @@
 import { combineReducers } from 'redux';
 
-import { RECEIVE_MEMBER, REQUEST_MEMBER, RECEIVE_OPS, POST_OP, ACKP_POST_OP, SET_FIREBASE_USER } from './actions';
+import { RECEIVE_MEMBER, REQUEST_MEMBER_BY_MID, REQUEST_MEMBER_BY_UID, RECEIVE_OPS, POST_OP, ACKP_POST_OP, SET_FIREBASE_USER } from './actions';
 
-function uidToMembers(state = {}, action) {
+function members(state = { byMid: {}, byUid: {} }, action) {
   switch (action.type) {
     case RECEIVE_MEMBER:
-    case REQUEST_MEMBER:
-      const { uid, ...value } = action.value;
-      return {
-        ...state,
-        [uid]: value
-      };
+      {
+        const isFetching = false;
+        const { memberDoc, receivedAt, id, byMid } = action;
+        const member = { isFetching, memberDoc, receivedAt };
+        let mid = null;
+        let uid = null;
+        if (memberDoc) {
+          uid = memberDoc.id;
+          mid = memberDoc.get('mid');
+        } else {
+          if (byMid) {
+            mid = id;
+          } else {
+            uid = id;
+          }
+        }
+        const newMid = mid && {
+          [mid]: member
+        };
+        const newUid = uid && {
+          [uid]: member
+        };
+        return {
+          byMid: {
+            ...state.byMid,
+            ...newMid
+          },
+          byUid: {
+            ...state.byUid,
+            ...newUid
+          }
+        };
+      }
+    case REQUEST_MEMBER_BY_MID:
+      {
+        const isFetching = true;
+        const mid = action.mid;
+        const newMid = {
+          [mid]: { ...state.byMid[mid], ...{ isFetching, mid } }
+        };
+        return {
+          byMid: {
+            ...state.byMid,
+            ...newMid
+          },
+          byUid: state.byUid
+        };
+      }
+    case REQUEST_MEMBER_BY_UID:
+      {
+        const isFetching = true;
+        const uid = action.uid;
+        const newUid = {
+          [uid]: { ...state.byUid[uid], ...{ isFetching, uid } }
+        };
+        return {
+          byMid: state.byMid,
+          byUid: {
+            ...state.byUid,
+            ...newUid
+          }
+        };
+      }
     default:
       return state;
   }
@@ -44,7 +101,7 @@ function auth(state = { firebaseUser: null, isLoaded: false }, action) {
 }
 
 const rootReducer = combineReducers({
-  uidToMembers,
+  members,
   uidToOpMeta,
   auth
 });

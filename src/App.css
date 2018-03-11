@@ -39,13 +39,13 @@ input, textarea {
 }
 
 .UserRelations-section {
-  margin: 2vh 0vw;
+  margin: 2vh 0;
 }
 
 .Video {
-  margin: 5vh 0vw;
-  width: 96vw;
+  margin: 5vh 0;
   height: 50vw;
+  max-height: 40vh;
 }
 
 .Youtube {
@@ -93,11 +93,8 @@ input, textarea {
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
 }
 
-.InviteVideoContainer {
-  width: 96vw;
-}
-
-.InviteVideoContainer .Video {
+/* TODO remove? */
+.Video {
   width: 100%;
 }
 
