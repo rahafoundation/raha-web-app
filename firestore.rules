@@ -19,7 +19,7 @@ service cloud.firestore {
 
     match /operations/{id} {
       // Additional validation can be done later when we decide whether to apply it to blockchain
-      allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid && request.resource.applied === false;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid && request.resource.data.applied == false;
       allow read;
     }
   }
