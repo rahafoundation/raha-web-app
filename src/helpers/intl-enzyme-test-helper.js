@@ -3,6 +3,7 @@
  * This is not available when mounting single components in Enzyme.
  * These helper functions aim to address that and wrap a valid,
  * English-locale intl context around them.
+ * Code adopted from https://github.com/yahoo/react-intl/wiki/Testing-with-React-Intl.
  */
 
 import React from 'react';
@@ -12,10 +13,10 @@ import { mount, shallow } from 'enzyme';
 // TODO make sure this file not included in prod bundle
 
 // You can pass your messages to the IntlProvider. Optional: remove if unneeded.
-// const messages = require('../locale/en'); // en.json
+const messages = require('../data/locales/en'); // en.json
 
 // Create the IntlProvider to retrieve context for wrapping around.
-const intlProvider = new IntlProvider({ locale: 'en'}, {});
+const intlProvider = new IntlProvider({ locale: 'en', messages }, {});
 const { intl } = intlProvider.getChildContext();
 
 /**

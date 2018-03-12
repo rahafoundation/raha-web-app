@@ -8,7 +8,6 @@ import { FormattedMessage } from 'react-intl';
 import MemberThumbnail from './MemberThumbnail';
 import TrustLevel from './TrustLevel';
 import ActionButton from './ActionButton';
-import STRINGS from '../strings';
 
 interface Props {
   uid: string;
@@ -41,16 +40,16 @@ class MemberRelations extends Component<Props, State> {
     this.addOpsGroup('data.to_uid', props.uid);
   }
 
-  addSection = (sections, sectionUids, title) => {
+  addSection = (sections, sectionUids, titleId) => {
     if (sectionUids.size > 0) {
       const rows = [];
       sectionUids.forEach((opMeta: OpMeta, uid: string) => {
         rows.push(<MemberThumbnail key={uid} uid={uid} opMeta={opMeta} />);
       });
       sections.push(
-        <div key={title} className="MemberRelations-section">
+        <div key={titleId} className="MemberRelations-section">
           <div className="SectionTitle">
-          <FormattedMessage {...title}  values={{value: rows.length}}/> </div>
+          <FormattedMessage id={titleId} values={{value: rows.length}}/> </div>
           {rows}
         </div>
       );
@@ -80,10 +79,10 @@ class MemberRelations extends Component<Props, State> {
       if (this.canTrustThisUser()) {
         sections.push(<ActionButton key="Trust Button" toUid={this.props.uid} toMid={this.props.mid} />);
       }
-      this.addSection(sections, this.props.invitedByUids, STRINGS.invited_by);
-      this.addSection(sections, this.props.invitedUids, STRINGS.invites);
-      this.addSection(sections, this.props.trustedByUids, STRINGS.trusted_by);
-      this.addSection(sections, this.props.trustsUids, STRINGS.trusts);
+      this.addSection(sections, this.props.invitedByUids, 'invited_by');
+      this.addSection(sections, this.props.invitedUids, 'invites');
+      this.addSection(sections, this.props.trustedByUids, 'trusted_by');
+      this.addSection(sections, this.props.trustsUids, 'trusts');
       // Grab and calculate these values based on this.state.trustedByUids and redux store.getState().members.byUid.
     }
     return <div>{sections}</div>;

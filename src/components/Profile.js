@@ -5,6 +5,7 @@ import YoutubeVideo from './YoutubeVideo';
 import { Link, Redirect } from 'react-router-dom';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
   isMyProfile?: boolean;
@@ -40,13 +41,14 @@ class Profile extends Component<Props> {
     }
     if (!memberDoc || !memberDoc.get('mid')) {
       if (!this.props.memberId) {
-        // TODO(#8) allow user to request trust from current user, upload their youtube video.
-        return (
-          <div>
-            <div>Thank you for logging in {this.props.authFirebaseUser.displayName}!</div>
-            <div>To become a Raha member, go to <Link className="Green" to="/request-invite">Request Invite</Link></div>
-          </div>
-        );
+        // TODO make into it's own <ProfilePending /> component
+        return <FormattedMessage
+          id="invite_pending"
+          values={{
+            display_name: this.props.authFirebaseUser.displayName,
+            help_email: <a href="mailto:help@raha.io">help@raha.io</a>
+          }}
+        />;
       }
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
@@ -57,7 +59,7 @@ class Profile extends Component<Props> {
       <div>
         <div className="Green MemberName">{fullName}</div>
         {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-        <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')}/>
+        <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
       </div>
     );
   }

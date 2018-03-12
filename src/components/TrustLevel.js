@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import STRINGS from '../strings';
 
 // TODO only show TrustSuggestion if current user is viewing.
 // Based on the FAQ trust is determined by:
@@ -19,13 +18,13 @@ const TrustLevel = ({ ownProfile, trustLevel, networkJoinDate, trustedByLevel2, 
 const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3) => {
   const MILLI_PER_DAY = 86400000;
   if (networkJoinDate > new Date().getTime() - (((trustLevel + 1) * 7) * MILLI_PER_DAY)) {
-    return <div><FormattedMessage {...STRINGS.trust_suggestion_active_longer} /></div>;
+    return <div><FormattedMessage id="trust_suggestion_active_longer" /></div>;
   }
   switch (trustLevel) {
     case 0:
       if (trustedByLevel2 + trustedByLevel3 < 2) {
         return (
-           <div> <FormattedMessage {...STRINGS.trust_suggestion_recieve_trust} 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
            values={{accounts: 2 - (trustedByLevel2 + trustedByLevel3), accountlevel: 2}} /></div>
         );
       }
@@ -33,7 +32,7 @@ const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedBy
     case 1:
       if (trustedByLevel3 < 3) {
         return (
-           <div> <FormattedMessage {...STRINGS.trust_suggestion_recieve_trust} 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
            values={{accounts: 3 - (trustedByLevel3), accountlevel: 3}} /></div>
         );
       }
@@ -41,13 +40,13 @@ const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedBy
     case 2:
       if (trustedByLevel3 < 5) {
         return (
-           <div> <FormattedMessage {...STRINGS.trust_suggestion_recieve_trust} 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
            values={{accounts: 5 - (trustedByLevel3), accountlevel: 3}} /></div>
         );
       }
       break;
     case 3:
-      return <div> <FormattedMessage {...STRINGS.trust_suggestion_max} /></div>;
+      return <div> <FormattedMessage id="trust_suggestion_max" /></div>;
     default:
       return null;
   }

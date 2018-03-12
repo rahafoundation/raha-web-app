@@ -6,7 +6,6 @@ import { getMemberId } from '../members';
 import { postOperation, fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import LogIn from './LogIn';
-import STRINGS from '../strings';
 import YoutubeVideo, { getYoutubeUrlVideoId } from './YoutubeVideo';
 
 export class RequestInvite extends Component {
@@ -72,7 +71,7 @@ export class RequestInvite extends Component {
     return (
       <div>
         <LogIn noRedirect />
-        <div>Sign up above to continue. We do not ask for your contact's information or ability to post.</div>
+        <FormattedMessage id="sign_up_above" />
       </div>
     );
   }
@@ -106,35 +105,23 @@ export class RequestInvite extends Component {
     );
   }
 
-  renderInviteMeIntro() {
-    return (
-      <div>
-        <FormattedMessage {...STRINGS.invite_me_intro} value={{completely_free: <b><FormattedMessage {...STRINGS.completely_free} /></b>}}/>
-      </div>
-    );
-  }
-
   renderInviteInstructions() {
-    const myInviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
+    const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
     return (
       <div>
-        <div>
-          Hi there {this.props.authMemberDoc.get('full_name')}!
-        </div>
-        <div>
-          If you would like to invite someone else, make a video where each of you say your full name and (optionally)
-          why you want to join Raha, have them upload it to Youtube, then direct them to
-          visit <a href={myInviteUrl}>{myInviteUrl}</a> to upload their own video and make their account. After they do this,
-          you will have to go visit their profile, check the video is accurate, and hit "Trust" for them to become members.
-          Please bear with us as we work on making this process more conveniant, if you have any thoughts reach us at
-          <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a> or file a <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>.
-        </div>
+        <FormattedMessage id="invite_others_instructions" values={{
+          github_issue: <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>,
+          full_name: this.props.authMemberDoc.get('full_name'),
+          invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
+          ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
+        }}/>
       </div>
     );
   }
 
   render() {
     if (this.state.submitted) {
+      // TODO this will move into <ProfilePending /> component shown at /me
       return (
         <div>
           Your video has been submitted for review! After approval by us
@@ -153,8 +140,10 @@ export class RequestInvite extends Component {
     }
     return (
       <div>
-        <b>Request Invite</b>
-        {this.renderInviteMeIntro()}
+        <b>{<FormattedMessage id="request_invite" />}</b>
+        <div>
+          <FormattedMessage id="invite_me_intro" values={{completely_free: <b><FormattedMessage id="completely_free" /></b>}} />
+        </div>
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </div >
     );
