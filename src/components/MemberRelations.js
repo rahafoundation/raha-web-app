@@ -106,8 +106,8 @@ function getMemberUidToOp(uidOps, opCode: OpCode, getUid: Function): Map<string,
 
 function mapStateToProps(state, ownProps: Props) {
   const authMemberDoc = getAuthMemberDoc(state);
-  const receivedOps = Object.entries(state.uidToOpMeta).filter(uidOp => uidOp[1].op.data.to_uid === ownProps.uid);
-  const sentOps = Object.entries(state.uidToOpMeta).filter(uidOp => uidOp[1].op.creator_uid === ownProps.uid);
+  const receivedOps = Object.entries(state.uidToOpMeta).filter(uidOp => uidOp[1].op.applied && uidOp[1].op.data.to_uid === ownProps.uid);
+  const sentOps = Object.entries(state.uidToOpMeta).filter(uidOp => uidOp[1].op.applied && uidOp[1].op.creator_uid === ownProps.uid);
   const trustedByUids = getMemberUidToOp(receivedOps, OpCode.TRUST, x => x.creator_uid);
   const trustsUids = getMemberUidToOp(sentOps, OpCode.TRUST, x => x.data.to_uid);
   const invitedByUids = getMemberUidToOp(sentOps, OpCode.REQUEST_INVITE, x => x.data.to_uid);

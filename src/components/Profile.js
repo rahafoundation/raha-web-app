@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 import { FormattedMessage } from 'react-intl';
