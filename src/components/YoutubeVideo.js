@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import STRINGS from '../strings';
 
 // eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
@@ -22,7 +21,7 @@ export default class YoutubeVideo extends Component {
     return (
       <div className="Video">
         <object ref={v => { this.videoObject = v; }} >
-          <div><FormattedMessage {...STRINGS.join_video} /></div>
+          <div><FormattedMessage id="join_video" /></div>
           <param name="allowFullScreen" value="true" />
           <embed
             className="Youtube"
