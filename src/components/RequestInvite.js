@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
 import { getRequestInviteOperation } from '../operations';
 import { getMemberId } from '../members';
 import { postOperation, fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
-import YoutubeVideo, { getYoutubeUrlVideoId } from './YoutubeVideo';
-import LogIn from './LogIn';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
+import LogIn from './LogIn';
+import STRINGS from '../strings';
+import YoutubeVideo, { getYoutubeUrlVideoId } from './YoutubeVideo';
 
 export class RequestInvite extends Component {
   constructor(props) {
@@ -104,28 +106,15 @@ export class RequestInvite extends Component {
     );
   }
 
-  renderDirections() {
+  renderInviteMeIntro() {
     return (
       <div>
-        <div>
-          We are excited to have you become a member of the Raha.io Network!
-          Joining is and always will be <b>completely free</b>. You must be
-          invited by an existing member in person via video using your full name.
-          Part of the value of Raha.io Network is that it's a unique identity
-          platform. If you sign up a fake identity or have multiple accounts, or invite
-          people with fake/duplicate accounts, your account will be frozen. If you know
-          of any fake accounts, report them to increase your income level! Ultimate
-          decisions of legitimacy will be made by the Raha.io Board.
-          Only accept an invite if you trust this member and share similar values, because
-          they will be your default admin in the event you need to recover your
-          account and default representantive to select your vote for the Raha.io Board. If it turns out
-          they invited many fake or duplicate accounts, then your account is at risk of being flagged.
-        </div>
+        <FormattedMessage {...STRINGS.invite_me_intro} value={{completely_free: <b><FormattedMessage {...STRINGS.completely_free} /></b>}}/>
       </div>
     );
   }
 
-  renderInviteInstruction() {
+  renderInviteInstructions() {
     const myInviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
     return (
       <div>
@@ -165,7 +154,7 @@ export class RequestInvite extends Component {
     return (
       <div>
         <b>Request Invite</b>
-        {this.renderDirections()}
+        {this.renderInviteMeIntro()}
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </div >
     );
