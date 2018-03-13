@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
@@ -18,7 +18,7 @@ function AppRouter() {
           <Route path="/login" component={LogIn} />
           <Route path="/logout" component={LogOut} />
           <Route path="/code-of-conduct" component={CodeOfConduct} />
-          <Route path="/me" component={Profile} />
+          <Route path="/me" render={() => (<Redirect to='/login' replace />)} />
           <Route path="/m/:memberId/invite" component={RequestInvite} />
           <Route path="/m/:memberId" component={Profile} />
           <Route component={PageNotFound} />
