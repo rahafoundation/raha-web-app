@@ -7,3 +7,15 @@
 1. Get familiar with Firebase, React, and Flow. Take a look at the [Create React App Guide](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md) - [VS Code Debugging](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#visual-studio-code) is nice. If using VS Code, recommended plugins include [Firebase](https://marketplace.visualstudio.com/items?itemName=toba.vsfire), [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome), and [Flow](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) (see [setup](https://github.com/flowtype/flow-for-vscode#setup)).
 1. Look at [`App.tsx`](src/App.tsx) for all of the main logic and assign yourself an [issue](https://github.com/rahafoundation/raha.io/issues)!
 1. To test locally you will need to install watchman [`brew install watchman`]
+
+## Deploy
+
+1. `firebase deploy --project <project-id>`
+
+### Firebase Rules
+
+1. `firebase deploy --project <project-id> --ONLY firestore:rules`
+
+### Firebase Functions
+
+1. `firebase deploy --project <project-id> --ONLY functions`
