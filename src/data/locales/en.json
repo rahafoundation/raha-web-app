@@ -10,7 +10,7 @@
   "loading": "Loading",
   "join_video": "Join Video",
   "page_not_found": "{404} page not found, go {home}.",
-  "request_invite": "Request Invite",
+  "request_invite": "Request Invite from {full_name} ({mid})",
   "sign_up_above": "Sign up above to continue. We do not ask for your contact's information or ability to post.",
   "trust_suggestion_active_longer": "Stay active on the network for more days to increase your trust level.",
   "trust_suggestion_recieve_trust": "Increase your trust by receiving trust from {accounts} level {accountlevel}+ accounts.",
