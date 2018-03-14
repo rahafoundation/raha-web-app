@@ -105,6 +105,7 @@ export class RequestInvite extends Component {
     );
   }
 
+<<<<<<< HEAD
   renderInviteInstructions() {
     const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
     return (
@@ -115,6 +116,25 @@ export class RequestInvite extends Component {
           invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
           ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
         }}/>
+=======
+  renderDirections() {
+    return (
+      <div>
+        <div>
+          We are excited to have you become a member of the Raha.io Network!
+          Joining is and always will be <b>completely free</b>. You must be
+          invited by an existing member in person via video using your full name.
+          Part of the value of Raha.io Network is that it's a unique identity
+          platform. If you sign up a fake identity or have multiple accounts, or invite
+          people with fake/duplicate accounts, your account will be frozen. If you know
+          of any fake accounts, report them to increase your income level! Ultimate
+          decisions of legitimacy will be made by the Raha.io Board.
+          Only accept an invite if you trust this member and share similar values, because
+          they will be your default admin in the event you need to recover your
+          account and default representantive to select your vote for the Raha.io Board. If it turns out
+          they invited many fake or duplicate accounts, then your account is at risk of being flagged.
+        </div>
+>>>>>>> Move invite instructions to Profile.
       </div>
     );
   }
@@ -135,15 +155,19 @@ export class RequestInvite extends Component {
       // TODO the loading appears again breifly is user goes from logged out to signed in with this.renderLogIn()
       return <div>Loading</div>;
     }
-    if (this.props.authMemberDoc && this.props.authMemberDoc.get('invite_confirmed')) {
-      return this.renderInviteInstructions();
-    }
     return (
       <div>
+<<<<<<< HEAD
         <b>{<FormattedMessage id="request_invite" />}</b>
         <div>
           <FormattedMessage id="invite_me_intro" values={{completely_free: <b><FormattedMessage id="completely_free" /></b>}} />
         </div>
+=======
+        <b>Request Invite from <i>
+          {this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null} ({this.props.memberId})
+        </i></b>
+        {this.renderDirections()}
+>>>>>>> Move invite instructions to Profile.
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </div >
     );
@@ -153,23 +177,32 @@ export class RequestInvite extends Component {
 function mapStateToProps(state, ownProps) {
   const memberId = ownProps.match.params.memberId;
   const isAuthLoaded = state.auth.isLoaded;
+  const toMemberDoc = getMemberDocByMid(state, memberId);
+
+  const stateToPropsMap = {
+    isAuthLoaded,
+    memberId,
+    isToMemberDocLoaded: toMemberDoc && !toMemberDoc.isFetching,
+    toMemberDoc,
+    notSignedIn: true,
+  };
+
   if (!isAuthLoaded) {
-    return { isAuthLoaded, memberId };
+    return stateToPropsMap;
   }
   const authFirebaseUser = state.auth.firebaseUser;
   if (!authFirebaseUser) {
-    return { isAuthLoaded, memberId, notSignedIn: true };
+    return stateToPropsMap;
   }
   const authMember = state.members.byUid[authFirebaseUser.uid];
-  return {
-    isAuthLoaded,
-    authFirebaseUser,
-    memberId,
-    isAuthMemberDocLoaded: authMember && !authMember.isFetching,
-    authMemberDoc: getAuthMemberDoc(state),
-    fullName: state.auth.firebaseUser.displayName,
-    toMemberDoc: getMemberDocByMid(state, ownProps.match.params.memberId)
-  };
+
+  stateToPropsMap.notSignedIn = false;
+  stateToPropsMap.authFirebaseUser = authFirebaseUser;
+  stateToPropsMap.isAuthMemberDocLoaded = authMember && !authMember.isFetching;
+  stateToPropsMap.authMemberDoc = getAuthMemberDoc(state);
+  stateToPropsMap.fullName = state.auth.firebaseUser.displayName;
+
+  return stateToPropsMap;
 }
 
 export default connect(

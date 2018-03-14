@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
@@ -21,6 +22,20 @@ class Profile extends Component<Props> {
     } else if (nextProps.isMyProfile && nextProps.authFirebaseUser) {
       this.props.fetchMemberByUidIfNeeded(nextProps.authFirebaseUser.uid);
     }
+  }
+
+  renderInviteInstructions() {
+    const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
+    return (
+      <div>
+        <FormattedMessage id="invite_others_instructions" values={{
+          github_issue: <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>,
+          full_name: this.props.authMemberDoc.get('full_name'),
+          invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
+          ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
+        }}/>
+      </div>
+    );
   }
 
   render() {
@@ -58,6 +73,8 @@ class Profile extends Component<Props> {
     return (
       <div>
         <div className="Green MemberName">{fullName}</div>
+        <h3>Invite instructions</h3>
+        {this.renderInviteInstructions()}
         {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
         <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
       </div>
