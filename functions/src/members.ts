@@ -1,3 +1,13 @@
+/**
+ * Copied from ../../members.js and renamed with a .ts suffix.
+ * There's probably a better way to do this, maybe copying files
+ * during the build step?
+ *
+ * The .ts rename is annoying too, but node doesn't support ES-6
+ * features like import, wheras the compilation of ts into js
+ * handles that. See: https://github.com/firebase/functions-samples/tree/master/typescript-getting-started.
+ */
+
 const NUMBER_SUFFIX_LENGTH = 4;
 
 const getNumberSuffix = (len, seedFn) => {
