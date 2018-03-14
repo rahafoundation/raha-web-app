@@ -105,40 +105,6 @@ export class RequestInvite extends Component {
     );
   }
 
-<<<<<<< HEAD
-  renderInviteInstructions() {
-    const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
-    return (
-      <div>
-        <FormattedMessage id="invite_others_instructions" values={{
-          github_issue: <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>,
-          full_name: this.props.authMemberDoc.get('full_name'),
-          invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
-          ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
-        }}/>
-=======
-  renderDirections() {
-    return (
-      <div>
-        <div>
-          We are excited to have you become a member of the Raha.io Network!
-          Joining is and always will be <b>completely free</b>. You must be
-          invited by an existing member in person via video using your full name.
-          Part of the value of Raha.io Network is that it's a unique identity
-          platform. If you sign up a fake identity or have multiple accounts, or invite
-          people with fake/duplicate accounts, your account will be frozen. If you know
-          of any fake accounts, report them to increase your income level! Ultimate
-          decisions of legitimacy will be made by the Raha.io Board.
-          Only accept an invite if you trust this member and share similar values, because
-          they will be your default admin in the event you need to recover your
-          account and default representantive to select your vote for the Raha.io Board. If it turns out
-          they invited many fake or duplicate accounts, then your account is at risk of being flagged.
-        </div>
->>>>>>> Move invite instructions to Profile.
-      </div>
-    );
-  }
-
   render() {
     if (this.state.submitted) {
       // TODO this will move into <ProfilePending /> component shown at /me
@@ -157,17 +123,13 @@ export class RequestInvite extends Component {
     }
     return (
       <div>
-<<<<<<< HEAD
-        <b>{<FormattedMessage id="request_invite" />}</b>
+        <b>{<FormattedMessage id="request_invite" values={{
+          full_name: this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null,
+          mid: this.props.memberId
+        }} />}</b>
         <div>
           <FormattedMessage id="invite_me_intro" values={{completely_free: <b><FormattedMessage id="completely_free" /></b>}} />
         </div>
-=======
-        <b>Request Invite from <i>
-          {this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null} ({this.props.memberId})
-        </i></b>
-        {this.renderDirections()}
->>>>>>> Move invite instructions to Profile.
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </div >
     );
