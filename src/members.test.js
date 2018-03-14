@@ -1,4 +1,4 @@
-import { getMemberId } from './members'
+import { getMemberId, getPrefixFromMemberId, getSuffixFromMemberId } from './members'
 
 const seedFn = () => { return 4 }
 
@@ -14,4 +14,14 @@ describe('members', () => {
       expect(getMemberId("JohnDoe", seedFn)).toBe("johndoe$0000");
     })
   })
-})
+  describe('getSuffixFromMemberId', () => {
+    it('should return the last 4 digits from a valid member id.', () => {
+      expect(getSuffixFromMemberId('john.doe$0000')).toBe('0000');
+    });
+  });
+  describe('getPrefixFromMemberId', () => {
+    it('should return all but the last 5 characters from a valid member id.', () => {
+      expect(getPrefixFromMemberId('john.doe$0000')).toBe('john.doe');
+    });
+  });
+});
