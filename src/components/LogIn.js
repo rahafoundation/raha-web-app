@@ -16,11 +16,13 @@ const LogIn = ({ authMemberDoc, noRedirect }) => {
       firebase.auth.GithubAuthProvider.PROVIDER_ID,
     ], callbacks: {
       signInSuccess: () => {
+        // Prevent FirebaseAuth from redirecting on success.
+        // We handle redirect manually below.
         return false;
       }
     },
   };
-  if (authMemberDoc) {
+  if (authMemberDoc && !noRedirect) {
     return (
       <Redirect to={`/m/${authMemberDoc.get('mid')}`} replace />
     )
