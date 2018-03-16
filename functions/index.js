@@ -42,7 +42,7 @@ function createMemberFromOperation(operation) {
         request_invite_op_seq: op_seq,
         request_invite_from_uid: creator_uid,
         request_invite_from_mid: creator_mid,
-        video_url: video_url,
+        video_url,
     });
 }
 
@@ -53,13 +53,13 @@ exports.onCreateOperation = functions.firestore
         switch(newOperation.op_code) {
             case REQUEST_INVITE:
                 createMemberFromOperation(newOperation).then(() => {
-                    return event.data.ref.set({
+                    return event.data.ref.update({
                         applied: true,
-                    }, {merge: true});
-                }).catch((err) => console.log(
-                    `An error occurred while trying to create a member from operation ${newOperation.id}.`, err));
-                break;
+                    });
+                }).catch((err) => console.err(`An error occurred while trying to create a member from operation ${newOperation.id}.`, err));
+                return 0;
             default:
-                return;
+                console.warn(`Received an unexpected operation: ${newOperation.op_code}.`);
+                return 1;
         }
 });
