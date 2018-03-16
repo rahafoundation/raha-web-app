@@ -1,4 +1,4 @@
-import { getMemberId, getPrefixFromMemberId, getSuffixFromMemberId } from './members'
+import { getMemberId } from './members'
 
 const seedFn = () => { return 4 }
 
