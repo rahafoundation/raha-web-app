@@ -8,11 +8,3 @@ const getNumberSuffix = (len, seedFn) => {
 export const getMemberId = (displayName, seedFn) => {
     return displayName.trim().toLowerCase().replace(/\s+/g, '.') + '$' + getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random);
 }
-
-export const getSuffixFromMemberId = (memberId) => {
-    return memberId.substr(-1 * NUMBER_SUFFIX_LENGTH, NUMBER_SUFFIX_LENGTH);
-}
-
-export const getPrefixFromMemberId = (memberId) => {
-    return memberId.substr(0, memberId.length - NUMBER_SUFFIX_LENGTH - 1);
-}
