@@ -73,19 +73,39 @@ function members(state = { byMid: {}, byUid: {} }, action) {
   }
 }
 
+/**
+ * Helper function to parse operations and add them to
+ * existing state.
+ */
+function parseOps(ops, opDocs) {
+  const newOps = opDocs.reduce((res, d) => {
+    res[d.id] = { uid: d.id, op: d.data(), inDb: true };
+    return res;
+  }, {});
+  return { ...ops, ...newOps };
+}
+
 function uidToOpMeta(state = {}, action) {
   switch (action.type) {
     case RECEIVE_OPS:
-      const newOps = action.opDocs.reduce((res, d) => {
-        res[d.id] = { uid: d.id, op: d.data(), inDb: true };
-        return res;
-      }, {});
-      return { ...state, ...newOps };
+      return parseOps(state, action.opDocs);
     case POST_OP:
     case ACKP_POST_OP:
       const { uid, ...value } = action.value;
       const updatedOp = { [uid]: { ...state[uid], ...value } };
       return { ...state, ...updatedOp };
+    default:
+      return state;
+  }
+}
+
+/**
+ * This is a simple container for received operations.
+ */
+function operations(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_OPS:
+      return parseOps(state, action.opDocs);
     default:
       return state;
   }
@@ -103,7 +123,8 @@ function auth(state = { firebaseUser: null, isLoaded: false }, action) {
 const rootReducer = combineReducers({
   members,
   uidToOpMeta,
-  auth
+  auth,
+  operations,
 });
 
 export default rootReducer;
