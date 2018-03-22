@@ -19,7 +19,32 @@ interface Props {
   invitedUids: Map<string, OpMeta>;
 }
 
-class MemberRelations extends Component<Props, State> {
+function isOwnProfile(uid, authMemberDoc) {
+  return authMemberDoc && authMemberDoc.uid === uid;
+}
+
+interface MemberListProps {
+  titleId: 'trusted' | 'trusts' | 'invited_by' | 'invited',
+  membersByUid: Map<string, OpMeta>
+}
+
+function MemberList(props: MemberListProps) {
+  const {titleId, membersByUid} = props;
+
+  const members = Array.from(membersByUid).map(([uid: string, opMeta: OpMeta]) =>
+    <MemberThumbnail key={uid} uid={uid} opMeta={opMeta} />
+  );
+  return (
+    <section key={titleId} className="MemberRelations--MemberList--section">
+      <div className="MemberRelations--MemberList--sectionTitle">
+        <FormattedMessage id={titleId} values={{value: members.length}}/>
+      </div>
+      <div className="MemberRelations--MemberList--members">{members}</div>
+    </section>
+  );
+}
+
+class MemberRelations extends Component<Props> {
 
   componentDidMount() {
     this.onPropsChange(this.props);
@@ -40,22 +65,6 @@ class MemberRelations extends Component<Props, State> {
     this.addOpsGroup('data.to_uid', props.uid);
   }
 
-  addSection = (sections, sectionUids, titleId) => {
-    if (sectionUids.size > 0) {
-      const rows = [];
-      sectionUids.forEach((opMeta: OpMeta, uid: string) => {
-        rows.push(<MemberThumbnail key={uid} uid={uid} opMeta={opMeta} />);
-      });
-      sections.push(
-        <div key={titleId} className="MemberRelations-section">
-          <div className="SectionTitle">
-          <FormattedMessage id={titleId} values={{value: rows.length}}/> </div>
-          {rows}
-        </div>
-      );
-    }
-  }
-
   canTrustThisUser() {
     return this.props.authMemberDoc !== null
       && this.props.authMemberDoc.id !== this.props.uid
@@ -63,29 +72,42 @@ class MemberRelations extends Component<Props, State> {
   }
 
   render() {
-    const sections = [];
-    // TODO ops should also go in redux, should count number for when people have different trust levels
-    if (this.props.trustedByUids !== undefined) {
-      sections.push(
-        <TrustLevel
-          key="Trust Level"
-          ownProfile={this.props.authMemberDoc && this.props.authMemberDoc.uid === this.props.uid}
-          trustLevel={3}
-          networkJoinDate={null}
-          trustedByLevel2={null}
-          trustedByLevel3={null}
-        />
-      );
-      if (this.canTrustThisUser()) {
-        sections.push(<ActionButton key="Trust Button" toUid={this.props.uid} toMid={this.props.mid} />);
-      }
-      this.addSection(sections, this.props.invitedByUids, 'invited_by');
-      this.addSection(sections, this.props.invitedUids, 'invites');
-      this.addSection(sections, this.props.trustedByUids, 'trusted_by');
-      this.addSection(sections, this.props.trustsUids, 'trusts');
-      // Grab and calculate these values based on this.state.trustedByUids and redux store.getState().members.byUid.
+    const sections = {
+      invited_by: this.props.invitedByUids,
+      invites: this.props.invitedUids,
+      trusted_by: this.props.trustedByUids,
+      trusts: this.props.trustsUids
     }
-    return <div>{sections}</div>;
+
+    const renderedSections = Object.keys(sections).map(titleId =>
+      <MemberList titleId={titleId} membersByUid={sections[titleId]} />
+    )
+    return (
+      <section>
+        {
+          // TODO ops should also go in redux, should count number for when
+          // people have different trust levels
+          this.props.trustedByUids !== undefined &&
+          <TrustLevel
+            key="Trust Level"
+            ownProfile={isOwnProfile(this.props.uid, this.props.authMemberDoc)}
+            trustLevel={3}
+            networkJoinDate={null}
+            trustedByLevel2={null}
+            trustedByLevel3={null}
+          />
+        }
+
+        {
+          this.canTrustThisUser() &&
+          <ActionButton
+            key="Trust Button" toUid={this.props.uid} toMid={this.props.mid}
+          />
+        }
+
+        {renderedSections}
+      </section>
+    )
   }
 }
 
