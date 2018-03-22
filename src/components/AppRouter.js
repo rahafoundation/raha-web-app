@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
+import Operations from './Operations';
 import PageNotFound from './PageNotFound';
 import Profile from './Profile';
 import RequestInvite from './RequestInvite';
@@ -21,6 +22,7 @@ function AppRouter() {
           <Route path="/me" render={() => (<Redirect to='/login' replace />)} />
           <Route path="/m/:memberId/invite" component={RequestInvite} />
           <Route path="/m/:memberId" component={Profile} />
+          <Route path="/ops" component={Operations} />
           <Route component={PageNotFound} />
         </Switch>
       </div>
