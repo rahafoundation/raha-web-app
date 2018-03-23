@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import {green} from '../constants/palette';
 
-const TrustContainer = styled.div`
+const TrustElem = styled.div`
   > .trustLevelReadout {
     > .trustIcon {
       margin-right: 5px;
@@ -26,14 +26,14 @@ const TrustContainer = styled.div`
 // 3. Level 3 verification video in last month || invited in first month
 const TrustLevel = ({ ownProfile, trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3 }) => {
   return (
-    <TrustContainer>
+    <TrustElem>
       <span className="trustLevelReadout">
         <FontAwesomeIcon className="trustIcon" icon={faCheckCircle} />
         <FormattedMessage id='trust_level' />:
         <span className="trustLevelNumber">{trustLevel}</span>
       </span>
       {ownProfile && TrustSuggestion(trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3)}
-    </TrustContainer>
+    </TrustElem>
   );
 };
 
