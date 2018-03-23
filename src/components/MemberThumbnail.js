@@ -38,13 +38,6 @@ const MemberThumbnailElem = styled(Link)`
   /* custom behavior to handle underline properly with initials display */
   :hover, :active, :focus {
     text-decoration: none;
-
-    > .thumbnailImage {
-      text-decoration: none;
-    }
-    > .memberName {
-      text-decoration: underline;
-    }
   }
 
   > .thumbnailImage {
