@@ -16,6 +16,7 @@ import Modal from './Modal';
 import InviteInstructions from './InviteInstructions'
 import { getAuthMemberDoc } from '../connectors';
 import { showModal as showModalAction } from '../actions';
+import LogoIcon from './LogoIcon';
 
 const FooterElem = styled.footer`
   padding: 20px;
@@ -31,14 +32,25 @@ function Footer() {
 }
 
 const LogoElem = styled.span`
+  display: flex;
+  align-items: center;
   color: white;
   font-size: 2em;
   font-weight: bold;
   padding: 10px;
 `;
 
+const LogoImg = styled(LogoIcon)`
+  margin-right: 20px;
+`;
+
 function Logo() {
-  return <LogoElem>Raha</LogoElem>;
+  return (
+  <LogoElem>
+    <LogoImg />
+    Raha
+  </LogoElem>
+  );
 }
 
 const HeaderElem = styled.header`
@@ -60,7 +72,7 @@ const HeaderElem = styled.header`
 
     > .inviteButton {
       height: 100%;
-      padding-right: 10px;
+      padding: 0 20px;
       cursor: pointer;
       transition: background .1s;
 
