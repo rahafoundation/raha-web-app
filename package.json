@@ -6,6 +6,7 @@
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.4",
     "@fortawesome/fontawesome-free-regular": "^5.0.8",
+    "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "@fortawesome/react-fontawesome": "^0.0.17",
     "firebase": "^4.9.0",
     "material-ui": "^0.20.0",
@@ -14,6 +15,7 @@
     "react-dom": "^16.2.0",
     "react-firebaseui": "^1.0.10",
     "react-intl": "^2.4.0",
+    "react-modal": "^3.3.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
