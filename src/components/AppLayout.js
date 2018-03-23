@@ -7,6 +7,8 @@ import {
   lightGreen500,
   green500
 } from 'material-ui/styles/colors';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/fontawesome-free-solid';
 
 import Link from './Link';
 import Modal from './Modal';
@@ -59,7 +61,7 @@ const HeaderElem = styled.header`
       margin-right: 10px;
     }
 
-    > .loggedInUser {
+    > .loggedInUser, .logIn {
       height: 100%;
       display: inline-flex;
       align-items: center;
@@ -67,6 +69,7 @@ const HeaderElem = styled.header`
       color: white;
       padding: 0 10px;
       background: ${lightGreen500};
+      transition: background-color .1s;
 
       :hover, :focus, :active {
         background: ${lightGreen300};
@@ -91,10 +94,18 @@ function Header(props) {
     <HeaderElem>
       <Logo />
       <span className="userSection">
-        <button onClick={handleInviteClick(fullName, inviteUrl, showModal)}>
-          Invite a new member
-        </button>
-        <Link className="loggedInUser" to="/me">{fullName}</Link>
+        {
+          memberDetails ? (
+            <React.Fragment>
+              <button onClick={handleInviteClick(fullName, inviteUrl, showModal)}>
+                <FontAwesomeIcon icon={faPlus} />
+                Invite a new member
+              </button>
+              <Link className="loggedInUser" to="/me">{fullName}</Link>
+            </React.Fragment>
+          )
+          : <Link className="logIn" to="/login">Log in</Link>
+        }
       </span>
     </HeaderElem>
   );
