@@ -1,20 +1,24 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/fontawesome-free-regular';
+import { faCheckCircle } from '@fortawesome/fontawesome-free-solid';
 import styled from 'styled-components';
 
 import {green} from '../constants/palette';
 
 const TrustElem = styled.div`
   > .trustLevelReadout {
-    > .trustIcon {
+    display: inline-flex;
+    align-items: center;
+
+    > .icon {
       margin-right: 5px;
       color: ${green};
+      font-size: 2rem;
     }
 
-    > .trustLevelNumber {
-      margin-left: 10px;
+    > .text > .number {
+      font-weight: bold;
     }
   }
 `;
@@ -28,9 +32,11 @@ const TrustLevel = ({ ownProfile, trustLevel, networkJoinDate, trustedByLevel2, 
   return (
     <TrustElem>
       <span className="trustLevelReadout">
-        <FontAwesomeIcon className="trustIcon" icon={faCheckCircle} />
-        <FormattedMessage id='trust_level' />:
-        <span className="trustLevelNumber">{trustLevel}</span>
+        <FontAwesomeIcon className="icon" icon={faCheckCircle} />
+        <span className="text">
+          <FormattedMessage id='trust_level' />&nbsp;
+          <span className="number">{trustLevel}</span>
+        </span>
       </span>
       {ownProfile && TrustSuggestion(trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3)}
     </TrustElem>
