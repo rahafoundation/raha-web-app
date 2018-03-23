@@ -1,3 +1,8 @@
+/*
+ * TODO: don't just use a global stylesheet. Consider using something
+ * like styled-components
+ */
+
 html, body {
   margin: 2vh auto;
   height: 96vh;
@@ -11,7 +16,7 @@ input, textarea {
 
 .Container {
   align-items: left;
-  max-width: 40rem;
+  /* max-width: 40rem; */
   margin: auto;
 }
 
@@ -27,10 +32,6 @@ input, textarea {
 .App-intro {
   font-size: large;
   margin: 5vh;
-}
-
-.Green {
-  color: #2A945E;
 }
 
 .Title {
@@ -70,7 +71,7 @@ input, textarea {
   border: 1px solid transparent;
   padding: .5rem 1rem;
   font-size: 1rem;
-  border-radius: .25rem;  
+  border-radius: .25rem;
 }
 
 .InviteInput {
@@ -110,21 +111,6 @@ input, textarea {
   flex-direction: column;
 }
 
-.MemberName {
-  font-weight: 600;
-  margin: 5px 0;
-}
-
-.MemberThumbnail {
-  font-weight: 600;
-  margin: 5px 0;
-  height: 25px;
-}
-
-.SectionTitle {
-  font-weight: 400;
-}
-
 .Grey {
   color: grey;
 }
@@ -138,8 +124,4 @@ input, textarea {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-}
-
-a, a:visited, a:hover, a:active {
-  text-decoration: inherit;
 }
