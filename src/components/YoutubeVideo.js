@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
+import classnames from 'classnames';
 
 // eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
@@ -19,17 +19,14 @@ export default class YoutubeVideo extends Component {
     const youtubeId = getYoutubeUrlVideoId(this.props.youtubeUrl);
     // TODO Chrome console errors with this object embed, investigate.
     return (
-      <div className="Video">
-        <object ref={v => { this.videoObject = v; }} >
-          <div><FormattedMessage id="join_video" /></div>
-          <param name="allowFullScreen" value="true" />
-          <embed
-            className="Youtube"
-            ref={v => { this.videoEmbed = v; }}
-            src={`https://www.youtube.com/embed/${youtubeId}?html5=1&amp;rel=0&amp;version=3`}
-          />
-        </object>
-      </div>
+      <object ref={v => { this.videoObject = v; }} >
+        <param name="allowFullScreen" value="true" />
+        <embed
+          className={classnames("YoutubeVideo", this.props.className)}
+          ref={v => { this.videoEmbed = v; }}
+          src={`https://www.youtube.com/embed/${youtubeId}?html5=1&amp;rel=0&amp;version=3`}
+        />
+      </object>
     );
   }
 

@@ -100,6 +100,8 @@ export class RequestInvite extends Component {
           Invite me!
         </button>
         <div className="InviteError">{this.state.errorMessage}</div>
+
+        <h3><FormattedMessage id="join_video" /></h3>
         {this.state.videoUrl && <YoutubeVideo youtubeUrl={this.state.videoUrl} />}
       </div>
     );

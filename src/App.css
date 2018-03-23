@@ -1,8 +1,7 @@
-html, body {
-  margin: 2vh auto;
-  height: 96vh;
-  width: 96vw;
-}
+/*
+ * TODO: don't just use a global stylesheet. Consider using something
+ * like styled-components
+ */
 
 input, textarea {
   width: 100%;
@@ -11,7 +10,7 @@ input, textarea {
 
 .Container {
   align-items: left;
-  max-width: 40rem;
+  /* max-width: 40rem; */
   margin: auto;
 }
 
@@ -29,10 +28,6 @@ input, textarea {
   margin: 5vh;
 }
 
-.Green {
-  color: #2A945E;
-}
-
 .Title {
   font-size: 5vh;
   margin: 10vh 0.5vh;
@@ -46,11 +41,6 @@ input, textarea {
   margin: 5vh 0;
   height: 50vw;
   max-height: 40vh;
-}
-
-.Youtube {
-  width: 100%;
-  height: 100%;
 }
 
 .InviteButton {
@@ -70,7 +60,7 @@ input, textarea {
   border: 1px solid transparent;
   padding: .5rem 1rem;
   font-size: 1rem;
-  border-radius: .25rem;  
+  border-radius: .25rem;
 }
 
 .InviteInput {
@@ -108,38 +98,4 @@ input, textarea {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-}
-
-.MemberName {
-  font-weight: 600;
-  margin: 5px 0;
-}
-
-.MemberThumbnail {
-  font-weight: 600;
-  margin: 5px 0;
-  height: 25px;
-}
-
-.SectionTitle {
-  font-weight: 400;
-}
-
-.Grey {
-  color: grey;
-}
-
-.ActionButton {
-    background-color: #2A945E;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-a, a:visited, a:hover, a:active {
-  text-decoration: inherit;
 }

@@ -1,5 +1,27 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import { faCheckCircle } from '@fortawesome/fontawesome-free-solid';
+import styled from 'styled-components';
+
+import {green} from '../constants/palette';
+
+const TrustElem = styled.div`
+  > .trustLevelReadout {
+    display: inline-flex;
+    align-items: center;
+
+    > .icon {
+      margin-right: 5px;
+      color: ${green};
+      font-size: 2rem;
+    }
+
+    > .text > .number {
+      font-weight: bold;
+    }
+  }
+`;
 
 // TODO only show TrustSuggestion if current user is viewing.
 // Based on the FAQ trust is determined by:
@@ -8,10 +30,16 @@ import { FormattedMessage } from 'react-intl';
 // 3. Level 3 verification video in last month || invited in first month
 const TrustLevel = ({ ownProfile, trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3 }) => {
   return (
-    <div className="Trust">
-      <div>Trust Level: {trustLevel}</div>
+    <TrustElem>
+      <span className="trustLevelReadout">
+        <FontAwesomeIcon className="icon" icon={faCheckCircle} />
+        <span className="text">
+          <FormattedMessage id='trust_level' />&nbsp;
+          <span className="number">{trustLevel}</span>
+        </span>
+      </span>
       {ownProfile && TrustSuggestion(trustLevel, networkJoinDate, trustedByLevel2, trustedByLevel3)}
-    </div>
+    </TrustElem>
   );
 };
 
@@ -24,7 +52,7 @@ const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedBy
     case 0:
       if (trustedByLevel2 + trustedByLevel3 < 2) {
         return (
-           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust"
            values={{accounts: 2 - (trustedByLevel2 + trustedByLevel3), accountlevel: 2}} /></div>
         );
       }
@@ -32,7 +60,7 @@ const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedBy
     case 1:
       if (trustedByLevel3 < 3) {
         return (
-           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust"
            values={{accounts: 3 - (trustedByLevel3), accountlevel: 3}} /></div>
         );
       }
@@ -40,7 +68,7 @@ const TrustSuggestion = (trustLevel, networkJoinDate, trustedByLevel2, trustedBy
     case 2:
       if (trustedByLevel3 < 5) {
         return (
-           <div> <FormattedMessage id="trust_suggestion_recieve_trust" 
+           <div> <FormattedMessage id="trust_suggestion_recieve_trust"
            values={{accounts: 5 - (trustedByLevel3), accountlevel: 3}} /></div>
         );
       }

@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import MemberRelations from './MemberRelations';
-import YoutubeVideo from './YoutubeVideo';
+import { FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+
+import MemberRelations from './MemberRelations';
+import TrustLevel from './TrustLevel';
+import ActionButton from './ActionButton';
+import YoutubeVideo from './YoutubeVideo';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
-import { FormattedMessage } from 'react-intl';
+import { getMemberUidToOp } from '../helpers/ops';
+import { OpCode } from '../operations';
 
 interface Props {
   isMyProfile?: boolean;
@@ -13,6 +19,27 @@ interface Props {
   authMemberDoc: firebase.firestore.DocumentSnapshot;
   memberDoc: firebase.firestore.DocumentSnapshot;
 }
+
+const ProfileElem = styled.main`
+  padding: 0 20px;
+  > header {
+    margin-bottom: 20px;
+
+    > .memberTitle {
+      display: flex;
+      align-items: center;
+
+      .trustButton {
+        margin-left: 20px;
+      }
+    }
+  }
+
+  .joinVideo {
+    width: 600px;
+    height: 400px;
+  }
+`
 
 class Profile extends Component<Props> {
   componentWillReceiveProps(nextProps) {
@@ -23,19 +50,16 @@ class Profile extends Component<Props> {
     }
   }
 
-  renderInviteInstructions() {
-    const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
-    return (
-      <div>
-        <FormattedMessage id="invite_others_instructions" values={{
-          github_issue: <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>,
-          full_name: this.props.authMemberDoc.get('full_name'),
-          invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
-          ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
-        }}/>
-      </div>
-    );
+  canTrustThisUser() {
+    return this.props.authMemberDoc !== null
+      && this.props.authMemberDoc.id !== this.props.uid
+      && !this.props.trustedByUids.has(this.props.authMemberDoc.id);
   }
+
+  isOwnProfile(uid) {
+    return this.props.authMemberDoc && this.props.authMemberDoc.uid === uid;
+  }
+
 
   render() {
     const { authFirebaseUser, authIsLoaded, isMyProfile, memberDoc } = this.props;
@@ -70,13 +94,44 @@ class Profile extends Component<Props> {
     const fullName = memberDoc.get('full_name');
     const youtubeUrl = memberDoc.get('video_url');
     return (
-      <div>
-        <div className="Green MemberName">{fullName}</div>
-        <h3>Invite instructions</h3>
-        {this.renderInviteInstructions()}
-        {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-        <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
-      </div>
+      <ProfileElem>
+        <header>
+          <h1 className="memberTitle">
+            {fullName}
+
+            {
+              this.canTrustThisUser() &&
+              <ActionButton
+                className="trustButton"
+                toUid={this.props.uid}
+                toMid={this.props.mid}
+              />
+            }
+          </h1>
+          {
+            // TODO ops should also go in redux, should count number for when
+            // people have different trust levels
+            this.props.trustedByUids !== undefined &&
+            <TrustLevel
+              ownProfile={this.isOwnProfile(memberDoc.id, this.props.authMemberDoc)}
+              trustLevel={3}
+              networkJoinDate={null}
+              trustedByLevel2={null}
+              trustedByLevel3={null}
+            />
+          }
+        </header>
+
+        <main>
+          {
+            youtubeUrl && <YoutubeVideo
+              className="joinVideo" youtubeUrl={youtubeUrl}
+            />
+          }
+
+          <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
+        </main>
+      </ProfileElem>
     );
   }
 }
@@ -87,12 +142,20 @@ const Loading = () => {
 
 function mapStateToProps(state, ownProps) {
   const isMyProfile = ownProps.match.path === '/me';
+  const authMemberDoc = getAuthMemberDoc(state);
   const memberId = isMyProfile ? null : ownProps.match.params.memberId;
-  const authIsLoaded = state.auth.isLoaded;
-  const authFirebaseUser = state.auth.firebaseUser;
-  const authMemberDoc = getAuthMemberDoc(state);  // TODO will we use this?
-  const memberDoc = isMyProfile ? authMemberDoc : getMemberDocByMid(state, memberId);
-  return { authFirebaseUser, authMemberDoc, authIsLoaded, isMyProfile, memberDoc, memberId };
+
+  const receivedOps = Object.entries(state.uidToOpMeta).filter(uidOp => uidOp[1].op.applied && uidOp[1].op.data.to_uid === ownProps.uid);
+  return {
+    // TODO I think this doesn't actually work? /me redirects
+    isMyProfile,
+    memberId,
+    authIsLoaded: state.auth.isLoaded,
+    authFirebaseUser: state.auth.firebaseUser,
+    authMemberDoc,  // TODO will we use this?
+    memberDoc: isMyProfile ? authMemberDoc : getMemberDocByMid(state, memberId),
+    trustedByUids: getMemberUidToOp(receivedOps, OpCode.TRUST, x => x.creator_uid)
+  };
 }
 
 export default connect(mapStateToProps, { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded })(Profile);
