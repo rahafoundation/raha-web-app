@@ -3,9 +3,6 @@
  * like styled-components
  */
 
-html, body {
-}
-
 input, textarea {
   width: 100%;
   display: block
@@ -106,19 +103,4 @@ input, textarea {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-}
-
-.Grey {
-  color: grey;
-}
-
-.ActionButton {
-    background-color: #2A945E;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
 }
