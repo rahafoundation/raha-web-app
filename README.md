@@ -10,12 +10,15 @@
 
 ## Deploy
 
-1. `firebase deploy --project <project-id>`
+1. `cp src/data/firebase.prod.json src/data/firebase.config.json` # Use the production db
+1. `yarn build` # Bundle everything for production
+1. `serve -s build` # Test out on both web and mobile
+1. `firebase deploy --project <project-id>` # Deploy everything
 
 ### Firebase Rules
 
-1. `firebase deploy --project <project-id> --ONLY firestore:rules`
+1. `firebase deploy --project <project-id> --only firestore:rules`
 
 ### Firebase Functions
 
-1. `firebase deploy --project <project-id> --ONLY functions`
+1. `firebase deploy --project <project-id> --only functions`
