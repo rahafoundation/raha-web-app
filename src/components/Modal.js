@@ -8,7 +8,9 @@ import styled from 'styled-components';
 import { hideModal } from '../actions';
 
 // necessary as per react-modal docs for accessibility
-ReactModal.setAppElement('#root');
+if (document.getElementById("root")) {
+  ReactModal.setAppElement('#root');
+}
 
 const CloseButton = styled.button`
   position: absolute;
