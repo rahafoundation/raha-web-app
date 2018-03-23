@@ -8,12 +8,13 @@ import PageNotFound from './PageNotFound';
 import Profile from './Profile';
 import RequestInvite from './RequestInvite';
 import Splash from './Splash';
+import AppLayout from './AppLayout';
 import '../App.css';
 
 function AppRouter() {
   return (
     <BrowserRouter>
-      <div className="Container">
+      <AppLayout>
         <Switch>
           <Route exact={true} path="/" component={Splash} />
           <Route path="/login" component={LogIn} />
@@ -25,7 +26,7 @@ function AppRouter() {
           <Route path="/ops" component={Operations} />
           <Route component={PageNotFound} />
         </Switch>
-      </div>
+      </AppLayout>
     </BrowserRouter>
   );
 }
