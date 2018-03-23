@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classnames from 'classnames';
 
 // eslint-disable-next-line no-useless-escape
 const YOUTUBE_URL_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
@@ -21,7 +22,7 @@ export default class YoutubeVideo extends Component {
       <object ref={v => { this.videoObject = v; }} >
         <param name="allowFullScreen" value="true" />
         <embed
-          className="Youtube"
+          className={classnames("YoutubeVideo", this.props.className)}
           ref={v => { this.videoEmbed = v; }}
           src={`https://www.youtube.com/embed/${youtubeId}?html5=1&amp;rel=0&amp;version=3`}
         />
