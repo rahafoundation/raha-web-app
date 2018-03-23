@@ -2,11 +2,11 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 import {
-  lightGreen100,
   lightGreen300,
   lightGreen500,
   green300,
-  green500
+  green500,
+  grey200
 } from 'material-ui/styles/colors';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/fontawesome-free-solid';
@@ -19,14 +19,16 @@ import { showModal as showModalAction } from '../actions';
 import LogoIcon from './LogoIcon';
 
 const FooterElem = styled.footer`
-  padding: 20px;
-  background: ${lightGreen100};
+  padding: 50px 30px;
+  margin-top: 50px;
+  background: ${grey200};
+  text-align: center;
 `;
 
 function Footer() {
   return (
     <FooterElem>
-      This is a footer!
+      Raha Foundation, 2018
     </FooterElem>
   );
 }
