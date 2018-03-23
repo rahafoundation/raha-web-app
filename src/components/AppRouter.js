@@ -11,22 +11,34 @@ import Splash from './Splash';
 import AppLayout from './AppLayout';
 import '../App.css';
 
+const DefaultLayout = (props) => {
+  const {component, ...rest} = props;
+  const Component = component;
+  return (
+    <Route
+      {...rest} render={matchProps => (
+        <AppLayout>
+          <Component {...matchProps} />
+        </AppLayout>
+      )}
+    />
+  );
+};
+
 function AppRouter() {
   return (
     <BrowserRouter>
-      <AppLayout>
-        <Switch>
-          <Route exact={true} path="/" component={Splash} />
-          <Route path="/login" component={LogIn} />
-          <Route path="/logout" component={LogOut} />
-          <Route path="/code-of-conduct" component={CodeOfConduct} />
-          <Route path="/me" render={() => (<Redirect to='/login' replace />)} />
-          <Route path="/m/:memberId/invite" component={RequestInvite} />
-          <Route path="/m/:memberId" component={Profile} />
-          <Route path="/ops" component={Operations} />
-          <Route component={PageNotFound} />
-        </Switch>
-      </AppLayout>
+      <Switch>
+        <DefaultLayout exact={true} path="/" component={Splash} />
+        <DefaultLayout path="/login" component={LogIn} />
+        <DefaultLayout path="/logout" component={LogOut} />
+        <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
+        <DefaultLayout path="/me" render={() => (<Redirect to='/login' replace />)} />
+        <DefaultLayout path="/m/:memberId/invite" component={RequestInvite} />
+        <DefaultLayout path="/m/:memberId" component={Profile} />
+        <DefaultLayout path="/ops" component={Operations} />
+        <DefaultLayout component={PageNotFound} />
+      </Switch>
     </BrowserRouter>
   );
 }
