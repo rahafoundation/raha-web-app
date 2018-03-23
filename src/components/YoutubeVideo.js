@@ -21,7 +21,6 @@ export default class YoutubeVideo extends Component {
     return (
       <div className="Video">
         <object ref={v => { this.videoObject = v; }} >
-          <div><FormattedMessage id="join_video" /></div>
           <param name="allowFullScreen" value="true" />
           <embed
             className="Youtube"

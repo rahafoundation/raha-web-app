@@ -71,9 +71,11 @@ class Profile extends Component<Props> {
     const youtubeUrl = memberDoc.get('video_url');
     return (
       <div>
-        <div className="Green MemberName">{fullName}</div>
+        <h2>{fullName}</h2>
         <h3>Invite instructions</h3>
         {this.renderInviteInstructions()}
+
+        <h3><FormattedMessage id="join_video" /></h3>
         {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
         <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
       </div>
