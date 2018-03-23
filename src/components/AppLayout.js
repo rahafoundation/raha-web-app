@@ -5,6 +5,7 @@ import {
   lightGreen100,
   lightGreen300,
   lightGreen500,
+  green300,
   green500
 } from 'material-ui/styles/colors';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -57,8 +58,24 @@ const HeaderElem = styled.header`
 
     height: 100%;
 
-    *:not(:last-child) {
-      margin-right: 10px;
+    > .inviteButton {
+      height: 100%;
+      padding-right: 10px;
+      cursor: pointer;
+      transition: background .1s;
+
+      > .icon {
+        margin-right: 8px;
+      }
+
+      :hover, :active, :focus {
+        background: ${green300};
+      }
+
+      border: none;
+      background: none;
+      color: white;
+      font-size: 1rem;
     }
 
     > .loggedInUser, .logIn {
@@ -97,8 +114,11 @@ function Header(props) {
         {
           memberDetails ? (
             <React.Fragment>
-              <button onClick={handleInviteClick(fullName, inviteUrl, showModal)}>
-                <FontAwesomeIcon icon={faPlus} />
+              <button
+                className="inviteButton"
+                onClick={handleInviteClick(fullName, inviteUrl, showModal)}
+              >
+                <FontAwesomeIcon className="icon" icon={faPlus} />
                 Invite a new member
               </button>
               <Link className="loggedInUser" to="/me">{fullName}</Link>

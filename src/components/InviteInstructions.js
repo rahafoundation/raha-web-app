@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 const InviteInstructionsElem = styled.section`
   padding: 10px;
-  width: 80vw;
+  max-width: 80vw;
+  min-width: 400px;
 `;
 
 export default function InviteInstructions(props) {
