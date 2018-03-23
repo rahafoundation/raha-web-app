@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import { faHandshake, faHandPeace, faEnvelope } from '@fortawesome/fontawesome-free-regular'
+import styled from 'styled-components';
+
 import { OpCode } from '../operations';
 import { db } from '../firebaseInit';
 import { fetchOperations, OpMeta } from '../actions';
 import { getAuthMemberDoc } from '../connectors';
-import { FormattedMessage } from 'react-intl';
 import MemberThumbnail from './MemberThumbnail';
 import TrustLevel from './TrustLevel';
 import ActionButton from './ActionButton';
@@ -23,26 +27,109 @@ function isOwnProfile(uid, authMemberDoc) {
   return authMemberDoc && authMemberDoc.uid === uid;
 }
 
+const icons = {
+  trusted_by: faHandPeace,
+  trusts: faHandshake,
+  invited_by: faHandshake,
+  invited: faEnvelope
+}
+
 interface MemberListProps {
   titleId: 'trusted' | 'trusts' | 'invited_by' | 'invited',
   membersByUid: Map<string, OpMeta>
 }
 
+/********************
+ * Styled components
+ ********************
+ */
+
+const MemberListContainer = styled.div`
+
+
+  > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  .summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    background: #fafafa;
+    border-radius: 3px;
+    padding: 10px;
+
+    > .relationIcon {
+      font-size: 1.5rem;
+      margin-right: 10px;
+    }
+
+    &:focus ~ .members {
+      display: block;
+    }
+
+    > .numMembers {
+      font-weight: bold;
+    }
+  }
+`;
+
+const Members = styled.ul`
+  margin: 0;
+  list-style-type: none;
+
+  > li {
+    display: inline-block;
+    margin: .5rem;
+  }
+`;
+
+// TODO: handle via react-intl
+// TODO: convert to component, mention a few people's names as well, currently
+// inconvenient since memberDocs may not be loaded, not part of `members`
+function pluralizeMembers(members) {
+  if (members.length === 0) {
+    return "nobody yet";
+  }
+  if (members.length === 1) {
+    return "one member";
+  }
+  return `${members.length} members`;
+}
+
 function MemberList(props: MemberListProps) {
   const {titleId, membersByUid} = props;
 
+  // singleton to handle people who weren't invited by anyone—namely,
+  // Mark Ulrich and his family.
+  if (titleId === 'invited_by' && membersByUid.size === 0) {
+    return null;
+  }
   const members = Array.from(membersByUid).map(([uid: string, opMeta: OpMeta]) =>
     <MemberThumbnail key={uid} uid={uid} opMeta={opMeta} />
   );
+
   return (
-    <section key={titleId} className="MemberRelations--MemberList--section">
-      <div className="MemberRelations--MemberList--sectionTitle">
-        <FormattedMessage id={titleId} values={{value: members.length}}/>
-      </div>
-      <div className="MemberRelations--MemberList--members">{members}</div>
-    </section>
+    <MemberListContainer key={titleId}>
+      <span className="summary">
+        <FontAwesomeIcon className="relationIcon" icon={icons[titleId]} />
+        <FormattedMessage className="messageTitle" id={titleId} />&nbsp;
+        <span className="numMembers">{pluralizeMembers(members)}</span>
+      </span>
+      <Members>
+        {members.map(member => <li>{member}</li>)}
+      </Members>
+    </MemberListContainer>
   );
 }
+
+/**********
+ * Styles *
+ **********
+ */
+const MemberRelationsSection = styled.section`
+`;
 
 class MemberRelations extends Component<Props> {
 
@@ -56,6 +143,7 @@ class MemberRelations extends Component<Props> {
     }
   }
 
+  // TODO: this sort of behavior probably shouldn't happen in the component
   addOpsGroup = (fieldPath, uid) => { // TODO both???
     this.props.fetchOperations(db.collection('operations').where(fieldPath, '==', uid).orderBy('op_seq'));
   }
@@ -74,7 +162,7 @@ class MemberRelations extends Component<Props> {
   render() {
     const sections = {
       invited_by: this.props.invitedByUids,
-      invites: this.props.invitedUids,
+      invited: this.props.invitedUids,
       trusted_by: this.props.trustedByUids,
       trusts: this.props.trustsUids
     }
@@ -83,7 +171,7 @@ class MemberRelations extends Component<Props> {
       <MemberList titleId={titleId} membersByUid={sections[titleId]} />
     )
     return (
-      <section>
+      <MemberRelationsSection>
         {
           // TODO ops should also go in redux, should count number for when
           // people have different trust levels
@@ -106,7 +194,7 @@ class MemberRelations extends Component<Props> {
         }
 
         {renderedSections}
-      </section>
+      </MemberRelationsSection>
     )
   }
 }
