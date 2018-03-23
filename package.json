@@ -8,6 +8,7 @@
     "@fortawesome/fontawesome-free-regular": "^5.0.8",
     "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "@fortawesome/react-fontawesome": "^0.0.17",
+    "classnames": "^2.2.5",
     "firebase": "^4.9.0",
     "material-ui": "^0.20.0",
     "random-material-color": "^1.0.3",
