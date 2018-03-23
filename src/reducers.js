@@ -1,6 +1,16 @@
 import { combineReducers } from 'redux';
 
-import { RECEIVE_MEMBER, REQUEST_MEMBER_BY_MID, REQUEST_MEMBER_BY_UID, RECEIVE_OPS, POST_OP, ACKP_POST_OP, SET_FIREBASE_USER } from './actions';
+import {
+  RECEIVE_MEMBER,
+  REQUEST_MEMBER_BY_MID,
+  REQUEST_MEMBER_BY_UID,
+  RECEIVE_OPS,
+  POST_OP,
+  ACKP_POST_OP,
+  SET_FIREBASE_USER,
+  HIDE_MODAL,
+  SHOW_MODAL
+} from './actions';
 
 function members(state = { byMid: {}, byUid: {} }, action) {
   switch (action.type) {
@@ -120,11 +130,23 @@ function auth(state = { firebaseUser: null, isLoaded: false }, action) {
   }
 }
 
+function modal(state = { element: null }, action) {
+  switch (action.type) {
+    case HIDE_MODAL:
+      return { ...state, element: null };
+    case SHOW_MODAL:
+      return { ...state, element: action.element };
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   members,
   uidToOpMeta,
   auth,
   operations,
+  modal
 });
 
 export default rootReducer;

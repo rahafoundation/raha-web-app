@@ -7,6 +7,8 @@ import { Operation } from './operations';
 export const RECEIVE_MEMBER = 'RECEIVE_MEMBER';
 export const REQUEST_MEMBER_BY_MID = 'REQUEST_MEMBER_BY_MID';
 export const REQUEST_MEMBER_BY_UID = 'REQUEST_MEMBER_BY_UID';
+export const SHOW_MODAL = 'SHOW_MODAL';
+export const HIDE_MODAL = 'HIDE_MODAL';
 
 function requestMemberByMid(mid: string) {
   return {
@@ -30,6 +32,19 @@ function receiveMember(memberDoc: firebase.firestore.DocumentData, id: string, b
     memberDoc,
     receivedAt: Date.now(),
   };
+}
+
+export function showModal(element) {
+  return {
+    type: SHOW_MODAL,
+    element
+  }
+}
+
+export function hideModal() {
+  return {
+    type: HIDE_MODAL
+  }
 }
 
 async function fetchMemberByMid(dispatch, mid: string) {
