@@ -33,7 +33,7 @@ function AppRouter() {
         <DefaultLayout path="/login" component={LogIn} />
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
-        <DefaultLayout path="/me" render={() => (<Redirect to='/login' replace />)} />
+        <DefaultLayout path="/me" component={() => (<Redirect to='/login' replace />)} />
         <DefaultLayout path="/m/:memberId/invite" component={RequestInvite} />
         <DefaultLayout path="/m/:memberId" component={Profile} />
         <DefaultLayout path="/ops" component={Operations} />
