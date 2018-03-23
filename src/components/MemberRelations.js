@@ -44,9 +44,7 @@ interface MemberListProps {
  ********************
  */
 
-const MemberListContainer = styled.div`
-
-
+const MemberListElem = styled.div`
   > *:not(:last-child) {
     margin-bottom: 10px;
   }
@@ -99,7 +97,7 @@ function pluralizeMembers(members) {
 }
 
 function MemberList(props: MemberListProps) {
-  const {titleId, membersByUid} = props;
+  const { titleId, membersByUid } = props;
 
   // singleton to handle people who weren't invited by anyone—namely,
   // Mark Ulrich and his family.
@@ -107,20 +105,18 @@ function MemberList(props: MemberListProps) {
     return null;
   }
   const members = Array.from(membersByUid).map(([uid: string, opMeta: OpMeta]) =>
-    <MemberThumbnail key={uid} uid={uid} opMeta={opMeta} />
+    <li key={uid}><MemberThumbnail uid={uid} opMeta={opMeta} /></li>
   );
 
   return (
-    <MemberListContainer key={titleId}>
+    <MemberListElem key={titleId}>
       <span className="summary">
         <FontAwesomeIcon className="relationIcon" icon={icons[titleId]} />
         <FormattedMessage className="messageTitle" id={titleId} />&nbsp;
         <span className="numMembers">{pluralizeMembers(members)}</span>
       </span>
-      <Members>
-        {members.map(member => <li>{member}</li>)}
-      </Members>
-    </MemberListContainer>
+      <Members>{members}</Members>
+    </MemberListElem>
   );
 }
 
@@ -168,7 +164,9 @@ class MemberRelations extends Component<Props> {
     }
 
     const renderedSections = Object.keys(sections).map(titleId =>
-      <MemberList titleId={titleId} membersByUid={sections[titleId]} />
+      <MemberList
+        key={titleId} titleId={titleId} membersByUid={sections[titleId]}
+      />
     )
     return (
       <MemberRelationsSection>
@@ -188,9 +186,7 @@ class MemberRelations extends Component<Props> {
 
         {
           this.canTrustThisUser() &&
-          <ActionButton
-            key="Trust Button" toUid={this.props.uid} toMid={this.props.mid}
-          />
+          <ActionButton toUid={this.props.uid} toMid={this.props.mid} />
         }
 
         {renderedSections}
