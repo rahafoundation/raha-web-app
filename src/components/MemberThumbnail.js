@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Link from './Link';
 import styled from 'styled-components';
 import randomColor from 'random-material-color';
+import {lightGreen500} from 'material-ui/styles/colors'
 
 import { gray } from '../constants/palette';
 import { fetchMemberByUidIfNeeded, OpMeta } from '../actions';
@@ -17,11 +18,18 @@ interface Props {
   memberDoc?: firebase.firestore.DocumentData;
 }
 
-const MemberThumbnailContainer = styled(Link)`
+const MemberThumbnailElem = styled(Link)`
   display: flex;
   width: 200px;
   align-items: center;
   justify-content: flex-start;
+  border-radius: 3px;
+  transition: background-color .05s, color .05s;
+
+  :hover {
+    background: ${lightGreen500};
+    color: white;
+  }
 
   > * {
     margin: .25rem;
@@ -74,7 +82,7 @@ class MemberThumbnail extends Component<Props> {
       .split(' ').map(part => part.charAt(0)).join('').toUpperCase();
     const backgroundColor = randomColor.getColor({ text: `${mid}${initials}` });
     return (
-      <MemberThumbnailContainer
+      <MemberThumbnailElem
         color={this.props.opMeta.inDb ? undefined : gray}
         to={`/m/${mid}`}
         thumbnailBackgroundColor={backgroundColor}
@@ -82,7 +90,7 @@ class MemberThumbnail extends Component<Props> {
         { /* TODO: if thumbnail image exists, show that instead of initials */ }
         <span className="thumbnailImage">{initials}</span>
         <span className="memberName">{name}</span>
-      </MemberThumbnailContainer>
+      </MemberThumbnailElem>
     );
   }
 }
