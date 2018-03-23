@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+
 import MemberRelations from './MemberRelations';
 import YoutubeVideo from './YoutubeVideo';
-import { Redirect } from 'react-router-dom';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
   isMyProfile?: boolean;
@@ -14,6 +16,12 @@ interface Props {
   memberDoc: firebase.firestore.DocumentSnapshot;
 }
 
+const ProfileElem = styled.main`
+  > .banner {
+    display: flex;
+  }
+`
+
 class Profile extends Component<Props> {
   componentWillReceiveProps(nextProps) {
     if (nextProps.memberId) {
@@ -21,20 +29,6 @@ class Profile extends Component<Props> {
     } else if (nextProps.isMyProfile && nextProps.authFirebaseUser) {
       this.props.fetchMemberByUidIfNeeded(nextProps.authFirebaseUser.uid);
     }
-  }
-
-  renderInviteInstructions() {
-    const inviteUrl = `${window.location.origin}/m/${this.props.authMemberDoc.get('mid')}/invite`;
-    return (
-      <div>
-        <FormattedMessage id="invite_others_instructions" values={{
-          github_issue: <a href="https://github.com/rahafoundation/raha.io/issues">Github Issue</a>,
-          full_name: this.props.authMemberDoc.get('full_name'),
-          invite_link: <a href={inviteUrl}>{inviteUrl}</a>,
-          ideas_email: <a href="mailto:ideas@raha.io?subject=Raha%20Improvement">ideas@raha.io</a>,
-        }}/>
-      </div>
-    );
   }
 
   render() {
@@ -70,15 +64,13 @@ class Profile extends Component<Props> {
     const fullName = memberDoc.get('full_name');
     const youtubeUrl = memberDoc.get('video_url');
     return (
-      <div>
-        <h2>{fullName}</h2>
-        <h3>Invite instructions</h3>
-        {this.renderInviteInstructions()}
-
-        <h3><FormattedMessage id="join_video" /></h3>
-        {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
-        <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
-      </div>
+      <ProfileElem>
+        <h2 className="memberFullName">{fullName}</h2>
+        <main>
+          {youtubeUrl && <YoutubeVideo youtubeUrl={youtubeUrl} />}
+          <MemberRelations uid={memberDoc.id} mid={memberDoc.get('mid')} />
+        </main>
+      </ProfileElem>
     );
   }
 }
