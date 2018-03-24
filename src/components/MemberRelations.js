@@ -175,12 +175,14 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
         </main>
 
         <footer>
-          <button className="expandBtn" onClick={this.handleExpand(!expanded)}>
-            { expanded ?
-              "Hide full list"
-              : pluralizeRemainingMembers(numRemainingMembers)
-            }
-          </button>
+          { numRemainingMembers > 0 &&
+            <button className="expandBtn" onClick={this.handleExpand(!expanded)}>
+              {expanded ?
+                "Hide full list"
+                : pluralizeRemainingMembers(numRemainingMembers)
+              }
+            </button>
+          }
         </footer>
       </MemberListElem>
     );
