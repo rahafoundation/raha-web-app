@@ -9,7 +9,7 @@ import {
   grey200
 } from 'material-ui/styles/colors';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/fontawesome-free-solid';
+import { faUserPlus } from '@fortawesome/fontawesome-free-solid';
 
 import Link from './Link';
 import Modal from './Modal';
@@ -132,8 +132,8 @@ function Header(props) {
                 className="inviteButton"
                 onClick={handleInviteClick(fullName, inviteUrl, showModal)}
               >
-                <FontAwesomeIcon className="icon" icon={faPlus} />
-                Invite a new member
+                <FontAwesomeIcon className="icon" icon={faUserPlus} />
+                Invite
               </button>
               <Link className="loggedInUser" to="/me">{fullName}</Link>
             </React.Fragment>
