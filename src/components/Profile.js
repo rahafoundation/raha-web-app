@@ -36,6 +36,7 @@ const ProfileElem = styled.main`
   }
 
   .joinVideo {
+    max-width: 90vw;
     width: 600px;
     height: 400px;
   }
