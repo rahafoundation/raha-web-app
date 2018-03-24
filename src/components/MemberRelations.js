@@ -197,6 +197,7 @@ const MemberRelationsElem = styled.section`
 
   > * {
     flex-basis: 40%;
+    flex-grow: 1;
     margin: 10px;
   }
 `;
