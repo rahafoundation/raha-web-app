@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Link from './Link';
 import styled from 'styled-components';
 import randomColor from 'random-material-color';
-import {lightGreen500} from 'material-ui/styles/colors'
+import { interactive } from '../constants/palette';
 
 import { gray } from '../constants/palette';
 import { fetchMemberByUidIfNeeded, OpMeta } from '../actions';
@@ -18,6 +18,7 @@ interface Props {
   memberDoc?: firebase.firestore.DocumentData;
 }
 
+// TODO generalize some of these styles into a link type
 const MemberThumbnailElem = styled(Link)`
   display: flex;
   width: 200px;
@@ -26,8 +27,8 @@ const MemberThumbnailElem = styled(Link)`
   border-radius: 3px;
   transition: background-color .05s, color .05s;
 
-  :hover {
-    background: ${lightGreen500};
+  :hover, :focus, :active {
+    background: ${interactive.primary};
     color: white;
   }
 
