@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import CodeOfConduct from './CodeOfConduct';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
@@ -10,6 +10,7 @@ import RequestInvite from './RequestInvite';
 import Splash from './Splash';
 import AppLayout from './AppLayout';
 import '../App.css';
+import InviteMissing from './InviteMissing';
 
 const DefaultLayout = (props) => {
   const {component, ...rest} = props;
@@ -30,10 +31,10 @@ function AppRouter() {
     <BrowserRouter>
       <Switch>
         <DefaultLayout exact={true} path="/" component={Splash} />
+        <DefaultLayout path="/invite_missing" component={InviteMissing} />
         <DefaultLayout path="/login" component={LogIn} />
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
-        <DefaultLayout path="/me" component={() => (<Redirect to='/login' replace />)} />
         <DefaultLayout path="/m/:memberId/invite" component={RequestInvite} />
         <DefaultLayout path="/m/:memberId" component={Profile} />
         <DefaultLayout path="/ops" component={Operations} />

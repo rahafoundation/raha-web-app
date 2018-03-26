@@ -109,7 +109,7 @@ export class RequestInvite extends Component {
 
   render() {
     if (this.state.submitted) {
-      // TODO this will move into <ProfilePending /> component shown at /me
+      // TODO we should instead redirect to their /m/memberId profile, which should display this message
       return (
         <div>
           Your video has been submitted for review! After approval by us
@@ -125,12 +125,17 @@ export class RequestInvite extends Component {
     }
     return (
       <div>
-        <b>{<FormattedMessage id="request_invite" values={{
-          full_name: this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null,
-          mid: this.props.memberId
-        }} />}</b>
+        <b>
+          <FormattedMessage
+            id="request_invite"
+            values={{
+              full_name: this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null,
+              mid: this.props.memberId
+            }}
+          />
+        </b>
         <div>
-          <FormattedMessage id="invite_me_intro" values={{completely_free: <b><FormattedMessage id="completely_free" /></b>}} />
+          <FormattedMessage id="invite_me_intro" values={{ completely_free: <b><FormattedMessage id="completely_free" /></b> }} />
         </div>
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </div >

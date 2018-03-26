@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { interactive } from '../constants/palette';
+import { FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { getAuthMemberDoc } from '../connectors';
 import { getTrustOperation } from '../operations';
+import { interactive } from '../constants/palette';
 import { postOperation } from '../actions';
 
 // TODO code duplication in functions/srs/index.ts, decomp.
@@ -51,13 +52,13 @@ class ActionButton extends Component<Props> {
     if (this.props.authMemberDoc.id && this.props.authMemberDoc.get('mid')) {
       return (
         <ButtonElem onClick={this.onTrustClick} className={this.props.className}>
-          Trust
+          <FormattedMessage id="action_button.trust" />
         </ButtonElem>
       );
     } else {
       return (
         <ButtonElem onClick={this.onInviteClick} className={this.props.className}>
-          Share Invite Video to Join
+          <FormattedMessage id="action_button.share_invite" />
         </ButtonElem>
       );
     }
