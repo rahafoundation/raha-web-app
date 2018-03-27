@@ -10,7 +10,7 @@ import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
 
 const LogIn = ({ authFirebaseUser, authMemberDocIsLoaded, authMemberDoc, noRedirect }) => {
   const uiConfig = {
-    signInFlow: 'popup', // TODO will 'redirect' fix some of our issues?
+    signInFlow: 'redirect',
     signInOptions: [
       firebase.auth.FacebookAuthProvider.PROVIDER_ID,
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,

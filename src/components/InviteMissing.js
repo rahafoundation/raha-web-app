@@ -1,3 +1,10 @@
+/**
+ * For users who are logged in but have not issued any REQUEST_INVITE operation,
+ * they have no member id so the page /m/:memberId does not exist. Instead after
+ * log in they will be taken to this page at /invite_missing where we explain
+ * how they can request and invite to become Raha members.
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';

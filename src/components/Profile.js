@@ -4,11 +4,12 @@ import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import ActionButton from './ActionButton';
+import Loading from './Loading';
 import MemberRelations from './MemberRelations';
 import TrustLevel from './TrustLevel';
-import ActionButton from './ActionButton';
 import YoutubeVideo from './YoutubeVideo';
-import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
+import { getAuthMemberDocIsLoaded, getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 import { getMemberUidToOp } from '../helpers/ops';
 import { OpCode } from '../operations';
@@ -60,23 +61,12 @@ class Profile extends Component<Props> {
   }
 
   render() {
-    const { authFirebaseUser, authIsLoaded, memberDoc } = this.props;
-    if (!authIsLoaded || !memberDoc) {
+    const { authFirebaseUser, authMemberDocIsLoaded, memberDoc } = this.props;
+    if (!authMemberDocIsLoaded) {
       return <Loading />;
     }
     const ownProfile = this.isOwnProfile();
     if (!memberDoc || !memberDoc.get('mid')) {
-      if (!this.props.memberId) {
-        return <FormattedMessage  // TODO this does not work
-          id="invite_missing"
-          values={{
-            display_name: authFirebaseUser.displayName,
-            help_email: <a href="mailto:help@raha.io">help@raha.io</a>,
-            login_account: <b>{authFirebaseUser.email}</b>,
-            logout: <Link to='/logout'>logout</Link>
-          }}
-        />;
-      }
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
     }
@@ -98,9 +88,8 @@ class Profile extends Component<Props> {
             }
           </h1>
           {
-            // TODO ops should also go in redux, should count number for when
-            // people have different trust levels
             this.props.trustedByUids !== undefined &&
+            // TODO pass in correct props
             <TrustLevel
               ownProfile={ownProfile}
               trustLevel={3}
@@ -125,10 +114,6 @@ class Profile extends Component<Props> {
   }
 }
 
-const Loading = () => {
-  return <div>Loading</div>;
-};
-
 function mapStateToProps(state, ownProps) {
   const authMemberDoc = getAuthMemberDoc(state);
   const memberId = ownProps.match.params.memberId;
@@ -137,7 +122,7 @@ function mapStateToProps(state, ownProps) {
   return {
     authFirebaseUser: state.auth.firebaseUser,
     authMemberDoc,
-    authIsLoaded: state.auth.isLoaded,
+    authMemberDocIsLoaded: getAuthMemberDocIsLoaded(state),
     memberDoc: getMemberDocByMid(state, memberId),
     memberId,
     trustedByUids: getMemberUidToOp(receivedOps, OpCode.TRUST, x => x.creator_uid)

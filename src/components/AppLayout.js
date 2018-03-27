@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import {
   lightGreen300,
@@ -43,15 +43,15 @@ const LogoElem = styled.span`
   padding: 10px;
 `;
 
-const LogoImg = styled(LogoIcon)`
+const LogoImg = styled(LogoIcon) `
   margin-right: 20px;
 `;
 
 function Logo() {
   return (
-  <LogoElem>
-    <LogoImg />
-    Raha
+    <LogoElem>
+      <LogoImg />
+      Raha
   </LogoElem>
   );
 }
@@ -127,21 +127,18 @@ function Header(props) {
     <HeaderElem>
       <Logo />
       <span className="userSection">
-        {
-          [
-            inviteUrl &&
-                <button
-                  key="inviteButton"
-                  className="inviteButton"
-                  onClick={handleInviteClick(fullName, inviteUrl, showModal)}
-                >
-                  <FontAwesomeIcon className="icon" icon={faUserPlus} />
-                  Invite
-                </button>,
-            profileUrl && <Link key="profile" className="loggedInUser" to={profileUrl}>{fullName}</Link>,
-            !profileUrl && <Link key="login" className="logIn" to="/login"><FormattedMessage id="app_layout.log_in" /></Link>
-          ]
+        {inviteUrl &&
+          <button
+            className="inviteButton"
+            onClick={handleInviteClick(fullName, inviteUrl, showModal)}
+          >
+            <FontAwesomeIcon className="icon" icon={faUserPlus} />Invite
+          </button>
         }
+        {profileUrl &&
+          <Link className="loggedInUser" to={profileUrl}>{fullName}</Link>}
+        {!profileUrl &&
+          <Link className="logIn" to="/login"><FormattedMessage id="app_layout.log_in" /></Link>}
       </span>
     </HeaderElem>
   );
