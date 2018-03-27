@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import {
   lightGreen300,
@@ -10,11 +10,12 @@ import {
 } from 'material-ui/styles/colors';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/fontawesome-free-solid';
+import { FormattedMessage } from 'react-intl';
 
 import Link from './Link';
 import Modal from './Modal';
 import InviteInstructions from './InviteInstructions'
-import { getAuthMemberDoc } from '../connectors';
+import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
 import { showModal as showModalAction } from '../actions';
 import LogoIcon from './LogoIcon';
 
@@ -42,15 +43,15 @@ const LogoElem = styled.span`
   padding: 10px;
 `;
 
-const LogoImg = styled(LogoIcon)`
+const LogoImg = styled(LogoIcon) `
   margin-right: 20px;
 `;
 
 function Logo() {
   return (
-  <LogoElem>
-    <LogoImg />
-    Raha
+    <LogoElem>
+      <LogoImg />
+      Raha
   </LogoElem>
   );
 }
@@ -117,29 +118,27 @@ function handleInviteClick(fullName, inviteUrl, showModal) {
       inviteUrl={inviteUrl}
     />);
 }
+
 function Header(props) {
   const { memberDetails, showModal } = props;
-  const { fullName, inviteUrl } = memberDetails || {};
+  const { fullName, inviteUrl, profileUrl } = memberDetails || {};
 
   return (
     <HeaderElem>
       <Logo />
       <span className="userSection">
-        {
-          memberDetails ? (
-            <React.Fragment>
-              <button
-                className="inviteButton"
-                onClick={handleInviteClick(fullName, inviteUrl, showModal)}
-              >
-                <FontAwesomeIcon className="icon" icon={faUserPlus} />
-                Invite
-              </button>
-              <Link className="loggedInUser" to="/me">{fullName}</Link>
-            </React.Fragment>
-          )
-          : <Link className="logIn" to="/login">Log in</Link>
+        {inviteUrl &&
+          <button
+            className="inviteButton"
+            onClick={handleInviteClick(fullName, inviteUrl, showModal)}
+          >
+            <FontAwesomeIcon className="icon" icon={faUserPlus} />Invite
+          </button>
         }
+        {profileUrl &&
+          <Link className="loggedInUser" to={profileUrl}>{fullName}</Link>}
+        {!profileUrl &&
+          <Link className="logIn" to="/login"><FormattedMessage id="app_layout.log_in" /></Link>}
       </span>
     </HeaderElem>
   );
@@ -153,15 +152,22 @@ const AppLayoutElem = styled.div`
 `;
 
 export function AppLayoutView(props) {
-  const { authMemberDoc, showModal } = props;
-  const headerProps = {
-    memberDetails: authMemberDoc && {
+  const { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded, showModal } = props;
+  let memberDetails = false;  // TODO do not overload memberDetails with multiple types
+  if (authMemberDoc) {  // TODO if invite missing
+    const profileUrl = `/m/${authMemberDoc.get('mid')}`;
+    memberDetails = {
       fullName: authMemberDoc.get('full_name'),
-      inviteUrl: `${window.location.origin}/m/${authMemberDoc.get('mid')}/invite`
-    },
-    showModal
-  };
-
+      inviteUrl: `${window.location.origin}${profileUrl}/invite`,
+      profileUrl
+    };
+  } else if (authMemberDocIsLoaded && authFirebaseUser) {
+    memberDetails = {
+      fullName: authFirebaseUser.displayName,
+      profileUrl: '/invite_missing'
+    };
+  }
+  const headerProps = { memberDetails, showModal };
   return (
     <AppLayoutElem id="appLayout">
       <Header {...headerProps} />
@@ -176,9 +182,9 @@ export function AppLayoutView(props) {
 function mapStateToProps(state, ownProps) {
   const authIsLoaded = state.auth.isLoaded;
   const authFirebaseUser = state.auth.firebaseUser;
-  const authMemberDoc = getAuthMemberDoc(state);  // TODO will we use this?
-
-  return { authFirebaseUser, authMemberDoc, authIsLoaded };
+  const authMemberDoc = getAuthMemberDoc(state);
+  const authMemberDocIsLoaded = getAuthMemberDocIsLoaded(state);
+  return { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded, authIsLoaded };
 }
 
 function mapDispatchToProps(dispatch) {

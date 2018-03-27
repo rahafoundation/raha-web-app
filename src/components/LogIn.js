@@ -4,12 +4,13 @@ import { Redirect } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { FirebaseAuth } from 'react-firebaseui';
 
+import Loading from './Loading';
 import { auth } from '../firebaseInit';
-import { getAuthMemberDoc } from '../connectors';
+import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
 
-const LogIn = ({ authMemberDoc, noRedirect }) => {
+const LogIn = ({ authFirebaseUser, authMemberDocIsLoaded, authMemberDoc, noRedirect }) => {
   const uiConfig = {
-    signInFlow: 'popup',
+    signInFlow: 'redirect',
     signInOptions: [
       firebase.auth.FacebookAuthProvider.PROVIDER_ID,
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -22,18 +23,24 @@ const LogIn = ({ authMemberDoc, noRedirect }) => {
       }
     },
   };
-  if (authMemberDoc && !noRedirect) {
-    return (
-      <Redirect to={`/m/${authMemberDoc.get('mid')}`} replace />
-    )
-  } else {
-    return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
+  if (!noRedirect) {
+    if (!authMemberDocIsLoaded) return <Loading />;
+    if (authMemberDoc && authMemberDoc.exists) {
+      return <Redirect to={`/m/${authMemberDoc.get('mid')}`} />;
+    }
+    if (authFirebaseUser) {
+      return <Redirect to={`/invite_missing`} />;
+    }
   }
+  return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
 };
 
 function mapStateToProps(state, ownProps) {
-  const authMemberDoc = getAuthMemberDoc(state);
-  return { authMemberDoc };
+  return {
+    authFirebaseUser: state.auth.firebaseUser,
+    authMemberDocIsLoaded: getAuthMemberDocIsLoaded(state),
+    authMemberDoc: getAuthMemberDoc(state)
+  };
 }
 
 export default connect(mapStateToProps)(LogIn);

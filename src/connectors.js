@@ -1,5 +1,13 @@
 function getMemberDoc(member) {
-  return member && member.memberDoc ? member.memberDoc : null;
+  return member && member.memberDoc && member.memberDoc.exists ? member.memberDoc : null;
+}
+
+export function getAuthMemberDocIsLoaded(state) {
+  if (!state.auth.isLoaded) return false;
+  const authFirebaseUser = state.auth.firebaseUser;
+  if (!authFirebaseUser) return true;
+  const member = state.members.byUid[authFirebaseUser.uid];
+  return member && !member.isFetching;
 }
 
 export function getAuthMemberDoc(state) {
