@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
+
 import { getRequestInviteOperation } from '../operations';
 import { getMemberId } from '../members';
 import { postOperation, fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import LogIn from './LogIn';
 import YoutubeVideo, { getYoutubeUrlVideoId } from './YoutubeVideo';
+
+const RequestInviteElem = styled.main`
+  > .completelyFree {
+    font-weight: bold;
+  }
+
+  > .requestInviteMessage {
+    font-weight: bold;
+  }
+`;
 
 export class RequestInvite extends Component {
   constructor(props) {
@@ -59,7 +71,7 @@ export class RequestInvite extends Component {
       const videoUrl = this.state.videoUrl;
       const requestOp = getRequestInviteOperation(creatorMid, this.props.authFirebaseUser.uid, toMid, toUid, fullName, videoUrl);
       await this.props.postOperation(requestOp);  // TODO handle error
-      this.setState({ submitted: true });
+      this.setState({ submitted: true, creatorMid });
     }
   }
 
@@ -68,6 +80,7 @@ export class RequestInvite extends Component {
   }
 
   renderLogIn() {
+    // TODO while login is loading user should not see the rest of page
     return (
       <div>
         <LogIn noRedirect />
@@ -100,21 +113,26 @@ export class RequestInvite extends Component {
           Invite me!
         </button>
         <div className="InviteError">{this.state.errorMessage}</div>
-
-        <h3><FormattedMessage id="join_video" /></h3>
-        {this.state.videoUrl && <YoutubeVideo youtubeUrl={this.state.videoUrl} />}
+        {this.state.videoUrl &&
+          <div>
+            <h3><FormattedMessage id="join_video" /></h3>
+            <YoutubeVideo youtubeUrl={this.state.videoUrl} />
+          </div>
+        }
       </div>
     );
   }
 
   render() {
+    // TODO check if user already invited
     if (this.state.submitted) {
-      // TODO we should instead redirect to their /m/memberId profile, which should display this message
+      // TODO we should instead redirect to profileUrl, which should display this message along with their video.
+      const profileUrl = `${window.location.origin}/m/${this.state.creatorMid}`;
       return (
         <div>
           Your video has been submitted for review! After approval by us
           and {this.props.toMemberDoc.get('full_name')}, your profile will appear at
-          to <a href="https://raha.io/me">https://raha.io/me</a>.
+          <a href={profileUrl}>{profileUrl}</a>.
           We are available at <a href="mailto:help@raha.io">help@raha.io</a> if you have any questions.
         </div>
       );
@@ -124,8 +142,8 @@ export class RequestInvite extends Component {
       return <div>Loading</div>;
     }
     return (
-      <div>
-        <b>
+      <RequestInviteElem>
+        <div className="requestInviteMessage">
           <FormattedMessage
             id="request_invite"
             values={{
@@ -133,12 +151,12 @@ export class RequestInvite extends Component {
               mid: this.props.memberId
             }}
           />
-        </b>
+        </div>
         <div>
-          <FormattedMessage id="invite_me_intro" values={{ completely_free: <b><FormattedMessage id="completely_free" /></b> }} />
+          <FormattedMessage id="invite_me_intro" values={{ completely_free: <span className="completelyFree"><FormattedMessage id="completely_free" /></span> }} />
         </div>
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
-      </div >
+      </RequestInviteElem>
     );
   }
 }

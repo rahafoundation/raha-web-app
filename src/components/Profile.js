@@ -49,8 +49,10 @@ class Profile extends Component<Props> {
     }
   }
 
+  // TODO should be can take action
   canTrustThisUser() {
-    return this.props.authMemberDoc !== null
+    return !this.isOwnProfile()
+      && this.props.authMemberDoc !== null
       && this.props.authMemberDoc.id !== this.props.uid
       && !this.props.trustedByUids.has(this.props.authMemberDoc.id);
   }
@@ -87,9 +89,9 @@ class Profile extends Component<Props> {
               />
             }
           </h1>
+          {/* // TODO make below work, pass in correct props
           {
             this.props.trustedByUids !== undefined &&
-            // TODO pass in correct props
             <TrustLevel
               ownProfile={ownProfile}
               trustLevel={3}
@@ -97,7 +99,7 @@ class Profile extends Component<Props> {
               trustedByLevel2={null}
               trustedByLevel3={null}
             />
-          }
+          } */}
         </header>
 
         <main>

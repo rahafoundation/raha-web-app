@@ -15,7 +15,7 @@ import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
 
 // TODO redirect if you are registered
 function InviteMissing({ authFirebaseUser, authIsLoaded, authMemberDocIsLoaded, authMemberDoc }) {
-  if (!authIsLoaded && authFirebaseUser === null) {
+  if (authIsLoaded && authFirebaseUser === null) {
     return <Redirect to="/login" />;
   }
   if (!authMemberDocIsLoaded) {

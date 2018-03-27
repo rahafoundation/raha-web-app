@@ -48,7 +48,7 @@ input, textarea {
   background-color: #2A945E;
   border-color: #2A945E;
   display: inline-block;
-  font-weight: 400;
+  font-weight: bold;
   line-height: 1.25;
   text-align: center;
   white-space: nowrap;
