@@ -153,7 +153,7 @@ const AppLayoutElem = styled.div`
 
 export function AppLayoutView(props) {
   const { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded, showModal } = props;
-  let memberDetails = false;
+  let memberDetails = false;  // TODO do not overload memberDetails with multiple types
   if (authMemberDoc) {  // TODO if invite missing
     const profileUrl = `/m/${authMemberDoc.get('mid')}`;
     memberDetails = {
