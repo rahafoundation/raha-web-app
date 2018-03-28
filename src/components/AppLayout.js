@@ -10,7 +10,7 @@ import {
 } from 'material-ui/styles/colors';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/fontawesome-free-solid';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage as FM } from 'react-intl';
 
 import Link from './Link';
 import Modal from './Modal';
@@ -138,7 +138,7 @@ function Header(props) {
         {profileUrl &&
           <Link className="loggedInUser" to={profileUrl}>{fullName}</Link>}
         {!profileUrl &&
-          <Link className="logIn" to="/login"><FormattedMessage id="app_layout.log_in" /></Link>}
+          <Link className="logIn" to="/login"><FM id="app_layout.log_in" /></Link>}
       </span>
     </HeaderElem>
   );

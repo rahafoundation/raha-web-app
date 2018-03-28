@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage as FM } from 'react-intl';
 import { Link, Redirect } from 'react-router-dom';
 
 import Loading from './Loading';
@@ -25,7 +25,7 @@ function InviteMissing({ authFirebaseUser, authIsLoaded, authMemberDocIsLoaded, 
     return <Redirect to={`/m/${authMemberDoc.get('mid')}`} />;
   }
   return (
-    <FormattedMessage
+    <FM
       id="invite_missing"
       values={{
         display_name: authFirebaseUser.displayName,

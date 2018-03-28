@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage as FM } from 'react-intl';
 import { connect } from 'react-redux';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import { faHandshake, faHandPeace, faEnvelope } from '@fortawesome/fontawesome-free-regular'
@@ -165,7 +165,7 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
       <MemberListElem key={titleId} expanded={expanded}>
         <header>
           <FontAwesomeIcon className="relationIcon" icon={icons[titleId]} />
-          <FormattedMessage className="messageTitle" id={titleId} />&nbsp;
+          <FM className="messageTitle" id={titleId} />&nbsp;
         </header>
         <main>
           {members.length === 0 &&
