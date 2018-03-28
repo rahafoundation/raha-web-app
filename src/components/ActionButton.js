@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage as FM } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -52,13 +52,13 @@ class ActionButton extends Component<Props> {
     if (this.props.authMemberDoc.id && this.props.authMemberDoc.get('mid')) {
       return (
         <ButtonElem onClick={this.onTrustClick} className={this.props.className}>
-          <FormattedMessage id="action_button.trust" />
+          <FM id="action_button.trust" />
         </ButtonElem>
       );
     } else {
       return (
         <ButtonElem onClick={this.onInviteClick} className={this.props.className}>
-          <FormattedMessage id="action_button.share_invite" />
+          <FM id="action_button.share_invite" />
         </ButtonElem>
       );
     }

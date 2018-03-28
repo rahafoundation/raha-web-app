@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage as FM } from 'react-intl';
 
 import { getRequestInviteOperation } from '../operations';
 import { getMemberId } from '../members';
@@ -84,7 +84,7 @@ export class RequestInvite extends Component {
     return (
       <div>
         <LogIn noRedirect />
-        <FormattedMessage id="sign_up_above" />
+        <FM id="sign_up_above" />
       </div>
     );
   }
@@ -115,7 +115,7 @@ export class RequestInvite extends Component {
         <div className="InviteError">{this.state.errorMessage}</div>
         {this.state.videoUrl &&
           <div>
-            <h3><FormattedMessage id="join_video" /></h3>
+            <h3><FM id="join_video" /></h3>
             <YoutubeVideo youtubeUrl={this.state.videoUrl} />
           </div>
         }
@@ -144,7 +144,7 @@ export class RequestInvite extends Component {
     return (
       <RequestInviteElem>
         <div className="requestInviteMessage">
-          <FormattedMessage
+          <FM
             id="request_invite"
             values={{
               full_name: this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null,
@@ -153,7 +153,7 @@ export class RequestInvite extends Component {
           />
         </div>
         <div>
-          <FormattedMessage id="invite_me_intro" values={{ completely_free: <span className="completelyFree"><FormattedMessage id="completely_free" /></span> }} />
+          <FM id="invite_me_intro" values={{ completely_free: <span className="completelyFree"><FM id="completely_free" /></span> }} />
         </div>
         {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
       </RequestInviteElem>
