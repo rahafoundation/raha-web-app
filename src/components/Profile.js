@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { FormattedMessage as FM } from 'react-intl';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import ActionButton from './ActionButton';
 import Loading from './Loading';
 import MemberRelations from './MemberRelations';
-import TrustLevel from './TrustLevel';
 import YoutubeVideo from './YoutubeVideo';
 import { getAuthMemberDocIsLoaded, getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
@@ -63,11 +60,10 @@ class Profile extends Component<Props> {
   }
 
   render() {
-    const { authFirebaseUser, authMemberDocIsLoaded, memberDoc } = this.props;
+    const { authMemberDocIsLoaded, memberDoc } = this.props;
     if (!authMemberDocIsLoaded) {
       return <Loading />;
     }
-    const ownProfile = this.isOwnProfile();
     if (!memberDoc || !memberDoc.get('mid')) {
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
