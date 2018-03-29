@@ -24,8 +24,8 @@ function createMemberFromOperation(operation) {
     }
 
     const {
-        // unused to_uid,
-        // unused to_mid,
+        to_uid,
+        to_mid,
         video_url,
         full_name
     } = data;
@@ -40,8 +40,8 @@ function createMemberFromOperation(operation) {
         request_invite_block_at: block_at,
         request_invite_block_seq: block_seq,
         request_invite_op_seq: op_seq,
-        request_invite_from_uid: creator_uid,
-        request_invite_from_mid: creator_mid,
+        request_invite_from_uid: to_uid,
+        request_invite_from_mid: to_mid,
         video_url,
     });
 }
