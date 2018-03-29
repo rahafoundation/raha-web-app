@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import ActionButton from './ActionButton';
 import Loading from './Loading';
 import MemberRelations from './MemberRelations';
+import TrustLevel from './TrustLevel';
 import YoutubeVideo from './YoutubeVideo';
 import { getAuthMemberDocIsLoaded, getAuthMemberDoc, getMemberDocByMid } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
@@ -68,6 +69,7 @@ class Profile extends Component<Props> {
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
     }
+    const ownProfile = this.isOwnProfile();
     const fullName = memberDoc.get('full_name');
     const youtubeUrl = memberDoc.get('video_url');
     return (
@@ -85,17 +87,17 @@ class Profile extends Component<Props> {
               />
             }
           </h1>
-          {/* // TODO make below work, pass in correct props
           {
             this.props.trustedByUids !== undefined &&
+            // TODO pass in correct props. Should MemberRelations mapStateToProps be in redux?
             <TrustLevel
               ownProfile={ownProfile}
-              trustLevel={3}
+              trustLevel={memberDoc.get('invite_confirmed') ? 3 : 0}
               networkJoinDate={null}
               trustedByLevel2={null}
               trustedByLevel3={null}
             />
-          } */}
+          }
         </header>
 
         <main>
