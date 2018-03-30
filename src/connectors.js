@@ -1,4 +1,4 @@
-function getMemberDoc(member) {
+export function getMemberDoc(member) {
   return member && member.memberDoc && member.memberDoc.exists ? member.memberDoc : null;
 }
 
