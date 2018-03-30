@@ -7,7 +7,7 @@ import Loading from './Loading';
 import MemberRelations from './MemberRelations';
 import TrustLevel from './TrustLevel';
 import YoutubeVideo from './YoutubeVideo';
-import { getAuthMemberDocIsLoaded, getAuthMemberDoc, getMemberDocByMid } from '../connectors';
+import { getAuthMemberDocIsLoaded, getAuthMemberDoc, getMemberDoc } from '../connectors';
 import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
 import { getMemberUidToOp } from '../helpers/ops';
 import { OpCode } from '../operations';
@@ -61,10 +61,11 @@ class Profile extends Component<Props> {
   }
 
   render() {
-    const { authMemberDocIsLoaded, memberDoc } = this.props;
-    if (!authMemberDocIsLoaded) {
+    const { authMemberDocIsLoaded, member } = this.props;
+    if (!authMemberDocIsLoaded || !member || member.isFetching) {
       return <Loading />;
     }
+    const memberDoc = getMemberDoc(member);
     if (!memberDoc || !memberDoc.get('mid')) {
       // TODO make below message nice page
       return <div>Member "{this.props.memberId}" does not exist</div>;
@@ -123,8 +124,8 @@ function mapStateToProps(state, ownProps) {
     authFirebaseUser: state.auth.firebaseUser,
     authMemberDoc,
     authMemberDocIsLoaded: getAuthMemberDocIsLoaded(state),
-    memberDoc: getMemberDocByMid(state, memberId),
     memberId,
+    member: state.members.byMid[memberId],
     trustedByUids: getMemberUidToOp(receivedOps, OpCode.TRUST, x => x.creator_uid)
   };
 }
