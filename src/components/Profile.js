@@ -82,8 +82,8 @@ class Profile extends Component<Props> {
               this.canTrustThisUser() &&
               <ActionButton
                 className="trustButton"
-                toUid={this.props.uid}
-                toMid={this.props.mid}
+                toUid={memberDoc.id}
+                toMid={memberDoc.get('mid')}
               />
             }
           </h1>
