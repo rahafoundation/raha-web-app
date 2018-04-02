@@ -1,3 +1,4 @@
 {
+  // use the version of typescript in the actual project
   "typescript.tsdk": "node_modules/typescript/lib"
 }
