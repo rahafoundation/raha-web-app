@@ -1,15 +1,21 @@
-import * as React from 'react';
-import ReactModal from 'react-modal';
-import { connect } from 'react-redux';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/fontawesome-free-solid';
-import styled from 'styled-components';
+import { faTimes } from "@fortawesome/fontawesome-free-solid";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import * as React from "react";
+import * as ReactModal from "react-modal";
+import {
+  connect,
+  Dispatch,
+  MapDispatchToProps,
+  MapStateToProps
+} from "react-redux";
+import styled from "styled-components";
 
-import { hideModal } from '../actions';
+import { hideModal as hideModalAction } from "../actions";
+import { AppState } from "../store";
 
 // necessary as per react-modal docs for accessibility
 if (document.getElementById("root")) {
-  ReactModal.setAppElement('#root');
+  ReactModal.setAppElement("#root");
 }
 
 const CloseButton = styled.button`
@@ -22,50 +28,68 @@ const CloseButton = styled.button`
   color: gray;
   cursor: pointer;
 
-  :hover, :focus, :active {
+  :hover,
+  :focus,
+  :active {
     color: lightgray;
   }
 `;
 
 const customModalContentStyle = {
-  position: 'fixed',
-  top: '50%',
-  right: 'auto',
-  bottom: 'auto',
-  left: '50%',
-  transform: 'translate(-50%,-50%)',
+  position: "fixed",
+  top: "50%",
+  right: "auto",
+  bottom: "auto",
+  left: "50%",
+  transform: "translate(-50%,-50%)",
   outline: 0
 };
 
-export function Modal(props) {
+interface StateProps {
+  modalElem: React.ReactNode;
+}
+interface DispatchProps {
+  hideModal: () => void;
+}
+interface OwnProps {}
+type Props = OwnProps & StateProps & DispatchProps;
+
+export const Modal: React.StatelessComponent<Props> = props => {
   const { hideModal, modalElem } = props;
 
   return (
     <ReactModal
       isOpen={!!modalElem}
-      onRequestClose={ hideModal }
-      style={{content: customModalContentStyle}}
+      onRequestClose={hideModal}
+      style={{ content: customModalContentStyle }}
     >
       <div>
         <CloseButton onClick={hideModal}>
           <FontAwesomeIcon icon={faTimes} />
         </CloseButton>
-        { modalElem }
+        {modalElem}
       </div>
     </ReactModal>
   );
-}
+};
 
-function mapStateToProps(state) {
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  AppState
+> = state => {
   return {
     modalElem: state.modal.element
   };
-}
+};
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps: MapDispatchToProps<
+  DispatchProps,
+  OwnProps
+> = dispatch => {
   return {
-    hideModal: () => dispatch(hideModal())
+    hideModal: () => dispatch(hideModalAction())
   };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Modal);

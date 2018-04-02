@@ -1,14 +1,19 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { connect } from 'react-redux';
-import { FormattedMessage as FM } from 'react-intl';
+import * as React from "react";
+import { FormattedMessage } from "react-intl";
+import { connect } from "react-redux";
+import styled from "styled-components";
 
-import { getRequestInviteOperation } from '../operations';
-import { getMemberId } from '../members';
-import { postOperation, fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from '../actions';
-import { getAuthMemberDoc, getMemberDocByMid } from '../connectors';
-import LogIn from './LogIn';
-import YoutubeVideo, { getYoutubeUrlVideoId } from './YoutubeVideo';
+import {
+  fetchMemberByMidIfNeeded,
+  fetchMemberByUidIfNeeded,
+  postOperation
+} from "../actions";
+import { getMemberDocByMid } from "../connectors";
+import { getMemberId, MemberDoc } from "../members";
+import { getRequestInviteOperation } from "../operations";
+import { AppState } from "../store";
+import LogIn from "./LogIn";
+import YoutubeVideo, { getYoutubeUrlVideoId } from "./YoutubeVideo";
 
 const RequestInviteElem = styled.main`
   > .completelyFree {
@@ -20,25 +25,55 @@ const RequestInviteElem = styled.main`
   }
 `;
 
-export class RequestInvite extends Component {
-  constructor(props) {
+interface State {
+  videoUrl: string;
+  toUid: string;
+  errorMessage: string;
+  // TODO: why is this here if it's already in state?
+  fullName: string | null;
+  submitted?: boolean;
+  creatorMid?: string;
+}
+
+// TODO: could be more but this is a really confusing component
+// TODO: this seems to be duplicated in multiple places
+interface OwnProps {
+  match: { params: { memberId: string } };
+}
+
+type Props = OwnProps & {
+  fullName: string | null;
+  postOperation: typeof postOperation;
+  fetchMemberByMidIfNeeded: typeof fetchMemberByMidIfNeeded;
+  fetchMemberByUidIfNeeded: typeof fetchMemberByUidIfNeeded;
+  isAuthLoaded: boolean;
+  isAuthMemberDocLoaded: boolean;
+  isToMemberDocLoaded: boolean;
+  memberId: string;
+  toMemberDoc: MemberDoc;
+  notSignedIn: boolean;
+  authFirebaseUser: { uid: string };
+};
+
+export class RequestInvite extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
-      videoUrl: '',
-      toUid: '',
-      errorMessage: '',
-      fullName: props.fullName,
+      videoUrl: "",
+      toUid: "",
+      errorMessage: "",
+      fullName: props.fullName
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  public componentWillReceiveProps(nextProps: Props) {
     if (nextProps.fullName !== this.props.fullName) {
       this.setState({ fullName: nextProps.fullName });
     }
     this.fetchIfNeeded(nextProps);
   }
 
-  fetchIfNeeded(props) {
+  public fetchIfNeeded(props: Props) {
     // TODO this logic very similar to Profile.componentWillReceiveProps.
     // Decomp/https://reactjs.org/docs/higher-order-components.html/https://github.com/acdlite/recompose
     if (props.memberId) {
@@ -49,53 +84,64 @@ export class RequestInvite extends Component {
     }
   }
 
-  setVideoURL = async (event: any): void => {
-    this.setState({ videoUrl: event.target.value })
-  }
+  public setVideoURL = async (
+    event: React.FormEvent<HTMLInputElement>
+  ): Promise<void> => {
+    this.setState({ videoUrl: event.currentTarget.value });
+  };
 
-  setFullName = async (event: any): void => {
-    this.setState({ fullName: event.target.value });
-  }
+  public setFullName = async (
+    event: React.FormEvent<HTMLInputElement>
+  ): Promise<void> => {
+    this.setState({ fullName: event.currentTarget.value });
+  };
 
-  handleOnSubmit = async (event: any): void => {
+  public handleOnSubmit = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
     event.stopPropagation();
     if (!getYoutubeUrlVideoId(this.state.videoUrl)) {
       // TODO instant validate instead of on submit, and make sure can play
-      this.setState({ errorMessage: 'Please enter a valid Youtube video url' });
+      this.setState({ errorMessage: "Please enter a valid Youtube video url" });
     } else {
       const toMemberDoc = this.props.toMemberDoc;
       const toUid = toMemberDoc.id;
-      const toMid = toMemberDoc.get('mid');
+      const toMid = toMemberDoc.get("mid");
       const fullName = this.state.fullName;
-      const creatorMid = getMemberId(fullName);
+      // TODO: is this how we want to handle lack of name?
+      const creatorMid = getMemberId(fullName || "");
       const videoUrl = this.state.videoUrl;
-      const requestOp = getRequestInviteOperation(creatorMid, this.props.authFirebaseUser.uid, toMid, toUid, fullName, videoUrl);
-      await this.props.postOperation(requestOp);  // TODO handle error
+      // TODO: should null fullName be handled this way?
+      const requestOp = getRequestInviteOperation(
+        creatorMid,
+        this.props.authFirebaseUser.uid,
+        toMid,
+        toUid,
+        fullName || "",
+        videoUrl
+      );
+      await this.props.postOperation(requestOp); // TODO handle error
       this.setState({ submitted: true, creatorMid });
     }
-  }
+  };
 
-  clearErrorMessage(e: any): void {
-    this.setState({ errorMessage: '' });
-  }
-
-  renderLogIn() {
+  public renderLogIn() {
     // TODO while login is loading user should not see the rest of page
     return (
       <div>
-        <LogIn noRedirect />
-        <FM id="sign_up_above" />
+        <LogIn noRedirect={true} />
+        <FormattedMessage id="sign_up_above" />
       </div>
     );
   }
 
-  renderForm() {
+  public renderForm() {
     return (
       <div>
         <br />
         <div>
           <input
-            value={this.state.fullName || ''}
+            value={this.state.fullName || ""}
             onChange={this.setFullName}
             placeholder="First and last name"
             className="InviteInput DisplayNameInput"
@@ -108,32 +154,34 @@ export class RequestInvite extends Component {
             className="InviteInput VideoUrlInput"
           />
         </div>
-        <button className="InviteButton Green"
-          onClick={this.handleOnSubmit}>
+        <button className="InviteButton Green" onClick={this.handleOnSubmit}>
           Invite me!
         </button>
         <div className="InviteError">{this.state.errorMessage}</div>
-        {this.state.videoUrl &&
+        {this.state.videoUrl && (
           <div>
-            <h3><FM id="join_video" /></h3>
+            <h3>
+              <FormattedMessage id="join_video" />
+            </h3>
             <YoutubeVideo youtubeUrl={this.state.videoUrl} />
           </div>
-        }
+        )}
       </div>
     );
   }
 
-  render() {
+  public render() {
     // TODO check if user already invited
     if (this.state.submitted) {
       // TODO we should instead redirect to profileUrl, which should display this message along with their video.
       const profileUrl = `${window.location.origin}/m/${this.state.creatorMid}`;
       return (
         <div>
-          Your video has been submitted for review! After approval by us
-          and {this.props.toMemberDoc.get('full_name')}, your profile will appear at
-          <a href={profileUrl}>{profileUrl}</a>.
-          We are available at <a href="mailto:help@raha.io">help@raha.io</a> if you have any questions.
+          Your video has been submitted for review! After approval by us and{" "}
+          {this.props.toMemberDoc.get("full_name")}, your profile will appear at
+          <a href={profileUrl}>{profileUrl}</a>. We are available at{" "}
+          <a href="mailto:help@raha.io">help@raha.io</a> if you have any
+          questions.
         </div>
       );
     }
@@ -144,24 +192,41 @@ export class RequestInvite extends Component {
     return (
       <RequestInviteElem>
         <div className="requestInviteMessage">
-          <FM
+          <FormattedMessage
             id="request_invite"
             values={{
-              full_name: this.props.isToMemberDocLoaded ? this.props.toMemberDoc.get('full_name') : null,
+              full_name: this.props.isToMemberDocLoaded
+                ? this.props.toMemberDoc.get("full_name")
+                : null,
               mid: this.props.memberId
             }}
           />
         </div>
         <div>
-          <FM id="invite_me_intro" values={{ completely_free: <span className="completelyFree"><FM id="completely_free" /></span> }} />
+          <FormattedMessage
+            id="invite_me_intro"
+            values={{
+              completely_free: (
+                <span className="completelyFree">
+                  <FormattedMessage id="completely_free" />
+                </span>
+              )
+            }}
+          />
         </div>
-        {this.props.notSignedIn ? this.renderLogIn() : (this.props.isAuthLoaded ? this.renderForm() : <div>Loading</div>)}
+        {this.props.notSignedIn ? (
+          this.renderLogIn()
+        ) : this.props.isAuthLoaded ? (
+          this.renderForm()
+        ) : (
+          <div>Loading</div>
+        )}
       </RequestInviteElem>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   const memberId = ownProps.match.params.memberId;
   const isAuthLoaded = state.auth.isLoaded;
   const toMemberDoc = getMemberDocByMid(state, memberId);
@@ -171,7 +236,7 @@ function mapStateToProps(state, ownProps) {
     memberId,
     isToMemberDocLoaded: toMemberDoc && !toMemberDoc.isFetching,
     toMemberDoc,
-    notSignedIn: true,
+    notSignedIn: true
   };
 
   if (!isAuthLoaded) {
@@ -183,16 +248,22 @@ function mapStateToProps(state, ownProps) {
   }
   const authMember = state.members.byUid[authFirebaseUser.uid];
 
-  stateToPropsMap.notSignedIn = false;
-  stateToPropsMap.authFirebaseUser = authFirebaseUser;
-  stateToPropsMap.isAuthMemberDocLoaded = authMember && !authMember.isFetching;
-  stateToPropsMap.authMemberDoc = getAuthMemberDoc(state);
-  stateToPropsMap.fullName = state.auth.firebaseUser.displayName;
-
-  return stateToPropsMap;
+  const extraProps = {
+    ...stateToPropsMap,
+    notSignedIn: false,
+    authFirebaseUser,
+    isAuthMemberDocLoaded: authMember && !authMember.isFetching
+  };
+  return state.auth.firebaseUser !== null
+    ? {
+        ...extraProps,
+        fullName: state.auth.firebaseUser.displayName
+      }
+    : extraProps;
 }
 
-export default connect(
-  mapStateToProps,
-  { postOperation, fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded }
-)(RequestInvite);
+export default connect(mapStateToProps, {
+  postOperation,
+  fetchMemberByMidIfNeeded,
+  fetchMemberByUidIfNeeded
+})(RequestInvite);

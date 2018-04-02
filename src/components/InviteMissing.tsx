@@ -5,16 +5,30 @@
  * how they can request and invite to become Raha members.
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
-import { FormattedMessage as FM } from 'react-intl';
-import { Link, Redirect } from 'react-router-dom';
+import * as React from "react";
+import { FormattedMessage as FM } from "react-intl";
+import { connect } from "react-redux";
+import { Link, Redirect } from "react-router-dom";
 
-import Loading from './Loading';
-import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
+import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
+import { MemberDoc } from "../members";
+import { AppState } from "../store";
+import Loading from "./Loading";
 
+interface StateProps {
+  authFirebaseUser: firebase.User | null;
+  authIsLoaded: boolean;
+  authMemberDocIsLoaded: boolean;
+  authMemberDoc: MemberDoc;
+}
+type Props = StateProps;
 // TODO redirect if you are registered
-function InviteMissing({ authFirebaseUser, authIsLoaded, authMemberDocIsLoaded, authMemberDoc }) {
+const InviteMissing: React.StatelessComponent<Props> = ({
+  authFirebaseUser,
+  authIsLoaded,
+  authMemberDocIsLoaded,
+  authMemberDoc
+}) => {
   if (authIsLoaded && authFirebaseUser === null) {
     return <Redirect to="/login" />;
   }
@@ -22,22 +36,23 @@ function InviteMissing({ authFirebaseUser, authIsLoaded, authMemberDocIsLoaded, 
     return <Loading />;
   }
   if (authMemberDoc && authMemberDoc.exists) {
-    return <Redirect to={`/m/${authMemberDoc.get('mid')}`} />;
+    return <Redirect to={`/m/${authMemberDoc.get("mid")}`} />;
   }
   return (
     <FM
       id="invite_missing"
       values={{
-        display_name: authFirebaseUser.displayName,
+        // TODO: is this how we want to handle potentially null user?
+        display_name: authFirebaseUser ? authFirebaseUser.displayName : "",
         help_email: <a href="mailto:help@raha.io">help@raha.io</a>,
-        login_account: <b>{authFirebaseUser.email}</b>,
-        logout: <Link to='/logout'>logout</Link>
+        login_account: <b>{authFirebaseUser ? authFirebaseUser.email : ""}</b>,
+        logout: <Link to="/logout">logout</Link>
       }}
     />
   );
-}
+};
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: AppState): StateProps {
   const authMemberDoc = getAuthMemberDoc(state);
   return {
     authIsLoaded: state.auth.isLoaded,

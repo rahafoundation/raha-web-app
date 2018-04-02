@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import { auth } from './firebaseInit';
-import { authSetFirebaseUser } from './actions';
-import AppRouter from './components/AppRouter';
-import store from './store';
+import * as React from "react";
+import { Provider } from "react-redux";
+import { authSetFirebaseUser } from "./actions";
+import AppRouter from "./components/AppRouter";
+import { auth } from "./firebaseInit";
+import store from "./store";
 
-class App extends Component {
-  componentDidMount() {
+class App extends React.Component {
+  public componentDidMount() {
     auth.onAuthStateChanged(authFirebaseUser => {
-      store.dispatch(authSetFirebaseUser(authFirebaseUser));
+      store.dispatch<any>(authSetFirebaseUser(authFirebaseUser));
     });
   }
 
-  render() {
+  public render() {
     return (
       <Provider store={store}>
         <AppRouter />

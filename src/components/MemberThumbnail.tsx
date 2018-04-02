@@ -1,22 +1,29 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Link from './Link';
-import styled from 'styled-components';
-import randomColor from 'random-material-color';
-import { interactive } from '../constants/palette';
+import randomColor from "random-material-color";
+import * as React from "react";
+import { connect } from "react-redux";
+import styled, { ThemeProvider } from "styled-components";
+import Link from "./Link";
 
-import { gray } from '../constants/palette';
-import { fetchMemberByUidIfNeeded, OpMeta } from '../actions';
+import { fetchMemberByUidIfNeeded } from "../actions";
+import { interactive, gray, lightGreen } from "../constants/palette";
+import { OpMeta } from "../operations";
+import { AppState } from "../store";
 
 const Loading = () => {
   return <div>Loading</div>;
 };
 
-interface Props {
+interface OwnProps {
   uid: string;
   opMeta: OpMeta;
+}
+interface PropsFromAppState {
   memberDoc?: firebase.firestore.DocumentData;
 }
+interface PropsFromDispatch {
+  fetchMemberByUidIfNeeded: typeof fetchMemberByUidIfNeeded;
+}
+type Props = OwnProps & PropsFromAppState & PropsFromDispatch;
 
 // TODO generalize some of these styles into a link type
 const MemberThumbnailElem = styled(Link)`
@@ -25,19 +32,23 @@ const MemberThumbnailElem = styled(Link)`
   align-items: center;
   justify-content: flex-start;
   border-radius: 3px;
-  transition: background-color .05s, color .05s;
+  transition: background-color 0.05s, color 0.05s;
 
-  :hover, :focus, :active {
+  :hover,
+  :focus,
+  :active {
     background: ${interactive.primary};
     color: white;
   }
 
   > * {
-    margin: .25rem;
+    margin: 0.25rem;
   }
 
   /* custom behavior to handle underline properly with initials display */
-  :hover, :active, :focus {
+  :hover,
+  :active,
+  :focus {
     text-decoration: none;
   }
 
@@ -50,50 +61,67 @@ const MemberThumbnailElem = styled(Link)`
     height: 50px;
     border-radius: 3px;
 
-    background: ${props => props.thumbnailBackgroundColor};
+    background: ${props => props.theme.thumbnailBackgroundColor};
     color: white;
     font-size: 1.3rem;
   }
 `;
+MemberThumbnailElem.defaultProps = {
+  theme: {
+    thumbnailBackgroundColor: lightGreen
+  }
+};
 
 // TODO(#14) improve this thumbnail
-class MemberThumbnail extends Component<Props> {
-  componentDidMount() {
+class MemberThumbnail extends React.Component<Props> {
+  public componentDidMount() {
     this.props.fetchMemberByUidIfNeeded(this.props.uid);
   }
 
-  render() {
+  public render() {
     const memberDoc = this.props.memberDoc && this.props.memberDoc.memberDoc;
     if (!memberDoc) {
-      return <div className="MemberThumbnail"><Loading /></div>;
+      return (
+        <div className="MemberThumbnail">
+          <Loading />
+        </div>
+      );
     }
-    const mid = memberDoc.get('mid');
-    const name = memberDoc.get('full_name');
+    const mid = memberDoc.get("mid");
+    const name: string | null = memberDoc.get("full_name");
     // TODO: why is name sometimes undefined?
     // TODO: better algorithm for determining initials of names with dashes,
     // limiting number of characters, etc...
-    const initials = name && name
-      .split(' ').map(part => part.charAt(0)).join('').toUpperCase();
+    const initials =
+      name &&
+      name
+        .split(" ")
+        .map(part => part.charAt(0))
+        .join("")
+        .toUpperCase();
     const backgroundColor = randomColor.getColor({ text: `${mid}${initials}` });
     return (
-      <MemberThumbnailElem
-        color={this.props.opMeta.inDb ? undefined : gray}
-        to={`/m/${mid}`}
-        thumbnailBackgroundColor={backgroundColor}
-      >
-        { /* TODO: if thumbnail image exists, show that instead of initials */ }
-        <span className="thumbnailImage">{initials}</span>
-        <span className="memberName">{name}</span>
-      </MemberThumbnailElem>
+      <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
+        <MemberThumbnailElem
+          color={this.props.opMeta.inDb ? undefined : gray}
+          to={`/m/${mid}`}
+        >
+          {/* TODO: if thumbnail image exists, show that instead of initials */}
+          <span className="thumbnailImage">{initials}</span>
+          <span className="memberName">{name}</span>
+        </MemberThumbnailElem>
+      </ThemeProvider>
     );
   }
 }
 
-export default connect(
-  (state, ownProps) => {
-    return { memberDoc: state.members.byUid[ownProps.uid] };
-  },
-  {
-    fetchMemberByUidIfNeeded
-  }
-)(MemberThumbnail);
+function mapStateToProps(
+  state: AppState,
+  ownProps: OwnProps
+): PropsFromAppState {
+  return { memberDoc: state.members.byUid[ownProps.uid] };
+}
+
+export default connect(mapStateToProps, { fetchMemberByUidIfNeeded })(
+  MemberThumbnail
+);

@@ -1,14 +1,16 @@
-import { Link as RouterLink } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link as RouterLink } from "react-router-dom";
+import styled from "styled-components";
 
-import { interactive } from '../constants/palette';
+import { interactive } from "../constants/palette";
 
 const Link = styled(RouterLink)`
-  color: ${props => props.color ? props.color : interactive.primary};
+  color: ${props => (props.color ? props.color : interactive.primary)};
   font-weight: bold;
   text-decoration: none;
 
-  :hover, :focus, :active {
+  :hover,
+  :focus,
+  :active {
     text-decoration: underline;
   }
 `;

@@ -1,12 +1,12 @@
-export const OpCode = {
-  ADMIN: 'ADMIN',
-  FLAG: 'FLAG',
-  REQUEST_INVITE: 'REQUEST_INVITE',
-  TRUST: 'TRUST',
-  UNADMIN: 'UNADMIN',
-  UNFLAG: 'UNFLAG',
-  UNTRUST: 'UNTRUST',
-  VOTE: 'VOTE'
+export enum OpCode {
+  ADMIN = 'ADMIN',
+  FLAG = 'FLAG',
+  REQUEST_INVITE = 'REQUEST_INVITE',
+  TRUST = 'TRUST',
+  UNADMIN = 'UNADMIN',
+  UNFLAG = 'UNFLAG',
+  UNTRUST = 'UNTRUST',
+  VOTE = 'VOTE'
 }
 
 interface ToId {
@@ -19,21 +19,34 @@ interface RequestInviteOpData extends ToId {
   full_name: string;
 }
 
-interface TrustOpData extends ToId { }
+type TrustOpData = ToId;
 
-export interface Operation {
+export interface OpMeta {
+  uid: string;
+  inDb: boolean;
+}
+
+export type OpDoc = firebase.firestore.DocumentData;
+export type Operation = OpMeta & {
+  op: OpDoc;
+};
+
+type OpData = TrustOpData | RequestInviteOpData;
+export interface OperationData {
   applied: false;
-  block_at: Date;
-  block_seq: number;
+  block_at: Date | null;
+  block_seq: number | null;
   created_at: Date; // firebase.firestore.FieldValue;
   creator_mid: string;
   creator_uid: string;
-  data: (TrustOpData | RequestInviteOpData);
+  data: OpData;
   op_code: OpCode;
-  op_seq: number;
+  op_seq: number | null;
 }
 
-const getOperation = (opCode: OpCode, creatorMid: string, creatorUid: string, data): Operation => {
+const getOperation = (
+  opCode: OpCode, creatorMid: string, creatorUid: string, data: OpData
+): OperationData => {
   return {
     applied: false,
     block_at: null,
@@ -47,7 +60,9 @@ const getOperation = (opCode: OpCode, creatorMid: string, creatorUid: string, da
   };
 };
 
-export const getTrustOperation = (creatorMid: string, creatorUid: string, toMid: string, toUid: string): Operation => {
+export const getTrustOperation = (
+  creatorMid: string, creatorUid: string, toMid: string, toUid: string
+): OperationData => {
   return getOperation(OpCode.TRUST, creatorMid, creatorUid, { to_uid: toUid, to_mid: toMid });
 };
 
@@ -58,6 +73,13 @@ export const getRequestInviteOperation = (
   toUid: string,
   fullName: string,
   videoUrl: string
-): Operation => {
-  return getOperation(OpCode.REQUEST_INVITE, creatorMid, creatorUid, { to_uid: toUid, to_mid: toMid, video_url: videoUrl, full_name: fullName});
+): OperationData => {
+  return getOperation(
+    OpCode.REQUEST_INVITE,
+    creatorMid,
+    creatorUid,
+    {
+      to_uid: toUid, to_mid: toMid, video_url: videoUrl, full_name: fullName
+    }
+  );
 };

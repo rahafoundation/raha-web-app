@@ -1,6 +1,14 @@
+// TODO: for all these action types, may make sense to use a
+// Redux flux standard actions action creator lib, as the types get redundant
+
 import * as firebase from 'firebase';
+import { Action, ActionCreator, Dispatch } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+
 import { db } from './firebaseInit';
-import { Operation } from './operations';
+import { MemberDoc, MemberEntry } from './members';
+import { OpDoc, Operation, OperationData, OpMeta } from './operations';
+import { AppState } from './store';
 
 // member_actions.js
 
@@ -10,44 +18,61 @@ export const REQUEST_MEMBER_BY_UID = 'REQUEST_MEMBER_BY_UID';
 export const SHOW_MODAL = 'SHOW_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
 
-function requestMemberByMid(mid: string) {
-  return {
-    type: REQUEST_MEMBER_BY_MID,
-    mid,
-  };
+// TODO: is there anything more specific than this?
+export interface ReceiveMemberAction extends Action {
+  type: typeof RECEIVE_MEMBER;
+  memberDoc: MemberDoc | null; // TODO: is this supposed to be potentially null?
+  id: string;
+  byMid: boolean;
+  receivedAt: number;
+}
+export interface RequestMemberByMidAction extends Action {
+  type: typeof REQUEST_MEMBER_BY_MID;
+  mid: string;
+}
+export interface RequestMemberByUidAction extends Action {
+  type: typeof REQUEST_MEMBER_BY_UID;
+  uid: string;
 }
 
-function requestMemberByUid(uid: string) {
-  return {
-    type: REQUEST_MEMBER_BY_UID,
-    uid,
-  };
+const requestMemberByMid: ActionCreator<RequestMemberByMidAction> = (mid: string) => ({
+  type: REQUEST_MEMBER_BY_MID,
+  mid,
+});
+
+const requestMemberByUid: ActionCreator<RequestMemberByUidAction> = (uid: string) => ({
+  type: REQUEST_MEMBER_BY_UID,
+  uid,
+});
+
+const receiveMember: ActionCreator<ReceiveMemberAction> = (
+  memberDoc: MemberDoc | null, id: string, byMid: boolean
+) => ({
+  type: RECEIVE_MEMBER,
+  id,
+  byMid,
+  memberDoc,
+  receivedAt: Date.now(),
+});
+
+export interface HideModalAction extends Action {
+  type: typeof HIDE_MODAL;
+}
+export interface ShowModalAction extends Action {
+  type: typeof SHOW_MODAL;
+  element: React.ReactNode;
 }
 
-function receiveMember(memberDoc: firebase.firestore.DocumentData, id: string, byMid: boolean) {
-  return {
-    type: RECEIVE_MEMBER,
-    id,
-    byMid,
-    memberDoc,
-    receivedAt: Date.now(),
-  };
-}
+export const showModal: ActionCreator<ShowModalAction> = (element: React.ReactNode) => ({
+  type: SHOW_MODAL,
+  element
+});
 
-export function showModal(element) {
-  return {
-    type: SHOW_MODAL,
-    element
-  }
-}
+export const hideModal: ActionCreator<HideModalAction> = () => ({
+  type: HIDE_MODAL
+});
 
-export function hideModal() {
-  return {
-    type: HIDE_MODAL
-  }
-}
-
-async function fetchMemberByMid(dispatch, mid: string) {
+async function fetchMemberByMid(dispatch: Dispatch<AppState>, mid: string) {
   dispatch(requestMemberByMid(mid));
   const memberQuery = await db.collection('members').where('mid', '==', mid).get();
   if (memberQuery.docs.length > 1) {
@@ -57,14 +82,14 @@ async function fetchMemberByMid(dispatch, mid: string) {
   dispatch(receiveMember(memberDoc, mid, true));
 }
 
-async function fetchMemberByUid(dispatch, uid: string) {
+async function fetchMemberByUid(dispatch: Dispatch<AppState>, uid: string) {
   dispatch(requestMemberByUid(uid));
   const memberDoc = await db.collection('members').doc(uid).get();
   // TODO error handling
   dispatch(receiveMember(memberDoc, uid, false));
 }
 
-function shouldFetchMember(member) {
+function shouldFetchMember(member?: MemberEntry) {
   if (!member) {
     return true;
   }
@@ -76,101 +101,103 @@ function shouldFetchMember(member) {
   return oneDayAgo > member.receivedAt;  // Re-fetch if over a day old. TODO improve this.
 }
 
-function shouldFetchMemberByUid(getState, uid: string) {
+function shouldFetchMemberByUid(getState: () => AppState, uid: string) {
   const member = getState().members.byUid[uid];
   return shouldFetchMember(member);
 }
 
-function shouldFetchMemberByMid(getState, mid: string) {
+function shouldFetchMemberByMid(getState: () => AppState, mid: string) {
   const member = getState().members.byMid[mid];
   return shouldFetchMember(member);
 }
 
-export function fetchMemberByUidIfNeeded(uid: string) {
-  return (dispatch, getState) => {
+export const fetchMemberByUidIfNeeded: ActionCreator<ThunkAction<void, AppState, void>> =
+  (uid: string) => (dispatch, getState) => {
     if (shouldFetchMemberByUid(getState, uid)) {
       fetchMemberByUid(dispatch, uid);
     }
-  }
-}
+  };
 
-export function fetchMemberByMidIfNeeded(mid: string) {
-  return (dispatch, getState) => {
+export const fetchMemberByMidIfNeeded: ActionCreator<ThunkAction<void, AppState, void>> =
+  (mid: string) => (dispatch, getState) => {
     if (shouldFetchMemberByMid(getState, mid)) {
       fetchMemberByMid(dispatch, mid);
     }
-  }
-}
+  };
 
 // op_actions.js
-
-export interface OpMeta {
-  uid: string;
-  inDb: boolean;
-}
 
 export const RECEIVE_OPS = 'RECEIVE_OPS';
 export const POST_OP = 'POST_OP';
 export const ACKP_POST_OP = 'ACKP_POST_OP';
 
-function postOp(uid: string, op: Operation) {
-  return {
-    type: POST_OP,
-    value: {
-      uid,
-      op,
-      inDb: false
-    }
-  };
+export interface ReceiveOpsAction extends Action {
+  type: typeof RECEIVE_OPS;
+  opDocs: OpDoc[];
+}
+export interface PostOpAction extends Action {
+  type: typeof POST_OP;
+  value: Operation;
+}
+export interface AckpPostOpAction extends Action {
+  type: typeof ACKP_POST_OP;
+  value: OpMeta;
 }
 
-function ackPostOp(uid: string) {
-  return {
-    type: ACKP_POST_OP,
-    value: {
-      uid,
-      inDb: true
-    }
+const postOp: ActionCreator<PostOpAction> = (uid: string, op: Operation) => ({
+  type: POST_OP,
+  value: {
+    uid,
+    op,
+    inDb: false
   }
-}
+});
 
-export function postOperation(op: Operation) {
-  return async dispatch => {
-    let opDoc = db.collection('operations').doc();
+const ackPostOp: ActionCreator<AckpPostOpAction> = (uid: string) => ({
+  type: ACKP_POST_OP,
+  value: {
+    uid,
+    inDb: true
+  }
+});
+
+export const postOperation: ActionCreator<ThunkAction<void, AppState, void>> =
+  (op: OperationData) => async dispatch => {
+    const opDoc = db.collection('operations').doc();
     dispatch(postOp(opDoc.id, op));
     await opDoc.set(op);
     dispatch(ackPostOp(opDoc.id));
-  }
-}
+  };
 
-function receiveOperations(opDocs: Array<firebase.firestore.DocumentSnapshot>) {
-  return {
+const receiveOperations: ActionCreator<ReceiveOpsAction> =
+  (opDocs: firebase.firestore.DocumentSnapshot[]) => ({
     type: RECEIVE_OPS,
     opDocs
-  };
-}
+  });
 
-export function fetchOperations(query: firebase.firestore.Query) {
-  return async dispatch => {
-    let snap = await query.get();
+export const fetchOperations: ActionCreator<ThunkAction<void, AppState, void>> =
+  (query: firebase.firestore.Query) => async dispatch => {
+    const snap = await query.get();
     dispatch(receiveOperations(snap.docs));
-  }
-}
+  };
 
 // auth_actions.js
 
 export const SET_FIREBASE_USER = 'SET_FIREBASE_USER';
 
-function setFirebaseUser(firebaseUser: firebase.User) {
-  return {
-    type: SET_FIREBASE_USER,
-    firebaseUser
-  }
+export interface SetFirebaseUserAction extends Action {
+  type: typeof SET_FIREBASE_USER;
+  firebaseUser: firebase.User;
 }
 
-export function authSetFirebaseUser(firebaseUser: firebase.User) {
-  return dispatch => {
-    if (firebaseUser) dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid));
+const setFirebaseUser: ActionCreator<SetFirebaseUserAction> =
+  (firebaseUser: firebase.User) => ({
+    type: SET_FIREBASE_USER,
+    firebaseUser
+  });
+
+export const authSetFirebaseUser: ActionCreator<ThunkAction<void, AppState, void>> =
+  (firebaseUser: firebase.User) => dispatch => {
+    if (firebaseUser) { dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid)); }
     dispatch(setFirebaseUser(firebaseUser));
-  }
-}
+  };

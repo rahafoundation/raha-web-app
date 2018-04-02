@@ -1,10 +1,10 @@
 import {
-  lightGreen500,
-  green500,
+  blueGrey100,
+  blueGrey300,
   cyanA400,
   cyanA700,
-  blueGrey300,
-  blueGrey100
+  green500,
+  lightGreen500
 } from 'material-ui/styles/colors';
 
 export const green = green500;

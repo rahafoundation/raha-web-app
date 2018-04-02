@@ -1,23 +1,25 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import styled from 'styled-components';
+import { faUserPlus } from "@fortawesome/fontawesome-free-solid";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
-  lightGreen300,
-  lightGreen500,
   green300,
   green500,
-  grey200
-} from 'material-ui/styles/colors';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/fontawesome-free-solid';
-import { FormattedMessage as FM } from 'react-intl';
+  grey200,
+  lightGreen300,
+  lightGreen500
+} from "material-ui/styles/colors";
+import * as React from "react";
+import { FormattedMessage } from "react-intl";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import styled from "styled-components";
 
-import Link from './Link';
-import Modal from './Modal';
-import InviteInstructions from './InviteInstructions'
-import { getAuthMemberDocIsLoaded, getAuthMemberDoc } from '../connectors';
-import { showModal as showModalAction } from '../actions';
-import LogoIcon from './LogoIcon';
+import { showModal as showModalAction } from "../actions";
+import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
+import { MemberDoc } from "../members";
+import { AppState } from "../store";
+import InviteInstructions from "./InviteInstructions";
+import Link from "./Link";
+import LogoIcon from "./LogoIcon";
+import Modal from "./Modal";
 
 const FooterElem = styled.footer`
   padding: 50px 30px;
@@ -27,11 +29,7 @@ const FooterElem = styled.footer`
 `;
 
 function Footer() {
-  return (
-    <FooterElem>
-      Raha Foundation, 2018
-    </FooterElem>
-  );
+  return <FooterElem>Raha Foundation, 2018</FooterElem>;
 }
 
 const LogoElem = styled.span`
@@ -43,7 +41,7 @@ const LogoElem = styled.span`
   padding: 10px;
 `;
 
-const LogoImg = styled(LogoIcon) `
+const LogoImg = styled(LogoIcon)`
   margin-right: 20px;
 `;
 
@@ -52,7 +50,7 @@ function Logo() {
     <LogoElem>
       <LogoImg />
       Raha
-  </LogoElem>
+    </LogoElem>
   );
 }
 
@@ -77,13 +75,15 @@ const HeaderElem = styled.header`
       height: 100%;
       padding: 0 20px;
       cursor: pointer;
-      transition: background .1s;
+      transition: background 0.1s;
 
       > .icon {
         margin-right: 8px;
       }
 
-      :hover, :active, :focus {
+      :hover,
+      :active,
+      :focus {
         background: ${green300};
       }
 
@@ -93,7 +93,8 @@ const HeaderElem = styled.header`
       font-size: 1rem;
     }
 
-    > .loggedInUser, .logIn {
+    > .loggedInUser,
+    .logIn {
       height: 100%;
       display: inline-flex;
       align-items: center;
@@ -101,9 +102,11 @@ const HeaderElem = styled.header`
       color: white;
       padding: 0 10px;
       background: ${lightGreen500};
-      transition: background-color .1s;
+      transition: background-color 0.1s;
 
-      :hover, :focus, :active {
+      :hover,
+      :focus,
+      :active {
         background: ${lightGreen300};
         text-decoration: none;
       }
@@ -111,38 +114,59 @@ const HeaderElem = styled.header`
   }
 `;
 
-function handleInviteClick(fullName, inviteUrl, showModal) {
+function handleInviteClick(
+  fullName: string,
+  inviteUrl: string,
+  showModal: (elem: React.ReactNode) => void
+) {
   return () =>
-    showModal(<InviteInstructions
-      fullName={fullName}
-      inviteUrl={inviteUrl}
-    />);
+    showModal(<InviteInstructions fullName={fullName} inviteUrl={inviteUrl} />);
 }
 
-function Header(props) {
+interface MemberDetails {
+  fullName: string | null;
+  inviteUrl?: string;
+  profileUrl?: string;
+}
+interface HeaderProps {
+  memberDetails?: MemberDetails;
+  showModal: (elem: React.ReactNode) => void;
+}
+const Header: React.StatelessComponent<HeaderProps> = props => {
   const { memberDetails, showModal } = props;
-  const { fullName, inviteUrl, profileUrl } = memberDetails || {};
 
   return (
     <HeaderElem>
       <Logo />
-      <span className="userSection">
-        {inviteUrl &&
-          <button
-            className="inviteButton"
-            onClick={handleInviteClick(fullName, inviteUrl, showModal)}
-          >
-            <FontAwesomeIcon className="icon" icon={faUserPlus} />Invite
-          </button>
-        }
-        {profileUrl &&
-          <Link className="loggedInUser" to={profileUrl}>{fullName}</Link>}
-        {!profileUrl &&
-          <Link className="logIn" to="/login"><FM id="app_layout.log_in" /></Link>}
-      </span>
+      {memberDetails && (
+        <span className="userSection">
+          {memberDetails.inviteUrl && (
+            <button
+              className="inviteButton"
+              onClick={handleInviteClick(
+                memberDetails.fullName || "",
+                memberDetails.inviteUrl,
+                showModal
+              )}
+            >
+              <FontAwesomeIcon className="icon" icon={faUserPlus} />Invite
+            </button>
+          )}
+          {memberDetails.profileUrl && (
+            <Link className="loggedInUser" to={memberDetails.profileUrl}>
+              {memberDetails.fullName}
+            </Link>
+          )}
+          {!memberDetails.profileUrl && (
+            <Link className="logIn" to="/login">
+              <FormattedMessage id="app_layout.log_in" />
+            </Link>
+          )}
+        </span>
+      )}
     </HeaderElem>
   );
-}
+};
 
 const AppLayoutElem = styled.div`
   min-height: 100vh;
@@ -151,20 +175,37 @@ const AppLayoutElem = styled.div`
   justify-content: space-between;
 `;
 
-export function AppLayoutView(props) {
-  const { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded, showModal } = props;
-  let memberDetails = false;  // TODO do not overload memberDetails with multiple types
-  if (authMemberDoc) {  // TODO if invite missing
-    const profileUrl = `/m/${authMemberDoc.get('mid')}`;
+interface OwnProps {}
+interface StateProps {
+  authFirebaseUser: firebase.User | null;
+  authMemberDoc: MemberDoc;
+  authMemberDocIsLoaded: boolean;
+}
+interface DispatchProps {
+  showModal: (elem: React.ReactNode) => void;
+}
+type Props = OwnProps & StateProps & DispatchProps;
+
+export const AppLayoutView: React.StatelessComponent<Props> = props => {
+  const {
+    authFirebaseUser,
+    authMemberDoc,
+    authMemberDocIsLoaded,
+    showModal
+  } = props;
+  let memberDetails: MemberDetails | undefined; // TODO do not overload memberDetails with multiple types
+  if (authMemberDoc) {
+    // TODO if invite missing
+    const profileUrl = `/m/${authMemberDoc.get("mid")}`;
     memberDetails = {
-      fullName: authMemberDoc.get('full_name'),
+      fullName: authMemberDoc.get("full_name"),
       inviteUrl: `${window.location.origin}${profileUrl}/invite`,
       profileUrl
     };
   } else if (authMemberDocIsLoaded && authFirebaseUser) {
     memberDetails = {
       fullName: authFirebaseUser.displayName,
-      profileUrl: '/invite_missing'
+      profileUrl: "/invite_missing"
     };
   }
   const headerProps = { memberDetails, showModal };
@@ -175,22 +216,34 @@ export function AppLayoutView(props) {
       <Footer />
       <Modal />
     </AppLayoutElem>
-  )
-}
+  );
+};
 
-
-function mapStateToProps(state, ownProps) {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
+  state,
+  ownProps
+) => {
   const authIsLoaded = state.auth.isLoaded;
   const authFirebaseUser = state.auth.firebaseUser;
   const authMemberDoc = getAuthMemberDoc(state);
   const authMemberDocIsLoaded = getAuthMemberDocIsLoaded(state);
-  return { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded, authIsLoaded };
-}
-
-function mapDispatchToProps(dispatch) {
   return {
-    showModal: (element) => dispatch(showModalAction(element))
+    authFirebaseUser,
+    authMemberDoc,
+    authMemberDocIsLoaded,
+    authIsLoaded
   };
-}
+};
+
+const mapDispatchToProps: MapDispatchToProps<
+  DispatchProps,
+  OwnProps
+> = dispatch => {
+  return {
+    showModal: (element: React.ReactNode) => {
+      dispatch(showModalAction(element));
+    }
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppLayoutView);

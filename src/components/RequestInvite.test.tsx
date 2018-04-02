@@ -1,9 +1,13 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import Enzyme, { mount } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16';
-import { RequestInvite } from './RequestInvite';
-import { mountWithIntl } from '../helpers/intl-enzyme-test-helper';
+// TODO: seems odd that we need to test this by running everything, including intl
+// and more than just shallow rendering.
+import * as Enzyme from "enzyme";
+import * as Adapter from "enzyme-adapter-react-16";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+import { mountWithIntl } from "../helpers/intl-enzyme-test-helper";
+import { OperationData } from "../operations";
+import { RequestInvite } from "./RequestInvite";
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -12,23 +16,34 @@ function setup() {
   const props = {
     isAuthLoaded: true,
     authFirebaseUser: {
-      uid: 'me'
+      uid: "me"
     },
-    memberId: 'me$1234',
+    memberId: "me$1234",
+    isToMemberDocLoaded: true,
     isAuthMemberDocLoaded: true,
-    authMemberDoc: null,
-    fullName: 'Member Me',
+    notSignedIn: false,
+    fullName: "Member Me",
     toMemberDoc: {
-      get: (key) => {
-        return {
-          'mid': 'friend$1234'
-        }[key];
+      get: (key: string) => {
+        if (key === "mid") {
+          return "friend$1234";
+        }
+        return undefined;
       },
-      id: 'ijalir'
+      id: "ijalir"
     },
-    postOperation: async () => {},
-    fetchMemberByUidIfNeeded: async () => {},
-    fetchMemberByUidIfNeeded: async () => {},
+    postOperation: (op: OperationData) => () => {
+      /* no-op */
+    },
+    fetchMemberByMidIfNeeded: (mid: string) => () => {
+      /* no-op */
+    },
+    fetchMemberByUidIfNeeded: (uid: string) => () => {
+      /* no-op */
+    },
+    match: {
+      params: { memberId: "me$1234" }
+    }
   };
 
   const enzymeWrapper = mountWithIntl(<RequestInvite {...props} />);
@@ -36,58 +51,59 @@ function setup() {
   return {
     props,
     enzymeWrapper
-  }
+  };
 }
 
-describe('RequestInvite component', () => {
-  it('renders without crashing', () => {
+describe("RequestInvite component", () => {
+  it("renders without crashing", () => {
     setup();
   });
 
-  it('sets an initial state', () => {
+  it("sets an initial state", () => {
     const { enzymeWrapper } = setup();
     expect(enzymeWrapper.state()).toEqual({
-      videoUrl: '',
-      toUid: '',
-      errorMessage: '',
-      fullName: 'Member Me',
+      videoUrl: "",
+      toUid: "",
+      errorMessage: "",
+      fullName: "Member Me"
     });
   });
 
-  it('sets the full name on render', () => {
+  it("sets the full name on render", () => {
     const { props, enzymeWrapper } = setup();
-    const displayNameInput = enzymeWrapper.find('.DisplayNameInput');
+    const displayNameInput = enzymeWrapper.find(".DisplayNameInput");
 
-    let componentProps = displayNameInput.props();
-    expect(componentProps.value).toBe('Member Me');
+    const componentProps = displayNameInput.props();
+    expect(componentProps.value).toBe("Member Me");
   });
 
-  it('sets the video url when given an input', () => {
+  // TODO: pretty sure this doesn't actually work, the .VideoUrlInput
+  // element isn't even available—these tests are likely to be fundamentally
+  // flawed
+  it("sets the video url when given an input", () => {
     const { props, enzymeWrapper } = setup();
-    const videoUrlInput = enzymeWrapper.find('.VideoUrlInput');
+    const videoUrlInput = enzymeWrapper.find(".VideoUrlInput");
 
-    let url = "https://www.youtube.com/watch?v=1GGxzSPP0J0";
-    let event = { target: { value: url } };
-    let componentProps = videoUrlInput.props();
-    componentProps.onChange(event);
+    const url = "https://www.youtube.com/watch?v=1GGxzSPP0J0";
+    const event = { target: { value: url } };
+    videoUrlInput.simulate("change", event);
     expect(enzymeWrapper.state().videoUrl).toBe(url);
   });
 
-  it('sets the full name when given an input', () => {
+  it("sets the full name when given an input", () => {
     const { props, enzymeWrapper } = setup();
-    const displayNameInput = enzymeWrapper.find('.DisplayNameInput');
+    const displayNameInput = enzymeWrapper.find(".DisplayNameInput");
 
-    let fullName = "My Weird Name";
-    let event = { target: { value: fullName } };
-    let componentProps = displayNameInput.props();
-    componentProps.onChange(event);
+    const fullName = "My Weird Name";
+    const event = { target: { value: fullName } };
+    displayNameInput.simulate("change", event);
     expect(enzymeWrapper.state().fullName).toBe(fullName);
   });
 
-  it('displays an error message when trying to submit without video url', () => {
+  it("displays an error message when trying to submit without video url", () => {
     const { props, enzymeWrapper } = setup();
-    const button = enzymeWrapper.find('.InviteButton');
-    button.simulate('click');
+    const button = enzymeWrapper.find(".InviteButton");
+    button.simulate("click");
     expect(enzymeWrapper.state().errorMessage).not.toHaveLength(0);
   });
 });
