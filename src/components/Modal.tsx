@@ -1,5 +1,5 @@
 import { faTimes } from "@fortawesome/fontawesome-free-solid";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import * as ReactModal from "react-modal";
 import {

@@ -1,5 +1,5 @@
 import { faUserPlus } from "@fortawesome/fontawesome-free-solid";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
   green300,
   green500,
@@ -28,7 +28,7 @@ const FooterElem = styled.footer`
   text-align: center;
 `;
 
-function Footer() {
+const Footer: React.StatelessComponent<{}> = () => {
   return <FooterElem>Raha Foundation, 2018</FooterElem>;
 }
 

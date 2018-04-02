@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import RahaTitle from "./RahaTitle";
 
-const PageNotFound = () => (
+const PageNotFound: React.StatelessComponent<{}> = () => (
   <div className="PageNotFound">
     <RahaTitle />
     <FormattedMessage

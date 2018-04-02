@@ -1,10 +1,10 @@
+import * as React from "react";
+import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
   faHandPeace,
   faHandshake
 } from "@fortawesome/fontawesome-free-regular";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import styled from "styled-components";
