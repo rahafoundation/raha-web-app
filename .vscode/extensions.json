@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "jpoissonnier.vscode-styled-components",
+    "esbenp.prettier-vscode",
+    "eg2.tslint",
+    "toba.vsfire",
+    "msjsdiag.debugger-for-chrome"
+  ]
+}
