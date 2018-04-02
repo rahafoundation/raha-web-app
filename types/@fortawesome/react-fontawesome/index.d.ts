@@ -4,6 +4,7 @@ declare module '@fortawesome/react-fontawesome' {
 
   type FontAwesomeIconProps = {
     icon: string | IconDefinition;
+    className?: string;
   }
 
   class FontAwesomeIcon extends Component<FontAwesomeIconProps> { }
