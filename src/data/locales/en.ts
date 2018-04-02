@@ -1,4 +1,4 @@
-{
+export default {
   "action_button.trust": "Trust",
   "action_button.share_invite": "Share Invite Video to Join",
   "app_layout.log_in": "Log In",
@@ -20,4 +20,4 @@
   "trust_suggestion_recieve_trust": "Increase your trust by receiving trust from {accounts} level {accountlevel}+ accounts.",
   "trust_suggestion_max": "You are max trust level.",
   "trust_level": "Trust Level"
-}
+};
