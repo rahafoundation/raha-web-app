@@ -1,98 +1,27 @@
 {
-    "extends": ["tslint-react"],
+    "extends": [
+        "tslint:latest",
+        "tslint-react",
+        "tslint-config-prettier"
+    ],
     "rules": {
-        "align": [
-            true,
-            "parameters",
-            "arguments",
-            "statements"
-        ],
-        "ban": false,
-        "class-name": true,
-        "comment-format": [
-            true,
-            "check-space"
-        ],
-        "curly": true,
-        "eofline": true,
-        "forin": true,
-        "indent": [ true, "spaces", 2 ],
-        "interface-name": [true, "never-prefix"],
-        "jsdoc-format": true,
+        // I think putting I in front of interface names doesn't get us anything
+        "interface-name": false,
+        // Sorting keys of object literals is meaningless
+        "object-literal-sort-keys": false,
+        // also meaningless
+        "ordered-imports": false,
+        // Often, like in .reduce calls, this is useful
+        "no-object-literal-type-assertion": false,
+        // submodule imports are often useful
+        "no-submodule-imports": false,
+        // empty interfaces are nice to be explicit sometimes
+        "no-empty-interface": false,
+        // multiple classes in file is useful for child components in React
+        "max-classes-per-file": false,
+        // perf isn't important enough for this inconvenience
         "jsx-no-lambda": false,
-        "jsx-no-multiline-js": false,
-        "label-position": true,
-        "max-line-length": [ true, 120 ],
-        "member-ordering": [
-            true,
-            "public-before-private",
-            "static-before-instance",
-            "variables-before-functions"
-        ],
-        "prefer-const": true,
-        "no-any": true,
-        "no-arg": true,
-        "no-bitwise": true,
-        "no-console": [
-            true,
-            "log",
-            "error",
-            "debug",
-            "info",
-            "time",
-            "timeEnd",
-            "trace"
-        ],
-        "no-consecutive-blank-lines": true,
-        "no-construct": true,
-        "no-debugger": true,
-        "no-duplicate-variable": true,
-        "no-empty": true,
-        "no-eval": true,
-        "no-shadowed-variable": true,
-        "no-string-literal": true,
-        "no-switch-case-fall-through": true,
-        "no-trailing-whitespace": false,
-        "no-unused-expression": true,
-        "no-var-keyword": true,
-        "one-line": [
-            true,
-            "check-catch",
-            "check-else",
-            "check-open-brace",
-            "check-whitespace"
-        ],
-        "quotemark": [true, "single", "jsx-double"],
-        "radix": true,
-        "semicolon": [true, "always"],
-        "switch-default": true,
-        "trailing-comma": [false],
-        "triple-equals": [ true, "allow-null-check" ],
-        "typedef": [
-            true,
-            "parameter",
-            "property-declaration"
-        ],
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            }
-        ],
-        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-module",
-            "check-operator",
-            "check-separator",
-            "check-type",
-            "check-typecast"
-        ]
+        // dev dependencies aren't implicit
+        "no-implicit-dependencies": [true, "dev"]
     }
 }
