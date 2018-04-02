@@ -6,7 +6,7 @@ const db = admin.firestore();
 
 const REQUEST_INVITE = 'REQUEST_INVITE';
 
-function createMemberFromOperation(operation) {
+function createMemberFromOperation(operation: OperationData) {
     const {
         applied,
         block_at,
@@ -50,7 +50,7 @@ exports.onCreateOperation = functions.firestore
     .document('/operations/{operationId}')
     .onCreate((event) => {
         const newOperation = event.data.data();
-        switch(newOperation.op_code) {
+        switch (newOperation.op_code) {
             case REQUEST_INVITE:
                 createMemberFromOperation(newOperation).then(() => {
                     return event.data.ref.update({

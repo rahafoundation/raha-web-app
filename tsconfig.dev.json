@@ -1,0 +1,11 @@
+// Config for convenience when running `tsc --watch` in the
+// background while developing. I suggest running it in the
+// background while using VSCode, you can activate it by
+// hitting Tasks > Run Task... and then choosing tsc:watch
+// with this config file.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}
