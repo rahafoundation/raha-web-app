@@ -11,6 +11,8 @@
         "object-literal-sort-keys": false,
         // also meaningless
         "ordered-imports": false,
+        // also meaningless
+        "member-ordering": false,
         // Often, like in .reduce calls, this is useful
         "no-object-literal-type-assertion": false,
         // submodule imports are often useful
