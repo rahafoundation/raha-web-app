@@ -73,7 +73,7 @@ export class RequestInvite extends React.Component<Props, State> {
     this.fetchIfNeeded(nextProps);
   }
 
-  public fetchIfNeeded(props: Props) {
+  private readonly fetchIfNeeded = (props: Props) => {
     // TODO this logic very similar to Profile.componentWillReceiveProps.
     // Decomp/https://reactjs.org/docs/higher-order-components.html/https://github.com/acdlite/recompose
     if (props.memberId) {
@@ -84,19 +84,19 @@ export class RequestInvite extends React.Component<Props, State> {
     }
   }
 
-  public setVideoURL = async (
+  private readonly setVideoURL = (
     event: React.FormEvent<HTMLInputElement>
-  ): Promise<void> => {
+  ) => {
     this.setState({ videoUrl: event.currentTarget.value });
   };
 
-  public setFullName = async (
+  private readonly setFullName = (
     event: React.FormEvent<HTMLInputElement>
-  ): Promise<void> => {
+  ) => {
     this.setState({ fullName: event.currentTarget.value });
   };
 
-  public handleOnSubmit = async (
+  private readonly handleOnSubmit = async (
     event: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     event.stopPropagation();
@@ -125,7 +125,7 @@ export class RequestInvite extends React.Component<Props, State> {
     }
   };
 
-  public renderLogIn() {
+  private renderLogIn() {
     // TODO while login is loading user should not see the rest of page
     return (
       <div>
@@ -135,7 +135,7 @@ export class RequestInvite extends React.Component<Props, State> {
     );
   }
 
-  public renderForm() {
+  private renderForm() {
     return (
       <div>
         <br />
