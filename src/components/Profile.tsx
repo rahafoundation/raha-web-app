@@ -16,7 +16,7 @@ import ActionButton from "./ActionButton";
 import Loading from "./Loading";
 import MemberRelations from "./MemberRelations";
 import TrustLevel from "./TrustLevel";
-import YoutubeVideo from "./YoutubeVideo";
+import InviteVideo from "./InviteVideo";
 
 // TODO: this seems to be duplicated in multiple places
 interface OwnProps {
@@ -123,7 +123,7 @@ class Profile extends React.Component<Props> {
 
         <main>
           {youtubeUrl && (
-            <YoutubeVideo className="joinVideo" youtubeUrl={youtubeUrl} />
+            <InviteVideo className="joinVideo" userId={memberDoc.id} />
           )}
 
           <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />

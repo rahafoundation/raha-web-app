@@ -18,6 +18,10 @@ export function getAuthMemberDoc(state: AppState) {
   return authFirebaseUser ? getMemberDoc(state.members.byUid[authFirebaseUser.uid]) : null;
 }
 
+export function getInviteVideoStorageRef(storageRef: firebase.storage.Reference, userId: string) {
+  return storageRef.child('public-video').child(userId).child('invite_video');
+}
+
 export function getMemberDocByUid(state: AppState, uid: string) {
   return getMemberDoc(state.members.byUid[uid]);
 }

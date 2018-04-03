@@ -14,6 +14,7 @@ export default {
   "trusts": "Trusts",
   "join_video": "Join Video",
   "page_not_found": "{404} page not found, go {home}.",
+  "record_invite": "Record (or upload) an invite video!",
   "request_invite": "Request Invite from {full_name} ({mid})",
   "sign_up_above": "Sign up above to continue. We do not ask for your contact's information or ability to post.",
   "trust_suggestion_active_longer": "Stay active on the network for more days to increase your trust level.",
