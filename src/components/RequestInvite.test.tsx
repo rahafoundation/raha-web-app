@@ -1,15 +1,12 @@
 // TODO: seems odd that we need to test this by running everything, including intl
 // and more than just shallow rendering.
-import * as Enzyme from "enzyme";
-import * as Adapter from "enzyme-adapter-react-16";
+import { shallow } from "enzyme";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { mountWithIntl } from "../helpers/intl-enzyme-test-helper";
 import { OperationData } from "../operations";
 import { RequestInvite } from "./RequestInvite";
-
-Enzyme.configure({ adapter: new Adapter() });
 
 // ref: pattern for testing connected components
 function setup() {
@@ -46,7 +43,7 @@ function setup() {
     }
   };
 
-  const enzymeWrapper = Enzyme.shallow(<RequestInvite {...props} />);
+  const enzymeWrapper = shallow(<RequestInvite {...props} />);
 
   return {
     props,
