@@ -7,7 +7,7 @@
     "use-test-db": "cp src/data/firebase.test.json src/data/firebase.config.json",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom --setupTestFrameworkScriptFile=jest-localstorage-mock",
+    "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
   "license": "Apache-2.0",
