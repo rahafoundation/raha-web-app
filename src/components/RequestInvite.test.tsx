@@ -59,10 +59,14 @@ describe("RequestInvite component", () => {
   it("sets an initial state", () => {
     const { enzymeWrapper } = setup();
     expect(enzymeWrapper.state()).toEqual({
-      videoUrl: "",
-      toUid: "",
-      errorMessage: "",
-      fullName: "Member Me"
+      "errorMessage": "",
+      "fullName": "Member Me",
+      "toUid": "",
+      "totalBytes": 0,
+      "uploaded": false,
+      "uploadedBytes": 0,
+      "uploading": false,
+      "videoUrl": ""
     });
   });
 

@@ -8,4 +8,5 @@ firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
 export const db = firebase.firestore();
-export const storageRef = firebase.storage().ref();
+// Because firebase.storage does not work in Node.js, check it exists so tests still pass
+export const storageRef = firebase.storage && firebase.storage().ref();
