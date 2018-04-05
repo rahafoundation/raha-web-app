@@ -126,7 +126,7 @@ export class RequestInvite extends React.Component<Props, State> {
     }
     const file = event.target.files[0];
 
-    if (file.size > 1024 * 1024 * 40) {
+    if (file.size > 40 * 1024 * 1024) {
       this.setState({ errorMessage: 'Video is larger than 40 MB, please upload smaller video.' });
     }
 

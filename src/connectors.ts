@@ -19,7 +19,7 @@ export function getAuthMemberDoc(state: AppState) {
 }
 
 export function getInviteVideoStorageRef(storageRef: firebase.storage.Reference, userId: string) {
-  return storageRef.child('public-video').child(userId).child('invite_video');
+  return storageRef.child('private-video').child(userId).child('invite-video');
 }
 
 export function getMemberDocByUid(state: AppState, uid: string) {
