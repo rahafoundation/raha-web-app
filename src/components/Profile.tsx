@@ -50,12 +50,6 @@ const ProfileElem = styled.main`
       }
     }
   }
-
-  .joinVideo {
-    max-width: 90vw;
-    width: 600px;
-    height: 400px;
-  }
 `;
 
 class Profile extends React.Component<Props> {
@@ -123,7 +117,7 @@ class Profile extends React.Component<Props> {
 
         <main>
           {youtubeUrl && (
-            <InviteVideo className="joinVideo" userId={memberDoc.id} />
+            <InviteVideo userId={memberDoc.id} memberId={memberDoc.get('mid')} />
           )}
 
           <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />

@@ -9,14 +9,21 @@ import {
   fetchMemberByUidIfNeeded,
   postOperation
 } from "../actions";
-import { getInviteVideoStorageRef, getMemberDocByMid } from "../connectors";
+import { getPrivateVideoInviteRef, getMemberDocByMid } from "../connectors";
 import { getMemberId, MemberDoc } from "../members";
 import { getRequestInviteOperation } from "../operations";
 import { storageRef } from '../firebaseInit';
 import { AppState } from "../store";
+import InviteVideo from "./InviteVideo";
+import Loading from "./Loading";
 import LogIn from "./LogIn";
+import Video from "./Video";
 
 const RequestInviteElem = styled.main`
+  div {
+    margin: 1vh 1vw;
+  }
+
   > .completelyFree {
     font-weight: bold;
   }
@@ -114,7 +121,7 @@ export class RequestInvite extends React.Component<Props, State> {
 
   private readonly inviteVideoStorageRef = () => {
     const userId = this.props.authFirebaseUser.uid;
-    return getInviteVideoStorageRef(storageRef, userId);
+    return getPrivateVideoInviteRef(storageRef, userId);
   }
 
   private uploadInviteVideo = async (event: HTMLInputEvent) => {
@@ -142,14 +149,28 @@ export class RequestInvite extends React.Component<Props, State> {
         this.setState({uploadedBytes: snapshot.bytesTransferred, totalBytes: snapshot.totalBytes});
       },
       e => this.setState({ errorMessage: 'Could not upload' }),
-      () => this.setState({ videoUrl: uploadTask.snapshot.downloadURL as string })
+      () => this.setState({ videoUrl: uploadTask.snapshot.downloadURL as string, uploading: false })
     );
+  }
+
+  private isOwnInvitePage() {
+    return this.props.authFirebaseUser.uid === this.props.toMemberDoc.id;
   }
 
   private readonly handleOnSubmit = async (
     event: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     event.stopPropagation();
+
+    if (this.isOwnInvitePage()) {
+      this.setState({ errorMessage: 'Sorry, cannot invite yourself!' });
+      return;
+    }
+
+    if (this.state.uploaded !== true) {
+      this.setState({ errorMessage: 'Upload a video first!' });
+      return;
+    }
 
     if (this.state.uploading === true) {
       this.setState({ errorMessage: 'Please wait for video upload to finish' });
@@ -219,9 +240,10 @@ export class RequestInvite extends React.Component<Props, State> {
         <div className="InviteError">{this.state.errorMessage}</div>
         {this.state.videoUrl && (
           <div>
-            <h3>
+            <h2>
               <FormattedMessage id="join_video" />
-            </h3>
+            </h2>
+            <Video videoUrl={this.state.videoUrl} />
           </div>
         )}
       </div>
@@ -243,27 +265,28 @@ export class RequestInvite extends React.Component<Props, State> {
         </div>
       );
     }
-    if (!this.props.notSignedIn && !this.props.isAuthMemberDocLoaded) {
+    if ((!this.props.notSignedIn && !this.props.isAuthMemberDocLoaded) || !this.props.isToMemberDocLoaded) {
       // TODO the loading appears again breifly is user goes from logged out to signed in with this.renderLogIn()
-      return <div>Loading</div>;
+      return <Loading />;
     }
     return (
       <RequestInviteElem>
+        {this.isOwnInvitePage() && <div><FormattedMessage id="own_invite_page" /></div>}
         <div className="requestInviteMessage">
           <FormattedMessage
             id="request_invite"
             values={{
-              full_name: this.props.isToMemberDocLoaded
-                ? this.props.toMemberDoc.get("full_name")
-                : null,
+              full_name: this.props.toMemberDoc.get("full_name"),
               mid: this.props.memberId
             }}
           />
         </div>
+        <InviteVideo memberId={this.props.memberId} userId={this.props.toMemberDoc.id} />
         <div>
           <FormattedMessage
             id="invite_me_intro"
             values={{
+              full_name: this.props.toMemberDoc.get("full_name"),
               completely_free: (
                 <span className="completelyFree">
                   <FormattedMessage id="completely_free" />
@@ -277,7 +300,7 @@ export class RequestInvite extends React.Component<Props, State> {
         ) : this.props.isAuthLoaded ? (
           this.renderForm()
         ) : (
-              <div>Loading</div>
+              <Loading />
             )}
       </RequestInviteElem>
     );
