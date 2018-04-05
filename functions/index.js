@@ -1,10 +1,5 @@
-const admin = require('firebase-admin');
 const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
-const spawn = require('child-process-promise').spawn;
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
@@ -67,32 +62,4 @@ exports.onCreateOperation = functions.firestore
                 console.warn(`Received an unexpected operation: ${newOperation.op_code}.`);
                 return 1;
         }
-});
-
-async function calcMultiHash(filePath) {
-    // TODO
-    return new Promise('QmFakeHash');
-}
-
-exports.processVideo = functions.storage.object().onChange(async (event) => {
-    // TODO create thumbnail? encode?
-    const object = event.data; // The Storage object.
-    const filePath = object.name; // File path in the bucket.
-    const contentType = object.contentType; // File content type.
-    const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
-    const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
-
-    if (!filePath.startsWith)
-    if (contentType !== 'video/mp4') {
-        console.err(`Invalid contentType ${contentType} for ${filePath}`);
-    }
-
-    const bucket = gcs.bucket(fileBucket);
-    const tempFilePath = path.join(os.tmpdir(), fileName);
-    await bucket.file(filePath).download({ destination: tempFilePath });
-    const multihash = calcMultiHash(filePath);
-
-    db.collection('videos').doc(multihash).set({ filePath, bucket });
-
-    // TODO update db.collection('operations');
 });
