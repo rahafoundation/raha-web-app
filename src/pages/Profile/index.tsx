@@ -18,7 +18,7 @@ import { AppState } from "../../store";
 import ActionButton from "../../components/ActionButton";
 import Loading from "../../components/Loading";
 import TrustLevel from "../../components/TrustLevel";
-import YoutubeVideo from "../../components/YoutubeVideo";
+import InviteVideo from "../../components/InviteVideo";
 
 import MemberRelations from "./MemberRelations";
 
@@ -53,12 +53,6 @@ const ProfileElem = styled.main`
         margin-left: 20px;
       }
     }
-  }
-
-  .joinVideo {
-    max-width: 90vw;
-    width: 600px;
-    height: 400px;
   }
 `;
 
@@ -127,7 +121,7 @@ class Profile extends React.Component<Props> {
 
         <main>
           {youtubeUrl && (
-            <YoutubeVideo className="joinVideo" youtubeUrl={youtubeUrl} />
+            <InviteVideo memberId={memberDoc.get('mid')} />
           )}
 
           <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />

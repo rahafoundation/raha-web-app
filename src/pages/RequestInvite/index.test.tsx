@@ -19,7 +19,7 @@ function setup() {
     isToMemberDocLoaded: true,
     isAuthMemberDocLoaded: true,
     notSignedIn: false,
-    fullName: "Member Me",
+    authFullName: "Member Me",
     toMemberDoc: {
       get: (key: string) => {
         if (key === "mid") {
@@ -58,12 +58,7 @@ describe("RequestInvite component", () => {
 
   it("sets an initial state", () => {
     const { enzymeWrapper } = setup();
-    expect(enzymeWrapper.state()).toEqual({
-      videoUrl: "",
-      toUid: "",
-      errorMessage: "",
-      fullName: "Member Me"
-    });
+    expect(enzymeWrapper.state()).toEqual({"fullName": "Member Me", "videoUrl": null});
   });
 
   it("sets the full name on render", () => {
