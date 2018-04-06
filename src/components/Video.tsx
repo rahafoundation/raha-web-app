@@ -2,21 +2,27 @@ import * as React from "react";
 import styled from "styled-components";
 
 
-const VideoElem = styled.div`
-  video {
-    max-width: 90vw;
-    width: 600px;
-    height: 400px;
-  }
+const VideoElem = styled.video`
+  max-width: 90vw;
+  width: 600px;
+  height: 400px;
+  display: block;
 `;
 
-export default class Video extends React.Component<{ videoUrl: string }, {}> {
-  // TODO poster="thumbnail.jpg"
-  public render() {
-    return (
-      <VideoElem>
-        <video controls={true} controlsList="nodownload" src={this.props.videoUrl} />
-      </VideoElem>
-    )
-  }
+interface Props {
+  videoUrl: string;
+  className?: string;
+};
+
+const Video: React.StatelessComponent<Props> = ({videoUrl, className}) => {
+  return (
+    <VideoElem
+      className={className}
+      controls={true}
+      controlsList="nodownload"
+      src={videoUrl}
+    />
+  )
 }
+
+export default Video;

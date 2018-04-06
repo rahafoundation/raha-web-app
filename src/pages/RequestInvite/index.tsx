@@ -22,8 +22,17 @@ import Video from "../../components/Video";
 import VideoUploader from "../../components/VideoUploader";
 
 const RequestInviteElem = styled.main`
-  div {
-    margin: 1vh 1vw;
+  > section, > form, > .inviteVideo {
+    margin: 15px auto;
+  }
+
+  > section, > form {
+    width: 740px;
+    max-width: 80vw;
+  }
+
+  > form > * {
+    margin-left: 30px;
   }
 
   > .completelyFree {
@@ -97,7 +106,7 @@ export class RequestInvite extends React.Component<Props, State> {
     this.setState({ videoUrl: event.currentTarget.value });
   };
 
-  private readonly setauthFullName = (
+  private readonly setAuthFullName = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     this.setState({ fullName: event.currentTarget.value });
@@ -166,30 +175,29 @@ export class RequestInvite extends React.Component<Props, State> {
   private renderForm() {
     const uploadRef = storageRef && getPrivateVideoInviteRef(storageRef, this.props.authFirebaseUser.uid);
     return (
-      <div>
-        <br />
-        <div>
-          <input
-            value={this.state.fullName || ""}
-            onChange={this.setauthFullName}
-            placeholder="First and last name"
-            className="InviteInput DisplayNameInput"
-          />
-        </div>
+      <form>
+        <h3>Upload your invite video</h3>
+        <input
+          value={this.state.fullName || ""}
+          onChange={this.setAuthFullName}
+          placeholder="First and last name"
+          className="InviteInput DisplayNameInput"
+        />
         <VideoUploader setVideoUrl={videoUrl => this.setState({ videoUrl })} uploadRef={uploadRef} />
         <button className="InviteButton Green" onClick={this.handleOnSubmit}>
-          Invite me!
+          { /* TODO: internationalize */ }
+          Request Invite
         </button>
-        <div className="InviteError">{this.state.errorMessage}</div>
-        {this.state.videoUrl && (
-          <div>
-            <h2>
-              <FormattedMessage id="join_video" />
-            </h2>
-            <Video videoUrl={this.state.videoUrl} />
-          </div>
-        )}
-      </div>
+        { this.state.errorMessage &&
+          <span className="InviteError">{this.state.errorMessage}</span>
+        }
+        {this.state.videoUrl && (<>
+          <h2>
+            <FormattedMessage id="join_video" />
+          </h2>
+          <Video videoUrl={this.state.videoUrl} />
+        </>)}
+      </form>
     );
   }
 
@@ -214,8 +222,10 @@ export class RequestInvite extends React.Component<Props, State> {
     }
     return (
       <RequestInviteElem>
-        {this.isOwnInvitePage() && <div><FormattedMessage id="own_invite_page" /></div>}
-        <div className="requestInviteMessage">
+        {this.isOwnInvitePage() &&
+          <section><FormattedMessage id="own_invite_page" /></section>
+        }
+        <section className="requestInviteMessage">
           <FormattedMessage
             id="request_invite"
             values={{
@@ -223,9 +233,9 @@ export class RequestInvite extends React.Component<Props, State> {
               mid: this.props.memberId
             }}
           />
-        </div>
-        <InviteVideo memberId={this.props.memberId} />
-        <div>
+        </section>
+        <InviteVideo className="inviteVideo" memberId={this.props.memberId} />
+        <section>
           <FormattedMessage
             id="invite_me_intro"
             values={{
@@ -237,7 +247,7 @@ export class RequestInvite extends React.Component<Props, State> {
               )
             }}
           />
-        </div>
+        </section>
         {this.props.notSignedIn ? (
           this.renderLogIn()
         ) : this.props.isAuthLoaded ? (
