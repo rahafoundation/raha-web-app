@@ -20,13 +20,13 @@ import {
   SetFirebaseUserAction,
   SHOW_MODAL,
   ShowModalAction
-} from './actions';
-import { MemberEntry } from './members';
+} from '../actions';
+import { MemberEntry } from '../members';
 import {
   OpDoc,
   Operation,
   OpMeta,
-} from './operations';
+} from '../operations';
 
 interface MembersState {
   readonly byMid: {[key: string]: MemberEntry},
