@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { fetchOperations } from "../actions";
 import { db } from "../firebaseInit";
-import { OperationsState } from "../reducers";
+import { OperationsState } from "../reducers/operations";
 import { AppState } from "../store";
 
 interface OwnProps {}
