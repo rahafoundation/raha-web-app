@@ -6,7 +6,6 @@ import Loading from "./Loading";
 import Video from "./Video";
 
 interface Props {
-  readonly userId: string;
   readonly memberId: string;
 }
 

@@ -117,7 +117,7 @@ class Profile extends React.Component<Props> {
 
         <main>
           {youtubeUrl && (
-            <InviteVideo userId={memberDoc.id} memberId={memberDoc.get('mid')} />
+            <InviteVideo memberId={memberDoc.get('mid')} />
           )}
 
           <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />

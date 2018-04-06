@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as firebase from "firebase";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import styled from "styled-components";
@@ -18,6 +17,7 @@ import InviteVideo from "./InviteVideo";
 import Loading from "./Loading";
 import LogIn from "./LogIn";
 import Video from "./Video";
+import VideoUploader from "./VideoUploader";
 
 const RequestInviteElem = styled.main`
   div {
@@ -34,17 +34,11 @@ const RequestInviteElem = styled.main`
 `;
 
 interface State {
-  videoUrl: string;
-  toUid: string;
-  errorMessage: string;
-  // TODO: why is this here if it's already in state?
+  videoUrl: string | null;
+  errorMessage?: string;
   fullName: string | null;
   submitted?: boolean;
   creatorMid?: string;
-  uploading: boolean;
-  uploaded: boolean;
-  uploadedBytes: number;
-  totalBytes: number;
 }
 
 // TODO: could be more but this is a really confusing component
@@ -54,7 +48,7 @@ interface OwnProps {
 }
 
 type Props = OwnProps & {
-  fullName: string | null;
+  authFullName: string | null;
   postOperation: typeof postOperation;
   fetchMemberByMidIfNeeded: typeof fetchMemberByMidIfNeeded;
   fetchMemberByUidIfNeeded: typeof fetchMemberByUidIfNeeded;
@@ -67,31 +61,19 @@ type Props = OwnProps & {
   authFirebaseUser: { uid: string };
 };
 
-interface HTMLInputEvent extends React.FormEvent<HTMLInputElement> {
-  target: HTMLInputElement & EventTarget;
-}
-
 export class RequestInvite extends React.Component<Props, State> {
-  private inviteVideoInput: HTMLInputElement | null;
 
   constructor(props: Props) {
     super(props);
-    this.inviteVideoInput = null;
     this.state = {
-      videoUrl: "",
-      toUid: "",
-      errorMessage: "",
-      fullName: props.fullName,
-      uploading: false,
-      uploaded: false,
-      uploadedBytes: 0,
-      totalBytes: 0
+      videoUrl: null,
+      fullName: props.authFullName
     };
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.fullName !== this.props.fullName) {
-      this.setState({ fullName: nextProps.fullName });
+    if (nextProps.authFullName !== this.props.authFullName) {
+      this.setState({ fullName: nextProps.authFullName });
     }
     this.fetchIfNeeded(nextProps);
   }
@@ -113,45 +95,11 @@ export class RequestInvite extends React.Component<Props, State> {
     this.setState({ videoUrl: event.currentTarget.value });
   };
 
-  private readonly setFullName = (
+  private readonly setauthFullName = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     this.setState({ fullName: event.currentTarget.value });
   };
-
-  private readonly inviteVideoStorageRef = () => {
-    const userId = this.props.authFirebaseUser.uid;
-    return getPrivateVideoInviteRef(storageRef, userId);
-  }
-
-  private uploadInviteVideo = async (event: HTMLInputEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (event.target.files === null) {
-      this.setState({ errorMessage: 'Invalid video file' });
-      return;
-    }
-    const file = event.target.files[0];
-
-    if (file.size > 40 * 1024 * 1024) {
-      this.setState({ errorMessage: 'Video is larger than 40 MB, please upload smaller video.' });
-    }
-
-    const metadata = {
-      'contentType': file.type
-    };
-
-    this.setState({ uploading: true });
-    const uploadTask = this.inviteVideoStorageRef().put(file, metadata);
-    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-      s => {
-        const snapshot = s as firebase.storage.UploadTaskSnapshot;
-        this.setState({uploadedBytes: snapshot.bytesTransferred, totalBytes: snapshot.totalBytes});
-      },
-      e => this.setState({ errorMessage: 'Could not upload' }),
-      () => this.setState({ videoUrl: uploadTask.snapshot.downloadURL as string, uploading: false })
-    );
-  }
 
   private isOwnInvitePage() {
     return this.props.authFirebaseUser.uid === this.props.toMemberDoc.id;
@@ -167,35 +115,31 @@ export class RequestInvite extends React.Component<Props, State> {
       return;
     }
 
-    if (this.state.uploaded !== true) {
-      this.setState({ errorMessage: 'Upload a video first!' });
+    if (!this.state.videoUrl || this.state.videoUrl.startsWith('https')) {
+      this.setState({ errorMessage: 'Please upload a valid video first!' });
       return;
     }
 
-    if (this.state.uploading === true) {
-      this.setState({ errorMessage: 'Please wait for video upload to finish' });
-      return;
-    }
+    const fullName = this.state.fullName;
 
-    if (this.state.uploaded !== true) {
-      this.setState({ errorMessage: 'Upload a video first!' });
+    if (!fullName) {
+      this.setState({ errorMessage: 'Please enter a valid full name' });
       return;
     }
 
     const toMemberDoc = this.props.toMemberDoc;
     const toUid = toMemberDoc.id;
     const toMid = toMemberDoc.get("mid");
-    const fullName = this.state.fullName;
     // TODO: is this how we want to handle lack of name?
-    const creatorMid = getMemberId(fullName || "");
+    const creatorMid = getMemberId(fullName);
     const videoUrl = this.state.videoUrl;
-    // TODO: should null fullName be handled this way?
+    // TODO: should null authFullName be handled this way?
     const requestOp = getRequestInviteOperation(
       creatorMid,
       this.props.authFirebaseUser.uid,
       toMid,
       toUid,
-      fullName || "",
+      fullName,
       videoUrl
     );
     try {
@@ -218,22 +162,19 @@ export class RequestInvite extends React.Component<Props, State> {
   }
 
   private renderForm() {
+    const uploadRef = storageRef && getPrivateVideoInviteRef(storageRef, this.props.authFirebaseUser.uid);
     return (
       <div>
         <br />
         <div>
           <input
             value={this.state.fullName || ""}
-            onChange={this.setFullName}
+            onChange={this.setauthFullName}
             placeholder="First and last name"
             className="InviteInput DisplayNameInput"
           />
         </div>
-        <div>
-          <label><FormattedMessage id="record_invite" /></label>
-          <input onChange={this.uploadInviteVideo} id="inviteVideo" capture={true} accept="video/mp4" type="file" />
-        </div>
-        {this.state.uploading && <div>Uploaded {Math.round(100.0 * this.state.uploadedBytes / this.state.totalBytes)}%</div>}
+        <VideoUploader setVideoUrl={videoUrl => this.setState({ videoUrl })} uploadRef={uploadRef} />
         <button className="InviteButton Green" onClick={this.handleOnSubmit}>
           Invite me!
         </button>
@@ -281,7 +222,7 @@ export class RequestInvite extends React.Component<Props, State> {
             }}
           />
         </div>
-        <InviteVideo memberId={this.props.memberId} userId={this.props.toMemberDoc.id} />
+        <InviteVideo memberId={this.props.memberId} />
         <div>
           <FormattedMessage
             id="invite_me_intro"
@@ -338,7 +279,7 @@ function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   return state.auth.firebaseUser !== null
     ? {
       ...extraProps,
-      fullName: state.auth.firebaseUser.displayName
+      authFullName: state.auth.firebaseUser.displayName
     }
     : extraProps;
 }
