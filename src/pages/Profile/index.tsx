@@ -2,21 +2,25 @@ import * as React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import { fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded } from "../actions";
+import {
+  fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded
+} from "../../actions";
 import {
   getAuthMemberDoc,
   getAuthMemberDocIsLoaded,
   getMemberDoc
-} from "../connectors";
-import { getMemberUidToOp, OpLookupTable } from "../helpers/ops";
-import { MemberEntry } from "../members";
-import { OpCode } from "../operations";
-import { AppState } from "../store";
-import ActionButton from "./ActionButton";
-import Loading from "./Loading";
+} from "../../connectors";
+import { getMemberUidToOp, OpLookupTable } from "../../helpers/ops";
+import { MemberEntry } from "../../members";
+import { OpCode } from "../../operations";
+import { AppState } from "../../store";
+
+import ActionButton from "../../components/ActionButton";
+import Loading from "../../components/Loading";
+import TrustLevel from "../../components/TrustLevel";
+import InviteVideo from "../../components/InviteVideo";
+
 import MemberRelations from "./MemberRelations";
-import TrustLevel from "./TrustLevel";
-import InviteVideo from "./InviteVideo";
 
 // TODO: this seems to be duplicated in multiple places
 interface OwnProps {

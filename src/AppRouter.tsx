@@ -1,16 +1,17 @@
 import * as React from "react";
 import { BrowserRouter, Route, RouteProps, Switch } from "react-router-dom";
-import "../App.css";
-import AppLayout from "./AppLayout";
-import CodeOfConduct from "./CodeOfConduct";
-import InviteMissing from "./InviteMissing";
-import LogIn from "./LogIn";
-import LogOut from "./LogOut";
-import Operations from "./Operations";
-import PageNotFound from "./PageNotFound";
-import Profile from "./Profile";
-import RequestInvite from "./RequestInvite";
-import Splash from "./Splash";
+import "./App.css";
+
+import AppLayout from "./pages/AppLayout";
+import CodeOfConduct from "./pages/CodeOfConduct";
+import InviteMissing from "./pages/InviteMissing";
+import LogIn from "./pages/LogIn";
+import LogOut from "./pages/LogOut";
+import Operations from "./pages/Operations";
+import PageNotFound from "./pages/PageNotFound";
+import Profile from "./pages/Profile";
+import RequestInvite from "./pages/RequestInvite";
+import Splash from "./pages/Splash";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {

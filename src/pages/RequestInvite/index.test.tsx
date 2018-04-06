@@ -4,9 +4,9 @@ import { shallow } from "enzyme";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { mountWithIntl } from "../helpers/intl-enzyme-test-helper";
-import { OperationData } from "../operations";
-import { RequestInvite } from "./RequestInvite";
+import { mountWithIntl } from "../../helpers/intl-enzyme-test-helper";
+import { OperationData } from "../../operations";
+import { RequestInvite } from "./";
 
 // ref: pattern for testing connected components
 function setup() {

@@ -7,17 +7,19 @@ import {
   fetchMemberByMidIfNeeded,
   fetchMemberByUidIfNeeded,
   postOperation
-} from "../actions";
-import { getPrivateVideoInviteRef, getMemberDocByMid } from "../connectors";
-import { getMemberId, MemberDoc } from "../members";
-import { getRequestInviteOperation } from "../operations";
-import { storageRef } from '../firebaseInit';
-import { AppState } from "../store";
-import InviteVideo from "./InviteVideo";
-import Loading from "./Loading";
-import LogIn from "./LogIn";
-import Video from "./Video";
-import VideoUploader from "./VideoUploader";
+} from "../../actions";
+import { getPrivateVideoInviteRef, getMemberDocByMid } from "../../connectors";
+import { getMemberId, MemberDoc } from "../../members";
+import { getRequestInviteOperation } from "../../operations";
+import { storageRef } from '../../firebaseInit';
+import { AppState } from "../../store";
+
+import LogIn from "../LogIn";
+
+import InviteVideo from "../../components/InviteVideo";
+import Loading from "../../components/Loading";
+import Video from "../../components/Video";
+import VideoUploader from "../../components/VideoUploader";
 
 const RequestInviteElem = styled.main`
   div {
