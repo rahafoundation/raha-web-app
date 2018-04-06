@@ -1,7 +1,6 @@
 {
-  "name": "raha-io",
+  "name": "@raha.io/website",
   "version": "0.2.0",
-  "private": true,
   "scripts": {
     "use-prod-db": "cp src/data/firebase.prod.json src/data/firebase.config.json",
     "use-test-db": "cp src/data/firebase.test.json src/data/firebase.config.json",
