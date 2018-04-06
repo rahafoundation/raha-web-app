@@ -2,12 +2,12 @@ import randomColor from "random-material-color";
 import * as React from "react";
 import { connect } from "react-redux";
 import styled, { ThemeProvider } from "styled-components";
-import Link from "./Link";
+import Link from "../../components/Link";
 
-import { fetchMemberByUidIfNeeded } from "../actions";
-import { interactive, gray, lightGreen } from "../constants/palette";
-import { OpMeta } from "../operations";
-import { AppState } from "../store";
+import { fetchMemberByUidIfNeeded } from "../../actions";
+import { interactive, gray, lightGreen } from "../../constants/palette";
+import { OpMeta } from "../../operations";
+import { AppState } from "../../store";
 
 const Loading = () => {
   return <div>Loading</div>;

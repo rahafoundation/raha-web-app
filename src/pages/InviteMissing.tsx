@@ -13,7 +13,8 @@ import { Link, Redirect } from "react-router-dom";
 import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
-import Loading from "./Loading";
+
+import Loading from "../components/Loading";
 
 interface StateProps {
   authFirebaseUser: firebase.User | null;

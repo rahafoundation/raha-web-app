@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import RahaTitle from "./RahaTitle";
+import RahaTitle from "../components/RahaTitle";
 
 const Splash = () => (
   <div className="Splash">
