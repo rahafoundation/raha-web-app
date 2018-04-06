@@ -7,13 +7,13 @@ import {
   fetchMemberByMidIfNeeded,
   fetchMemberByUidIfNeeded,
   postOperation
-} from "../actions";
-import { getMemberDocByMid } from "../connectors";
-import { getMemberId, MemberDoc } from "../members";
-import { getRequestInviteOperation } from "../operations";
-import { AppState } from "../store";
-import LogIn from "./LogIn";
-import YoutubeVideo, { getYoutubeUrlVideoId } from "./YoutubeVideo";
+} from "../../actions";
+import { getMemberDocByMid } from "../../connectors";
+import { getMemberId, MemberDoc } from "../../members";
+import { getRequestInviteOperation } from "../../operations";
+import { AppState } from "../../store";
+import LogIn from "../LogIn";
+import YoutubeVideo, { getYoutubeUrlVideoId } from "../../components/YoutubeVideo";
 
 const RequestInviteElem = styled.main`
   > .completelyFree {

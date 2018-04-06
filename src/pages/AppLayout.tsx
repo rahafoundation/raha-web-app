@@ -16,10 +16,12 @@ import { showModal as showModalAction } from "../actions";
 import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
+
 import InviteInstructions from "./InviteInstructions";
-import Link from "./Link";
-import LogoIcon from "./LogoIcon";
-import Modal from "./Modal";
+
+import Link from "../components/Link";
+import LogoIcon from "../components/LogoIcon";
+import Modal from "../components/Modal";
 
 const FooterElem = styled.footer`
   padding: 50px 30px;

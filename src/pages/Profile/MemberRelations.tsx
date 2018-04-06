@@ -8,14 +8,14 @@ import {
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { green, interactive } from "../constants/palette";
+import { green, interactive } from "../../constants/palette";
 
-import { fetchOperations } from "../actions";
-import { getAuthMemberDoc } from "../connectors";
-import { db } from "../firebaseInit";
-import { getMemberUidToOp, OpLookupTable } from "../helpers/ops";
-import { OpCode, OpMeta } from "../operations";
-import { AppState } from "../store";
+import { fetchOperations } from "../../actions";
+import { getAuthMemberDoc } from "../../connectors";
+import { db } from "../../firebaseInit";
+import { getMemberUidToOp, OpLookupTable } from "../../helpers/ops";
+import { OpCode, OpMeta } from "../../operations";
+import { AppState } from "../../store";
 import MemberThumbnail from "./MemberThumbnail";
 
 interface OwnProps {
@@ -88,9 +88,7 @@ const MemberListElem = styled.div`
     padding-bottom: 20px;
     padding-right: 10px;
 
-     {
-      /* TODO: make this a general purpose button style */
-    }
+    /* TODO: make this a general purpose button style */
     .expandBtn {
       background: none;
       border: none;

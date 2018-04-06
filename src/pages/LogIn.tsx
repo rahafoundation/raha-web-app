@@ -8,7 +8,8 @@ import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { auth } from "../firebaseInit";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
-import Loading from "./Loading";
+
+import Loading from "../components/Loading";
 
 interface StateProps {
   authFirebaseUser: firebase.User | null;
