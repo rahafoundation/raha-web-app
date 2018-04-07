@@ -153,16 +153,12 @@ export class RequestInvite extends React.Component<Props, State> {
       fullName,
       videoUrl
     );
-    debugger;
     try {
       await this.props.postOperation(requestOp);
-      debugger;
     } catch (e) {
-      debugger;
       this.setState({ errorMessage: 'Failed to request invite' });
       return;
     }
-    debugger;
     this.setState({ submitted: true, creatorMid });
   };
 
@@ -208,7 +204,6 @@ export class RequestInvite extends React.Component<Props, State> {
   public render() {
     // TODO check if user already invited
     if (this.state.submitted) {
-      debugger;
       // TODO we should instead redirect to profileUrl, which should display this message along with their invite video.
       const profileUrl = `${window.location.origin}/m/${this.state.creatorMid}`;
       return (

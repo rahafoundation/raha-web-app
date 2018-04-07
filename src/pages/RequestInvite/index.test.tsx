@@ -96,7 +96,7 @@ describe("RequestInvite component", () => {
   it("displays an error message when trying to submit without video url", () => {
     const { props, enzymeWrapper } = setup();
     const button = enzymeWrapper.find(".InviteButton");
-    button.simulate("click", { stopPropagation() { /* no-op */ } });
-    expect(enzymeWrapper.state().errorMessage).not.toHaveLength(0);
+    button.simulate("click", { stopPropagation() { /* no-op */ }, preventDefault() { /* no-op */ }});
+    expect(enzymeWrapper.state().errorMessage).toEqual('Please upload a valid video first!');
   });
 });
