@@ -5,6 +5,8 @@
         "tslint-config-prettier"
     ],
     "rules": {
+        // Set this to false when debugging
+        "no-debugger": true,
         // I think putting I in front of interface names doesn't get us anything
         "interface-name": false,
         // Sorting keys of object literals is meaningless
