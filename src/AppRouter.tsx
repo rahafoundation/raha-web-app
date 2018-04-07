@@ -5,7 +5,7 @@ import "./App.css";
 import AppLayout from "./pages/AppLayout";
 import CodeOfConduct from "./pages/CodeOfConduct";
 import InviteMissing from "./pages/InviteMissing";
-import LogIn from "./pages/LogIn";
+import LogIn from "./components/LogIn";
 import LogOut from "./pages/LogOut";
 import Operations from "./pages/Operations";
 import PageNotFound from "./pages/PageNotFound";

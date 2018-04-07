@@ -14,8 +14,7 @@ import { getRequestInviteOperation } from "../../operations";
 import { storageRef } from '../../firebaseInit';
 import { AppState } from "../../store";
 
-import LogIn from "../LogIn";
-
+import LogIn from "../../components/LogIn";
 import InviteVideo from "../../components/InviteVideo";
 import Loading from "../../components/Loading";
 import Video from "../../components/Video";
@@ -113,20 +112,21 @@ export class RequestInvite extends React.Component<Props, State> {
   };
 
   private isOwnInvitePage() {
-    return this.props.authFirebaseUser.uid === this.props.toMemberDoc.id;
+    return this.props.authFirebaseUser && this.props.authFirebaseUser.uid === this.props.toMemberDoc.id;
   }
 
   private readonly handleOnSubmit = async (
     event: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     event.stopPropagation();
+    event.preventDefault();
 
     if (this.isOwnInvitePage()) {
       this.setState({ errorMessage: 'Sorry, cannot invite yourself!' });
       return;
     }
 
-    if (!this.state.videoUrl || this.state.videoUrl.startsWith('https')) {
+    if (!this.state.videoUrl || !this.state.videoUrl.startsWith('https')) {
       this.setState({ errorMessage: 'Please upload a valid video first!' });
       return;
     }
@@ -153,12 +153,16 @@ export class RequestInvite extends React.Component<Props, State> {
       fullName,
       videoUrl
     );
+    debugger;
     try {
       await this.props.postOperation(requestOp);
+      debugger;
     } catch (e) {
+      debugger;
       this.setState({ errorMessage: 'Failed to request invite' });
       return;
     }
+    debugger;
     this.setState({ submitted: true, creatorMid });
   };
 
@@ -204,6 +208,7 @@ export class RequestInvite extends React.Component<Props, State> {
   public render() {
     // TODO check if user already invited
     if (this.state.submitted) {
+      debugger;
       // TODO we should instead redirect to profileUrl, which should display this message along with their invite video.
       const profileUrl = `${window.location.origin}/m/${this.state.creatorMid}`;
       return (
