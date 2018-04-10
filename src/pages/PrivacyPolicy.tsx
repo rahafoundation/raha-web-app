@@ -21,7 +21,7 @@ const PrivacyPolicy = () => (
                 We may need your information display content on the Site correctly.
   </li>
             <li>
-                <i>To personalize user experience</i><br />
+                <i>To personalize member experience</i><br />
                 We may use information in the aggregate to understand how our Members as a group use the services and resources provided on our Site.
   </li>
             <li>
