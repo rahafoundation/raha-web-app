@@ -3,7 +3,7 @@ import * as firebase from "firebase";
 import { FormattedMessage } from "react-intl";
 
 const BYTES_PER_MIB = 1024 * 1024;
-const MAX_VIDEO_SIZE = 40 * BYTES_PER_MIB;
+const MAX_VIDEO_SIZE = 60 * BYTES_PER_MIB;
 
 interface Props {
     uploadRef: firebase.storage.Reference;
