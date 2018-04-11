@@ -143,15 +143,13 @@ export class RequestInvite extends React.Component<Props, State> {
     const toMid = toMemberDoc.get("mid");
     // TODO: is this how we want to handle lack of name?
     const creatorMid = getMemberId(fullName);
-    const videoUrl = this.state.videoUrl;
     // TODO: should null authFullName be handled this way?
     const requestOp = getRequestInviteOperation(
       creatorMid,
       this.props.authFirebaseUser.uid,
       toMid,
       toUid,
-      fullName,
-      videoUrl
+      fullName
     );
     try {
       await this.props.postOperation(requestOp);

@@ -71,15 +71,14 @@ export const getRequestInviteOperation = (
   creatorUid: string,
   toMid: string,
   toUid: string,
-  fullName: string,
-  videoUrl: string
+  fullName: string
 ): OperationData => {
   return getOperation(
     OpCode.REQUEST_INVITE,
     creatorMid,
     creatorUid,
     {
-      to_uid: toUid, to_mid: toMid, video_url: videoUrl, full_name: fullName
+      to_uid: toUid, to_mid: toMid, full_name: fullName
     }
   );
 };
