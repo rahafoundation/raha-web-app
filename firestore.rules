@@ -4,21 +4,14 @@ service cloud.firestore {
       return request.auth.uid != null;
     }
 
-    match /user_data/{id} {
-      allow read;
-    }
-
-    match /relations/{id} {
-      allow read;
-    }
-
     match /members/{id} {
+      // TODO do not allow create after switch to raha-api
       allow create: if isSignedIn() && request.auth.uid == id;
       allow read;
     }
 
     match /operations/{id} {
-      // Additional validation can be done later when we decide whether to apply it to blockchain
+      // TODO do not allow create after switch to raha-api
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid && request.resource.data.applied == false;
       allow read;
     }
