@@ -12,7 +12,7 @@ service cloud.firestore {
 
     match /operations/{id} {
       // TODO do not allow create after switch to raha-api
-      allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid && request.resource.data.applied == false;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid;
       allow read;
     }
   }

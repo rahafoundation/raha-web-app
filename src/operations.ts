@@ -1,3 +1,5 @@
+import * as url from 'url';
+
 export enum OpCode {
   ADMIN = 'ADMIN',
   FLAG = 'FLAG',
@@ -32,7 +34,6 @@ export type Operation = OpMeta & {
 
 type OpData = TrustOpData | RequestInviteOpData;
 export interface OperationData {
-  applied: false;
   block_at: Date | null;
   block_seq: number | null;
   created_at: Date; // firebase.firestore.FieldValue;
@@ -47,7 +48,6 @@ const getOperation = (
   opCode: OpCode, creatorMid: string, creatorUid: string, data: OpData
 ): OperationData => {
   return {
-    applied: false,
     block_at: null,
     block_seq: null,
     created_at: new Date(),

@@ -3,7 +3,6 @@
     {
       "collectionId": "operations",
       "fields": [
-        { "fieldPath": "applied", "mode": "ASCENDING" },
         { "fieldPath": "op_seq", "mode": "ASCENDING" }
       ]
     },
