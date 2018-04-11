@@ -6,7 +6,7 @@ const db = admin.firestore();
 
 const REQUEST_INVITE = 'REQUEST_INVITE';
 
-function createMemberFromOperation(operation: OperationData) {
+function createMemberFromOperation(operation) {
     const {
         block_at,
         block_seq,
