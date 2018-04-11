@@ -26,7 +26,6 @@ function createMemberFromOperation(operation: OperationData) {
     const {
         to_uid,
         to_mid,
-        video_url,
         full_name
     } = data;
 
@@ -41,8 +40,7 @@ function createMemberFromOperation(operation: OperationData) {
         request_invite_block_seq: block_seq,
         request_invite_op_seq: op_seq,
         request_invite_from_uid: to_uid,
-        request_invite_from_mid: to_mid,
-        video_url,
+        request_invite_from_mid: to_mid
     });
 }
 
