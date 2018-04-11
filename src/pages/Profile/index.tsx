@@ -136,7 +136,7 @@ function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   const memberId = ownProps.match.params.memberId;
 
   const receivedOps = Object.entries(state.uidToOpMeta).filter(
-    uidOp => uidOp[1].op.applied && uidOp[1].op.data.to_uid === ownProps.uid
+    uidOp => uidOp[1].op.data.to_uid === ownProps.uid
   );
   return {
     authFirebaseUser: state.auth.firebaseUser,

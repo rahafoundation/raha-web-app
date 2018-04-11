@@ -282,10 +282,10 @@ function mapStateToProps(
 ): PropsFromAppState {
   const authMemberDoc = getAuthMemberDoc(state);
   const receivedOps = Object.entries(state.uidToOpMeta).filter(
-    uidOp => uidOp[1].op.applied && uidOp[1].op.data.to_uid === ownProps.uid
+    uidOp => uidOp[1].op.data.to_uid === ownProps.uid
   );
   const sentOps = Object.entries(state.uidToOpMeta).filter(
-    uidOp => uidOp[1].op.applied && uidOp[1].op.creator_uid === ownProps.uid
+    uidOp => uidOp[1].op.creator_uid === ownProps.uid
   );
   const trustedByUids = getMemberUidToOp(
     receivedOps,

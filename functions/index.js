@@ -8,7 +8,6 @@ const REQUEST_INVITE = 'REQUEST_INVITE';
 
 function createMemberFromOperation(operation: OperationData) {
     const {
-        applied,
         block_at,
         block_seq,
         created_at,
@@ -19,7 +18,7 @@ function createMemberFromOperation(operation: OperationData) {
         op_seq
     } = operation;
 
-    if (applied || op_code !== REQUEST_INVITE) {
+    if (op_code !== REQUEST_INVITE) {
         return null;
     }
 
@@ -50,12 +49,7 @@ exports.onCreateOperation = functions.firestore
         const newOperation = event.data.data();
         switch (newOperation.op_code) {
             case REQUEST_INVITE:
-                createMemberFromOperation(newOperation).then(() => {
-                    return event.data.ref.update({
-                        applied: true,
-                    });
-                }).catch((err) => console.err(`An error occurred while trying to create a member from operation ${newOperation.id}.`, err));
-                return 0;
+                return createMemberFromOperation(newOperation);
             default:
                 console.warn(`Received an unexpected operation: ${newOperation.op_code}.`);
                 return 1;
