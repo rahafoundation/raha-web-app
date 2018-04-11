@@ -92,7 +92,7 @@ class Profile extends React.Component<Props> {
     }
     const ownProfile = this.isOwnProfile();
     const fullName = memberDoc.get("full_name");
-    const youtubeUrl = memberDoc.get("video_url");
+    const inviteConfirmed = memberDoc.get("invite_confirmed");
     return (
       <ProfileElem>
         <header>
@@ -111,7 +111,7 @@ class Profile extends React.Component<Props> {
             // TODO pass in correct props. Should MemberRelations mapStateToProps be in redux?
             <TrustLevel
               ownProfile={ownProfile}
-              trustLevel={memberDoc.get("invite_confirmed") ? 3 : 0}
+              trustLevel={inviteConfirmed ? 3 : 0}
               networkJoinDate={0}
               trustedByLevel2={0}
               trustedByLevel3={0}
@@ -120,9 +120,9 @@ class Profile extends React.Component<Props> {
         </header>
 
         <main>
-          {youtubeUrl && (
+          {inviteConfirmed ? (
             <InviteVideo memberId={memberDoc.get('mid')} />
-          )}
+          ) : <div>Pending trust confirmation before showing public video</div>}
 
           <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />
         </main>

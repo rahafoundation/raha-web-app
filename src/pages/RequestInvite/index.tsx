@@ -44,7 +44,7 @@ const RequestInviteElem = styled.main`
 `;
 
 interface State {
-  videoUrl: string | null;
+  videoUrl: string | null;  // Will contain video auth token, for this client only do not store
   errorMessage?: string;
   fullName: string | null;
   submitted?: boolean;

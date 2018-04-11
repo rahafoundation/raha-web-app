@@ -15,7 +15,6 @@ interface ToId {
 }
 
 interface RequestInviteOpData extends ToId {
-  video_url: string;
   full_name: string;
 }
 
