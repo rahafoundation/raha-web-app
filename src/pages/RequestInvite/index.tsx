@@ -184,11 +184,19 @@ export class RequestInvite extends React.Component<Props, State> {
           className="InviteInput DisplayNameInput"
         />
         <VideoUploader setVideoUrl={videoUrl => this.setState({ videoUrl })} uploadRef={uploadRef} />
+        <div>
+          <FormattedMessage id="request_invite.terms" values={{
+            code_of_conduct: <a href="/code-of-conduct"><FormattedMessage id="request_invite.code_of_conduct" /></a>,
+            privacy_policy: <a href="/privacy-policy"><FormattedMessage id="request_invite.privacy_policy" /></a>,
+            terms_of_service: <a href="/terms-of-service"><FormattedMessage id="request_invite.terms_of_service" /></a>
+          }} />
+        </div>
+        <br />
         <button className="InviteButton Green" onClick={this.handleOnSubmit}>
-          { /* TODO: internationalize */ }
+          { /* TODO: internationalize */}
           Request Invite
         </button>
-        { this.state.errorMessage &&
+        {this.state.errorMessage &&
           <span className="InviteError">{this.state.errorMessage}</span>
         }
         {this.state.videoUrl && (<>
