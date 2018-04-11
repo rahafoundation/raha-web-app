@@ -59,7 +59,7 @@ const PrivacyPolicy = () => (
         <p>If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at privacy@raha.io</p>
 
         <h3>Revisions and Amendments</h3>
-        <p>If you have further privacy concerns please do not hesitate to ask us by contacting help@raha.io. This Privacy Policy is effective as of April 9, 2018. This Privacy Policy is not intended to and does not create any contractual or other legal rights in or on behalf of any party. Raha Foundation reserves the right, at any time and without notice, to add to, modify, change or update this Privacy Policy, simply by posting such change, update or modification on https://raha.io. Any such change, update or modification will be effective immediately upon posting on the Company’s website.</p>
+        <p>If you have further privacy concerns please do not hesitate to ask us by contacting help@raha.io. This Privacy Policy is effective as of April 10, 2018. This Privacy Policy is not intended to and does not create any contractual or other legal rights in or on behalf of any party. Raha Foundation reserves the right, at any time and without notice, to add to, modify, change or update this Privacy Policy, simply by posting such change, update or modification on https://raha.io. Any such change, update or modification will be effective immediately upon posting on the Company’s website.</p>
     </div>
 );
 
