@@ -1,3 +1,4 @@
+// TODO: nuke this whole reducer, replace with operationsNew
 import { Reducer } from "redux";
 
 import {

@@ -7,8 +7,13 @@ import { ThunkAction } from 'redux-thunk';
 
 import { db } from './firebaseInit';
 import { MemberDoc, MemberEntry } from './members';
+// TODO: get rid of old operations
 import { OpDoc, Operation, OperationData, OpMeta } from './operations';
+import { APIOperation, OperationType, OperationsState } from './reducers/operationsNew';
+import { MembersState, MemberLookupTable } from './reducers/membersNew';
+import { Uid, Mid } from './identifiers';
 import { AppState } from './store';
+
 
 // member_actions.js
 
@@ -201,3 +206,49 @@ export const authSetFirebaseUser: ActionCreator<ThunkAction<void, AppState, void
     if (firebaseUser) { dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid)); }
     dispatch(setFirebaseUser(firebaseUser));
   };
+
+
+export enum OperationsActionType {
+  SET_OPERATIONS = 'SET_OPERATIONS',
+  ADD_OPERATION = 'ADD_OPERATION'
+}
+export interface SetOperationsAction {
+  type: OperationsActionType.SET_OPERATIONS,
+  operations: APIOperation[]
+}
+export interface AddOperationAction {
+  type: OperationsActionType.ADD_OPERATION,
+  operation: APIOperation
+}
+export type OperationsAction = SetOperationsAction | AddOperationAction
+
+const _refreshOperations: ThunkAction<void, AppState, void> = async (dispatch) => {
+    const res = await fetch('https://raha-5395e.appspot.com/api/operations');
+    if (res.status !== 200) {
+      return;
+    }
+    const operations = await res.json();
+    const action: OperationsAction = {
+      type: OperationsActionType.SET_OPERATIONS,
+      operations
+    };
+    dispatch(action);
+  };
+export const refreshOperations: ActionCreator<typeof _refreshOperations> = () => _refreshOperations
+
+export const applyOperation: (op: APIOperation) => ThunkAction<
+  void, AppState, void
+> = (operation: APIOperation) => async (dispatch, getState) => {
+  dispatch({
+    type: OperationsActionType.ADD_OPERATION,
+    operation,
+  });
+}
+
+export type MembersAction = SetOperationsAction | AddOperationAction;
+export const refreshMembers: ActionCreator<ThunkAction<void, AppState, void>> = () => {
+  return async (dispatch, getState) => {
+    // TODO: make this less bullshit
+    await _refreshOperations(dispatch, getState, undefined);
+  };
+}

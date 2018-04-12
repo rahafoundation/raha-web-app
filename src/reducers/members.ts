@@ -1,3 +1,4 @@
+// TODO: nuke this reducer, replace with membersNew
 import { Reducer } from 'redux';
 
 import { MemberEntry } from '../members';
