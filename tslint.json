@@ -24,6 +24,8 @@
         // perf isn't important enough for this inconvenience
         "jsx-no-lambda": false,
         // dev dependencies aren't implicit
-        "no-implicit-dependencies": [true, "dev"]
+        "no-implicit-dependencies": [true, "dev"],
+        // too strict, not useful
+        "variable-name": false
     }
 }
