@@ -7,6 +7,7 @@ import { interactive } from "../constants/palette";
 import { MemberDoc } from "../members";
 import { getTrustOperation } from "../operations";
 import { AppState } from "../store";
+import { linkStyles } from "./Link";
 
 // TODO code duplication in functions/srs/index.ts, decomp.
 
@@ -52,7 +53,7 @@ const buttonStyles = {
   color: {
     [ButtonType.PRIMARY]: "white",
     [ButtonType.SECONDARY]: "white",
-    [ButtonType.LINK]: interactive.primary
+    [ButtonType.LINK]: linkStyles.color
   },
   size: {
     [ButtonSize.SMALL]: ".8rem",
@@ -65,7 +66,7 @@ const buttonStyles = {
     [ButtonSize.LARGE]: "10px 20px"
   },
   textDecoration: {
-    [ButtonType.LINK]: "none"
+    [ButtonType.LINK]: linkStyles.textDecoration
   },
   hover: {
     background: {
@@ -76,10 +77,10 @@ const buttonStyles = {
     color: {
       [ButtonType.PRIMARY]: "white",
       [ButtonType.SECONDARY]: "white",
-      [ButtonType.LINK]: interactive.primaryHover
+      [ButtonType.LINK]: linkStyles.hover.color
     },
     textDecoration: {
-      [ButtonType.LINK]: "underline"
+      [ButtonType.LINK]: linkStyles.hover.textDecoration
     }
   }
 }
@@ -102,6 +103,9 @@ const ButtonElem = styled.button`
   text-decoration: none;
 
   font-size: ${props => buttonStyles.size[props.theme.size]};
+  font-weight: ${props => props.theme.type === ButtonType.LINK ?
+    linkStyles.fontWeight : "500"
+  };
 
   transition: color 0.15s, text-decoration 0.15s, background-color 0.15s;
 
