@@ -162,6 +162,10 @@
   version "22.2.2"
   resolved "https://registry.npmjs.org/@types/jest/-/jest-22.2.2.tgz#afe5dacbd00d65325f52da0ed3e76e259629ac9d"
 
+"@types/lodash@^4.14.106":
+  version "4.14.106"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.106.tgz#6093e9a02aa567ddecfe9afadca89e53e5dce4dd"
+
 "@types/material-ui@^0.21.1":
   version "0.21.1"
   resolved "https://registry.npmjs.org/@types/material-ui/-/material-ui-0.21.1.tgz#ddb6aaa7659cbf58b448c405e4872def2650cbab"
