@@ -1,5 +1,4 @@
 import { Reducer } from 'redux';
-import { cloneDeep } from 'lodash';
 
 import { Uid, Mid, Id } from '../identifiers';
 import { OperationsAction, OperationsActionType } from '../actions';
@@ -37,9 +36,10 @@ export type OperationsState = APIOperation[]
 export const reducer: Reducer<OperationsState> = (state = [], untypedAction) => {
   const action = untypedAction as OperationsAction;
   switch(action.type) {
-    case (OperationsActionType.SET_OPERATIONS): {
-      return cloneDeep(action.operations)
-    }
+    case (OperationsActionType.SET_OPERATIONS):
+      return action.operations
+    case (OperationsActionType.ADD_OPERATION):
+      return [...state, action.operation];
     default:
      return state;
   }
