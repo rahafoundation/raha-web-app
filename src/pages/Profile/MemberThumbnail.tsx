@@ -74,9 +74,6 @@ function getInitialsForName(name: string): string {
 
 // TODO(#14) improve this thumbnail
 const MemberThumbnail: React.StatelessComponent<Props> = ({member}) => {
-  // TODO: why is name sometimes undefined?
-  // TODO: better algorithm for determining initials of names with dashes,
-  // limiting number of characters, etc...
   const backgroundColor = randomColor.getColor({ text: `${member.mid}${member.fullName}` });
   return (
     <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
