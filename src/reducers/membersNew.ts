@@ -146,10 +146,10 @@ function applyOperation(
         throw new OperationInvalidError("Member who invite was requested from doesn't exist", operation)
       }
 
-      const inviter = prevState[to_uid].inviteMember(to_uid);
+      const inviter = prevState[to_uid].inviteMember(creator_uid);
       const inviteRequester = new Member(
         creator_uid, creator_mid, full_name,
-        to_uid, {[to_uid]: true}
+       to_uid, {[to_uid]: true}
       )
       return {
         ...prevState,
