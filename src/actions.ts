@@ -225,7 +225,7 @@ const _refreshOperations: ThunkAction<void, AppState, void> = async (dispatch) =
   // TODO: API calls should be wrapped in try/catch blocks; that can be encapsulated
   // into a helper.
   const res = await fetch('https://raha-5395e.appspot.com/api/operations');
-  if (res.status > 299) {
+  if (res.status !== 200) {
     // TODO: we should probably do something on failure
     return;
   }
