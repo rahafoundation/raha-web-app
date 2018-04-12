@@ -19,7 +19,7 @@ const GENESIS_TRUST_OPS = [
 ]
 export const GENESIS_USER = Symbol("GENESIS");
 
-interface UserSet {
+export interface UidSet {
   // can't use type Uid, bc this error: https://github.com/Microsoft/TypeScript/issues/7374
   [uid: string]: boolean
 }
@@ -33,13 +33,13 @@ export class Member {
   public fullName: string;
   public invitedBy: Uid | typeof GENESIS_USER;
 
-  public trustedBy: UserSet;
-  public invited: UserSet;
-  public trusts: UserSet
+  public trustedBy: UidSet;
+  public invited: UidSet;
+  public trusts: UidSet
 
   constructor(
     uid: Uid, mid: Mid, fullName: string, invitedBy: Uid | typeof GENESIS_USER,
-    trusts?: UserSet, trustedBy?: UserSet, invited?: UserSet,
+    trusts?: UidSet, trustedBy?: UidSet, invited?: UidSet,
   ) {
     this.uid = uid;
     this.mid = mid;
