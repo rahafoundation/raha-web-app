@@ -15,8 +15,6 @@ import { Uid, Mid } from './identifiers';
 import { AppState } from './store';
 
 
-// member_actions.js
-
 export const RECEIVE_MEMBER = 'RECEIVE_MEMBER';
 export const REQUEST_MEMBER_BY_MID = 'REQUEST_MEMBER_BY_MID';
 export const REQUEST_MEMBER_BY_UID = 'REQUEST_MEMBER_BY_UID';
@@ -186,8 +184,6 @@ export const fetchOperations: ActionCreator<ThunkAction<void, AppState, void>> =
     dispatch(receiveOperations(snap.docs));
   };
 
-// auth_actions.js
-
 export const SET_FIREBASE_USER = 'SET_FIREBASE_USER';
 
 export interface SetFirebaseUserAction extends Action {
@@ -222,18 +218,24 @@ export interface AddOperationAction {
 }
 export type OperationsAction = SetOperationsAction | AddOperationAction
 
+// TODO: these operations methods are likely correct, but long term inefficient.
+// We can rely on it now given that the number and size of operations are small,
+// but later rely on cached results instead.
 const _refreshOperations: ThunkAction<void, AppState, void> = async (dispatch) => {
-    const res = await fetch('https://raha-5395e.appspot.com/api/operations');
-    if (res.status !== 200) {
-      return;
-    }
-    const operations = await res.json();
-    const action: OperationsAction = {
-      type: OperationsActionType.SET_OPERATIONS,
-      operations
-    };
-    dispatch(action);
+  // TODO: API calls should be wrapped in try/catch blocks; that can be encapsulated
+  // into a helper.
+  const res = await fetch('https://raha-5395e.appspot.com/api/operations');
+  if (res.status > 299) {
+    // TODO: we should probably do something on failure
+    return;
+  }
+  const operations = await res.json();
+  const action: OperationsAction = {
+    type: OperationsActionType.SET_OPERATIONS,
+    operations
   };
+  dispatch(action);
+};
 export const refreshOperations: ActionCreator<typeof _refreshOperations> = () => _refreshOperations
 
 export const applyOperation: (op: APIOperation) => ThunkAction<
@@ -248,7 +250,7 @@ export const applyOperation: (op: APIOperation) => ThunkAction<
 export type MembersAction = SetOperationsAction | AddOperationAction;
 export const refreshMembers: ActionCreator<ThunkAction<void, AppState, void>> = () => {
   return async (dispatch, getState) => {
-    // TODO: make this less bullshit
+    // TODO: make this request cached members, not reconstruct from operations
     await _refreshOperations(dispatch, getState, undefined);
   };
 }
