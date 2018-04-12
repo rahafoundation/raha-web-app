@@ -12,28 +12,19 @@ import { RequestInvite } from "./";
 // ref: pattern for testing connected components
 function setup() {
   const props = {
-    isAuthLoaded: true,
+    isLoading: false,
     authFirebaseUser: {
       uid: "me"
     },
-    targetMid: "me$1234",
-    isTargetMemberLoaded: true,
-    isAuthMemberDocLoaded: true,
     targetMember: new Member(
-      "friend$1234",
-      "ijalir",
-      "Member Me",
+      "me$1234", // target mid
+      "ijalir", // target uid
+      "Member Me", // name
       "Inviting Friend"
     ),
     notSignedIn: false,
     authFullName: "Member Me",
     postOperation: (op: OperationData) => () => {
-      /* no-op */
-    },
-    fetchMemberByMidIfNeeded: (mid: string) => () => {
-      /* no-op */
-    },
-    fetchMemberByUidIfNeeded: (uid: string) => () => {
       /* no-op */
     },
     match: {

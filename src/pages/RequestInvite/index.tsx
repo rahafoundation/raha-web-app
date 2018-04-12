@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { postOperation } from "../../actions";
-import { getPrivateVideoInviteRef, getMemberDocByMid } from "../../connectors";
+import { getPrivateVideoInviteRef } from "../../connectors";
 import { getMemberId, MemberDoc } from "../../members";
 import { Member } from "../../reducers/membersNew";
 import { getRequestInviteOperation } from "../../operations";
@@ -60,13 +60,11 @@ interface OwnProps {
 type Props = OwnProps & {
   authFullName: string | null;
   postOperation: typeof postOperation;
-  isAuthLoaded: boolean;
-  isAuthMemberDocLoaded: boolean;
-  isTargetMemberLoaded: boolean;
-  targetMid: string;
   targetMember: Member;
   notSignedIn: boolean;
-  authFirebaseUser: { uid: string };
+  authFirebaseUser: any; // { uid: string };
+
+  isLoading: boolean;
 };
 
 export class RequestInvite extends React.Component<Props, State> {
@@ -95,9 +93,10 @@ export class RequestInvite extends React.Component<Props, State> {
   };
 
   private isOwnInvitePage() {
+    // tslint:disable
+    debugger;
     return (
-      this.props.authFirebaseUser &&
-      this.props.isTargetMemberLoaded &&
+      !this.props.isLoading &&
       this.props.authFirebaseUser.uid === this.props.targetMember.uid
     );
   }
@@ -126,16 +125,14 @@ export class RequestInvite extends React.Component<Props, State> {
     }
 
     const targetMember = this.props.targetMember;
-    const targetUid = targetMember.uid;
-    const targetMid = targetMember.mid;
     // TODO: is this how we want to handle lack of name?
     const creatorMid = getMemberId(fullName);
     // TODO: should null authFullName be handled this way?
     const requestOp = getRequestInviteOperation(
       creatorMid,
       this.props.authFirebaseUser.uid,
-      targetMid,
-      targetUid,
+      targetMember.mid,
+      targetMember.uid,
       fullName
     );
     try {
@@ -231,11 +228,7 @@ export class RequestInvite extends React.Component<Props, State> {
         </div>
       );
     }
-    if (
-      (!this.props.notSignedIn && !this.props.isAuthMemberDocLoaded) ||
-      !this.props.isTargetMemberLoaded
-    ) {
-      // TODO the loading appears again breifly is user goes from logged out to signed in with this.renderLogIn()
+    if (this.props.isLoading) {
       return <Loading />;
     }
     return (
@@ -250,11 +243,14 @@ export class RequestInvite extends React.Component<Props, State> {
             id="request_invite"
             values={{
               full_name: this.props.targetMember.fullName,
-              mid: this.props.targetMid
+              mid: this.props.targetMember.mid
             }}
           />
         </section>
-        <InviteVideo className="inviteVideo" memberId={this.props.targetMid} />
+        <InviteVideo
+          className="inviteVideo"
+          memberId={this.props.targetMember.mid}
+        />
         <section>
           <FormattedMessage
             id="invite_me_intro"
@@ -268,12 +264,12 @@ export class RequestInvite extends React.Component<Props, State> {
             }}
           />
         </section>
-        {this.props.notSignedIn ? (
-          this.renderLogIn()
-        ) : this.props.isAuthLoaded ? (
+        {this.props.isLoading ? (
+          <Loading />
+        ) : this.props.authFirebaseUser ? (
           this.renderForm()
         ) : (
-          <Loading />
+          this.renderLogIn()
         )}
       </RequestInviteElem>
     );
@@ -282,45 +278,34 @@ export class RequestInvite extends React.Component<Props, State> {
 
 function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   const isAuthLoaded = state.auth.isLoaded;
+  const authFirebaseUser = isAuthLoaded ? state.auth.firebaseUser : undefined;
+  const authMember: Member | undefined = authFirebaseUser
+    ? state.membersNew[authFirebaseUser.uid]
+    : undefined;
+  const authFullName: string | undefined | null = authMember
+    ? authMember.fullName
+    : authFirebaseUser ? authFirebaseUser.displayName : undefined;
 
   const targetMid = ownProps.match.params.memberId;
   const targetMember: Member | undefined = Object.values(state.membersNew).find(
     m => m.mid === targetMid
   );
 
-  const stateToPropsMap = {
-    isAuthLoaded,
-    targetMid,
-    isTargetMemberLoaded: state.membersNew && !!targetMember,
-    targetMember,
-    notSignedIn: true
-  };
+  const isLoading =
+    // Loading auth
+    !isAuthLoaded ||
+    // Member state is unpopulated
+    Object.entries(state.membersNew).length === 0;
 
-  if (!isAuthLoaded) {
-    return stateToPropsMap;
-  }
-  const authFirebaseUser = state.auth.firebaseUser;
-  if (!authFirebaseUser) {
-    return stateToPropsMap;
-  }
-
-  // TODO replace uses of authMember with new authMember
-  // const authMember = state.members.byUid[authFirebaseUser.uid];
-  const authMember: Member | undefined = state.membersNew[authFirebaseUser.uid];
-  // Remember that user doesn't necessarily have a Member doc at this stage.
-
-  const extraProps = {
-    ...stateToPropsMap,
-    notSignedIn: false,
+  return {
     authFirebaseUser,
-    isAuthMemberDocLoaded: state.membersNew && !!authMember
+    authFullName,
+    notSignedIn: !!authFirebaseUser,
+
+    targetMember,
+
+    isLoading
   };
-  return state.auth.firebaseUser !== null
-    ? {
-        ...extraProps,
-        authFullName: state.auth.firebaseUser.displayName
-      }
-    : extraProps;
 }
 
 export default connect(mapStateToProps, {
