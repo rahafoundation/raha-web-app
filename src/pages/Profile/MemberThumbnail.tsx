@@ -4,12 +4,12 @@ import styled, { ThemeProvider } from "styled-components";
 
 import Link from "../../components/Link";
 
-import { Member } from "../../reducers/membersNew"
+import { Member } from "../../reducers/membersNew";
 
 import { interactive, gray, lightGreen } from "../../constants/palette";
 
 interface Props {
-  member: Member
+  member: Member;
 }
 
 // TODO generalize some of these styles into a link type
@@ -73,16 +73,20 @@ function getInitialsForName(name: string): string {
 }
 
 // TODO(#14) improve this thumbnail
-const MemberThumbnail: React.StatelessComponent<Props> = ({member}) => {
-  const backgroundColor = randomColor.getColor({ text: `${member.mid}${member.fullName}` });
+const MemberThumbnail: React.StatelessComponent<Props> = ({ member }) => {
+  const backgroundColor = randomColor.getColor({
+    text: `${member.mid}${member.fullName}`
+  });
   return (
     <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
       <MemberThumbnailElem to={`/m/${member.mid}`}>
         {/* TODO: if thumbnail image exists, show that instead of initials */}
-        <span className="thumbnailImage">{getInitialsForName(member.fullName)}</span>
+        <span className="thumbnailImage">
+          {getInitialsForName(member.fullName)}
+        </span>
         <span className="memberName">{member.fullName}</span>
       </MemberThumbnailElem>
     </ThemeProvider>
   );
-}
+};
 export default MemberThumbnail;

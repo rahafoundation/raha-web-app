@@ -1,14 +1,17 @@
-import * as React from 'react';
-import * as FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import * as React from "react";
+import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
-  faEnvelope, faHandPeace, faHandshake, faEnvelopeOpen
+  faEnvelope,
+  faHandPeace,
+  faHandshake,
+  faEnvelopeOpen
 } from "@fortawesome/fontawesome-free-regular";
 
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 import { green, interactive } from "../../constants/palette";
 
-import { Member, GENESIS_USER } from "../../reducers/membersNew"
+import { Member, GENESIS_USER } from "../../reducers/membersNew";
 
 import MemberThumbnail from "./MemberThumbnail";
 
@@ -48,12 +51,12 @@ function pluralizeRemainingMembers(numRemaining: number) {
 type MemberListTitleId = keyof typeof MEMBER_LIST_ICONS;
 
 interface MemberListProps {
-  titleId: MemberListTitleId
-  members: Member[]
+  titleId: MemberListTitleId;
+  members: Member[];
 }
 
 interface MemberListState {
-  expanded: boolean
+  expanded: boolean;
 }
 
 /********************
@@ -167,13 +170,19 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
       </li>
     ));
 
-    const numRemainingMembers = Math.max(memberThumbnails.length - INITIAL_LIST_SIZE, 0);
+    const numRemainingMembers = Math.max(
+      memberThumbnails.length - INITIAL_LIST_SIZE,
+      0
+    );
     const TopLevelElem = expanded ? ExpandedMemberListElem : MemberListElem;
 
     return (
       <TopLevelElem key={titleId}>
         <header>
-          <FontAwesomeIcon className="relationIcon" icon={MEMBER_LIST_ICONS[titleId]} />
+          <FontAwesomeIcon
+            className="relationIcon"
+            icon={MEMBER_LIST_ICONS[titleId]}
+          />
           <FormattedMessage id={titleId}>
             {(text: string) => <span className="messageTitle">{text}</span>}
           </FormattedMessage>&nbsp;
@@ -181,7 +190,9 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
         <main>
           {memberThumbnails.length === 0 && <span>No other members yet</span>}
           <Members>
-            {expanded ? memberThumbnails : memberThumbnails.slice(0, INITIAL_LIST_SIZE)}
+            {expanded
+              ? memberThumbnails
+              : memberThumbnails.slice(0, INITIAL_LIST_SIZE)}
           </Members>
         </main>
 
