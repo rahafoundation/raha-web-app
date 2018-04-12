@@ -38,13 +38,8 @@ export class Member {
   public trusts: UserSet
 
   constructor(
-    uid: Uid,
-    mid: Mid,
-    fullName: string,
-    invitedBy: Uid | typeof GENESIS_USER,
-    trusts?: UserSet,
-    trustedBy?: UserSet,
-    invited?: UserSet,
+    uid: Uid, mid: Mid, fullName: string, invitedBy: Uid | typeof GENESIS_USER,
+    trusts?: UserSet, trustedBy?: UserSet, invited?: UserSet,
   ) {
     this.uid = uid;
     this.mid = mid;
@@ -119,12 +114,7 @@ function operationIsRelevantAndValid(operation: APIOperation): boolean {
 function applyOperation(
   prevState: MemberLookupTable, operation: APIOperation
 ): MemberLookupTable {
-  const {
-    creator_mid,
-    creator_uid,
-    op_code,
-    data
-  } = operation;
+  const { creator_mid, creator_uid, op_code, data } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
@@ -137,19 +127,12 @@ function applyOperation(
       console.warn("Operation invalid", operation)
       return prevState;
     }
-
     throw err;
   }
 
-  const creator = creator_uid in prevState ? prevState[creator_uid] : undefined;
-
   switch (operation.op_code) {
     case OperationType.REQUEST_INVITE: {
-      const {
-        full_name,
-        to_uid,
-        to_mid
-      } = operation.data;
+      const { full_name, to_uid, to_mid } = operation.data;
 
       // the initial users weren't invited by anyone; so no need to hook up any associations.
       if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
@@ -175,17 +158,14 @@ function applyOperation(
       }
     }
     case OperationType.TRUST: {
-      const {
-        to_uid,
-        to_mid
-      } = operation.data;
+      const { to_uid, to_mid } = operation.data;
 
       const truster = prevState[creator_uid].trustMember(to_uid)
       if (!(to_uid in prevState)) {
-        // tslint:disable
-        console.error(operation);
+        // TODO: [#log] do real logging
+        // tslint:disable-next-line:no-console
+        console.error("Invalid trust operation before request invite", operation);
         return prevState;
-        // debugger;
       }
       const trusted = prevState[to_uid].beTrustedByMember(creator_uid);
       return {
