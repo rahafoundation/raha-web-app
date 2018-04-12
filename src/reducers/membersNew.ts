@@ -149,7 +149,7 @@ function applyOperation(
       const inviter = prevState[to_uid].inviteMember(creator_uid);
       const inviteRequester = new Member(
         creator_uid, creator_mid, full_name,
-       to_uid, {[to_uid]: true}
+        to_uid, {[to_uid]: true}
       )
       return {
         ...prevState,
