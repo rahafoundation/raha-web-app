@@ -7,8 +7,13 @@ import { ThunkAction } from 'redux-thunk';
 
 import { db } from './firebaseInit';
 import { MemberDoc, MemberEntry } from './members';
+// TODO: get rid of old operations
 import { OpDoc, Operation, OperationData, OpMeta } from './operations';
+import { APIOperation, OperationType, OperationsState } from './reducers/operationsNew';
+import { Member, MembersState, MemberLookupTable } from './reducers/membersNew';
+import { Uid, Mid } from './identifiers';
 import { AppState } from './store';
+
 
 // member_actions.js
 
@@ -201,3 +206,144 @@ export const authSetFirebaseUser: ActionCreator<ThunkAction<void, AppState, void
     if (firebaseUser) { dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid)); }
     dispatch(setFirebaseUser(firebaseUser));
   };
+
+function getMemberOrCreateIfNewUid(members: MemberLookupTable, uid: Uid, mid: Mid): Member {
+  const hasMember = uid in members;
+  const member = hasMember ? members[uid] : new Member(uid, mid);
+  if (!hasMember) {
+    members[uid] = member;
+  }
+  return member;
+}
+
+const GENESIS_OPERATION_IDS = [
+  "InuYAjMISl6operovXIR",
+  "SKI5CxMXWd4qjJm1zm1y",
+  "SUswrxogVQ6S0rH8O2h7",
+  "Y8FiyjOLs9O8AZNGzhwQ"
+];
+function operationIsValid(operation: APIOperation) {
+  if (operation.op_code === OperationType.REQUEST_INVITE) {
+    // Force to boolean
+    // TODO: consider how else this could be messed up
+    if (!!operation.data.to_uid) { return true; }
+    return (GENESIS_OPERATION_IDS.includes(operation.id))
+  }
+
+  if (operation.op_code === OperationType.TRUST) {
+    return !!operation.data.to_uid;
+  }
+  return false;
+}
+
+const _applyOperation = (members: MemberLookupTable, operation: APIOperation) => {
+  const {
+    creator_mid,
+    creator_uid,
+    op_code,
+    data
+  } = operation;
+
+  if (!creator_uid) {
+    return;
+  }
+  const member = getMemberOrCreateIfNewUid(members, creator_uid, creator_mid)
+
+  if (!operationIsValid(operation)) {
+    // TODO: [#log] do real logging
+    // tslint:disable-next-line:no-console
+    console.warn("Operation invalid", operation)
+    return;
+  }
+
+  switch (operation.op_code) {
+    case OperationType.REQUEST_INVITE: {
+      const {
+        full_name,
+        to_uid,
+        to_mid
+      } = operation.data;
+
+      member.fullName = full_name;
+      // TODO: it's possible the inviter doesn't exist yet, this might be a
+      // latent bug but for now it's unlikely to be an issue
+      const inviter = getMemberOrCreateIfNewUid(members, to_uid, to_mid);
+      member.invitedBy = to_uid;
+      inviter.invited[creator_uid] = true;
+      member.trusts[to_uid] = true;
+      inviter.trustedBy[creator_uid] = true;
+      break;
+    }
+    case OperationType.TRUST: {
+      const {
+        to_uid,
+        to_mid
+      } = operation.data;
+
+      // TODO: it's totally possible to end up with members who were never
+      // requested to invite, but trust other users. This is definitely a bug,
+      // you can tell if the member doesn't have name and invited_by. We should
+      // probably do something about that.
+      const trusted = getMemberOrCreateIfNewUid(members, to_uid, to_mid);
+      member.trusts[to_uid] = true;
+      trusted.trustedBy[creator_uid] = true;
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+export enum OperationsActionType {
+  SET_OPERATIONS = 'SET_OPERATIONS'
+}
+export interface OperationsAction {
+  type: OperationsActionType.SET_OPERATIONS,
+  operations: APIOperation[]
+}
+
+const _refreshOperations: ThunkAction<void, AppState, void> = async (dispatch) => {
+    const res = await fetch('https://raha-5395e.appspot.com/api/operations');
+    if (res.status !== 200) {
+      return;
+    }
+    const operations = await res.json();
+    const action: OperationsAction = {
+      type: OperationsActionType.SET_OPERATIONS,
+      operations
+    };
+    dispatch(action);
+  };
+export const refreshOperations: ActionCreator<typeof _refreshOperations> = () => _refreshOperations
+
+export enum MembersActionType {
+  SET_MEMBERS = 'SET_MEMBERS'
+}
+export interface MembersAction {
+  type: MembersActionType.SET_MEMBERS,
+  members: MemberLookupTable
+}
+
+export const refreshMembers: ActionCreator<ThunkAction<void, AppState, void>> = () => {
+  return async (dispatch, getState) => {
+    // TODO: make this less bullshit
+    await _refreshOperations(dispatch, getState, undefined);
+    const members: MemberLookupTable = {};
+    getState().operationsNew.forEach(operation => _applyOperation(members, operation));
+
+    dispatch({
+      type: MembersActionType.SET_MEMBERS,
+      members
+    });
+  };
+}
+
+// export const applyOperation: (op: APIOperation) => ThunkAction<
+//   void, AppState, void
+// > = (operation: APIOperation) => async (dispatch, getState) => {
+//   _applyOperation(getState().membersNew, operation);
+//   dispatch({
+//     type: 'ADD_OPERATION',
+//     operation,
+//   });
+// }
