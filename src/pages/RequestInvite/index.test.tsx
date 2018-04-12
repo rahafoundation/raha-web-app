@@ -6,6 +6,7 @@ import * as ReactDOM from "react-dom";
 
 import { mountWithIntl } from "../../helpers/intl-enzyme-test-helper";
 import { OperationData } from "../../operations";
+import { Member } from "../../reducers/membersNew";
 import { RequestInvite } from "./";
 
 // ref: pattern for testing connected components
@@ -15,20 +16,17 @@ function setup() {
     authFirebaseUser: {
       uid: "me"
     },
-    memberId: "me$1234",
-    isToMemberDocLoaded: true,
+    targetMid: "me$1234",
+    isTargetMemberLoaded: true,
     isAuthMemberDocLoaded: true,
+    targetMember: new Member(
+      "friend$1234",
+      "ijalir",
+      "Member Me",
+      "Inviting Friend"
+    ),
     notSignedIn: false,
     authFullName: "Member Me",
-    toMemberDoc: {
-      get: (key: string) => {
-        if (key === "mid") {
-          return "friend$1234";
-        }
-        return undefined;
-      },
-      id: "ijalir"
-    },
     postOperation: (op: OperationData) => () => {
       /* no-op */
     },
@@ -58,7 +56,10 @@ describe("RequestInvite component", () => {
 
   it("sets an initial state", () => {
     const { enzymeWrapper } = setup();
-    expect(enzymeWrapper.state()).toEqual({"fullName": "Member Me", "videoUrl": null});
+    expect(enzymeWrapper.state()).toEqual({
+      fullName: "Member Me",
+      videoUrl: null
+    });
   });
 
   it("sets the full name on render", () => {
@@ -96,7 +97,16 @@ describe("RequestInvite component", () => {
   it("displays an error message when trying to submit without video url", () => {
     const { props, enzymeWrapper } = setup();
     const button = enzymeWrapper.find(".InviteButton");
-    button.simulate("click", { stopPropagation() { /* no-op */ }, preventDefault() { /* no-op */ }});
-    expect(enzymeWrapper.state().errorMessage).toEqual('Please upload a valid video first!');
+    button.simulate("click", {
+      stopPropagation() {
+        /* no-op */
+      },
+      preventDefault() {
+        /* no-op */
+      }
+    });
+    expect(enzymeWrapper.state().errorMessage).toEqual(
+      "Please upload a valid video first!"
+    );
   });
 });
