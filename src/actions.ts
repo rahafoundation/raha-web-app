@@ -267,6 +267,10 @@ const _applyOperation = (members: MemberLookupTable, operation: APIOperation) =>
       member.fullName = full_name;
       // TODO: it's possible the inviter doesn't exist yet, this might be a
       // latent bug but for now it's unlikely to be an issue
+      if (GENESIS_OPERATION_IDS.includes(operation.id)) {
+        break;
+      }
+
       const inviter = getMemberOrCreateIfNewUid(members, to_uid, to_mid);
       member.invitedBy = to_uid;
       inviter.invited[creator_uid] = true;
