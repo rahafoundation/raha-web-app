@@ -42,7 +42,7 @@ function AppRouter() {
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
         <DefaultLayout path="/privacy-policy" component={PrivacyPolicy} />
         <DefaultLayout path="/m/:memberId/invite" component={RequestInvite} />
-        <DefaultLayout path="/m/:memberId" component={Profile} />
+        <DefaultLayout path="/m/:memberMid" component={Profile} />
         <DefaultLayout path="/ops" component={Operations} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
         <DefaultLayout component={PageNotFound} />

@@ -1,9 +1,9 @@
-import { Reducer } from 'redux';
+import { Reducer } from "redux";
 
-import { Uid, Mid } from '../identifiers'
-import { MembersAction, OperationsActionType } from '../actions';
-import { APIOperation, OperationType } from './operationsNew';
-import OperationInvalidError from '../errors/OperationInvalidError';
+import { Uid, Mid } from "../identifiers";
+import { MembersAction, OperationsActionType } from "../actions";
+import { APIOperation, OperationType } from "./operationsNew";
+import OperationInvalidError from "../errors/OperationInvalidError";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
@@ -16,12 +16,12 @@ const GENESIS_TRUST_OPS = [
   "CmVDdktn3c3Uo5pP4rV6",
   "uAFLhBjYtrpTXOZkJ6BD",
   "y5EKzzihWm8RlDCcfv6d"
-]
+];
 export const GENESIS_USER = Symbol("GENESIS");
 
-interface UserSet {
+export interface UidSet {
   // can't use type Uid, bc this error: https://github.com/Microsoft/TypeScript/issues/7374
-  [uid: string]: boolean
+  [uid: string]: boolean;
 }
 
 /**
@@ -33,13 +33,18 @@ export class Member {
   public fullName: string;
   public invitedBy: Uid | typeof GENESIS_USER;
 
-  public trustedBy: UserSet;
-  public invited: UserSet;
-  public trusts: UserSet
+  public trustedBy: UidSet;
+  public invited: UidSet;
+  public trusts: UidSet;
 
   constructor(
-    uid: Uid, mid: Mid, fullName: string, invitedBy: Uid | typeof GENESIS_USER,
-    trusts?: UserSet, trustedBy?: UserSet, invited?: UserSet,
+    uid: Uid,
+    mid: Mid,
+    fullName: string,
+    invitedBy: Uid | typeof GENESIS_USER,
+    trusts?: UidSet,
+    trustedBy?: UidSet,
+    invited?: UidSet
   ) {
     this.uid = uid;
     this.mid = mid;
@@ -60,32 +65,47 @@ export class Member {
    */
   public inviteMember(uid: Uid) {
     return new Member(
-      this.uid, this.mid, this.fullName, this.invitedBy, this.trusts,
-      {...this.trustedBy, [uid]: true}, {...this.invited, [uid]: true}
-    )
+      this.uid,
+      this.mid,
+      this.fullName,
+      this.invitedBy,
+      this.trusts,
+      { ...this.trustedBy, [uid]: true },
+      { ...this.invited, [uid]: true }
+    );
   }
 
   public trustMember(uid: Uid) {
     return new Member(
-      this.uid, this.mid, this.fullName, this.invitedBy,
-      {...this.trusts, [uid]: true}, this.trustedBy, this.invited
-    )
+      this.uid,
+      this.mid,
+      this.fullName,
+      this.invitedBy,
+      { ...this.trusts, [uid]: true },
+      this.trustedBy,
+      this.invited
+    );
   }
 
   public beTrustedByMember(uid: Uid) {
     return new Member(
-      this.uid, this.mid, this.fullName, this.invitedBy, this.trusts,
-      {...this.trustedBy, [uid]: true}, this.invited
-    )
+      this.uid,
+      this.mid,
+      this.fullName,
+      this.invitedBy,
+      this.trusts,
+      { ...this.trustedBy, [uid]: true },
+      this.invited
+    );
   }
 }
 
 export interface MemberLookupTable {
   // can't use type Uid, bc this error: https://github.com/Microsoft/TypeScript/issues/7374
-  [uid: string]: Member
+  [uid: string]: Member;
 }
 
-export type MembersState = MemberLookupTable
+export type MembersState = MemberLookupTable;
 
 /**
  * @returns true if relevant/false otherwise
@@ -96,13 +116,15 @@ function operationIsRelevantAndValid(operation: APIOperation): boolean {
     if (GENESIS_TRUST_OPS.includes(operation.id)) {
       return false; // no need for the genesis ops to be reflected in app state.
     }
-    throw new OperationInvalidError("Must have uid", operation)
+    throw new OperationInvalidError("Must have uid", operation);
   }
   if (operation.op_code === OperationType.REQUEST_INVITE) {
     // Force to boolean
     // TODO: consider how else this could be messed up
-    if (!!operation.data.to_uid) { return true; }
-    return (GENESIS_REQUEST_INVITE_OPS.includes(operation.id))
+    if (!!operation.data.to_uid) {
+      return true;
+    }
+    return GENESIS_REQUEST_INVITE_OPS.includes(operation.id);
   }
 
   if (operation.op_code === OperationType.TRUST) {
@@ -112,7 +134,8 @@ function operationIsRelevantAndValid(operation: APIOperation): boolean {
 }
 
 function applyOperation(
-  prevState: MemberLookupTable, operation: APIOperation
+  prevState: MemberLookupTable,
+  operation: APIOperation
 ): MemberLookupTable {
   const { creator_mid, creator_uid, op_code, data } = operation;
 
@@ -124,7 +147,7 @@ function applyOperation(
     if (err instanceof OperationInvalidError) {
       // TODO: [#log] do real logging
       // tslint:disable-next-line:no-console
-      console.warn("Operation invalid", operation)
+      console.warn("Operation invalid", operation);
       return prevState;
     }
     throw err;
@@ -138,59 +161,74 @@ function applyOperation(
       if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
         return {
           ...prevState,
-          [creator_uid]: new Member(creator_uid, creator_mid, full_name, GENESIS_USER)
-        }
+          [creator_uid]: new Member(
+            creator_uid,
+            creator_mid,
+            full_name,
+            GENESIS_USER
+          )
+        };
       }
 
       if (!(to_uid in prevState)) {
-        throw new OperationInvalidError("Member who invite was requested from doesn't exist", operation)
+        throw new OperationInvalidError(
+          "Member who invite was requested from doesn't exist",
+          operation
+        );
       }
 
-      const inviter = prevState[to_uid].inviteMember(to_uid);
+      const inviter = prevState[to_uid].inviteMember(creator_uid);
       const inviteRequester = new Member(
-        creator_uid, creator_mid, full_name,
-        to_uid, {[to_uid]: true}
-      )
+        creator_uid,
+        creator_mid,
+        full_name,
+        to_uid,
+        { [to_uid]: true }
+      );
       return {
         ...prevState,
         [to_uid]: inviter,
         [creator_uid]: inviteRequester
-      }
+      };
     }
     case OperationType.TRUST: {
       const { to_uid, to_mid } = operation.data;
 
-      const truster = prevState[creator_uid].trustMember(to_uid)
+      const truster = prevState[creator_uid].trustMember(to_uid);
       if (!(to_uid in prevState)) {
         // TODO: [#log] do real logging
         // tslint:disable-next-line:no-console
-        console.error("Invalid trust operation before request invite", operation);
+        console.error(
+          "Invalid trust operation before request invite",
+          operation
+        );
         return prevState;
       }
       const trusted = prevState[to_uid].beTrustedByMember(creator_uid);
       return {
-        ...prevState, [creator_uid]: truster, [to_uid]: trusted
-      }
+        ...prevState,
+        [creator_uid]: truster,
+        [to_uid]: trusted
+      };
     }
     default:
       return prevState;
   }
 }
 
-export const reducer: Reducer<MembersState> = (
-  state = {}, untypedAction
-) => {
+export const reducer: Reducer<MembersState> = (state = {}, untypedAction) => {
   const action = untypedAction as MembersAction;
-  switch(action.type) {
-    case (OperationsActionType.ADD_OPERATION): {
+  switch (action.type) {
+    case OperationsActionType.ADD_OPERATION: {
       return applyOperation(state, action.operation);
     }
-    case (OperationsActionType.SET_OPERATIONS): {
-      return action.operations.reduce((curState, op) =>
-        applyOperation(curState, op), {} as MemberLookupTable
-      )
+    case OperationsActionType.SET_OPERATIONS: {
+      return action.operations.reduce(
+        (curState, op) => applyOperation(curState, op),
+        {} as MemberLookupTable
+      );
     }
     default:
       return state;
   }
-}
+};
