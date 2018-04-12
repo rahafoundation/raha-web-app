@@ -17,7 +17,6 @@
     "@fortawesome/react-fontawesome": "^0.0.17",
     "classnames": "^2.2.5",
     "firebase": "^4.9.0",
-    "lodash": "^4.17.5",
     "material-ui": "^0.20.0",
     "random-material-color": "^1.0.3",
     "react": "^16.2.0",
