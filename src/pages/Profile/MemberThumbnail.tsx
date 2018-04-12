@@ -1,29 +1,16 @@
 import randomColor from "random-material-color";
 import * as React from "react";
-import { connect } from "react-redux";
 import styled, { ThemeProvider } from "styled-components";
+
 import Link from "../../components/Link";
 
-import { fetchMemberByUidIfNeeded } from "../../actions";
+import { Member } from "../../reducers/membersNew"
+
 import { interactive, gray, lightGreen } from "../../constants/palette";
-import { OpMeta } from "../../operations";
-import { AppState } from "../../store";
 
-const Loading = () => {
-  return <div>Loading</div>;
-};
-
-interface OwnProps {
-  uid: string;
-  opMeta: OpMeta;
+interface Props {
+  member: Member
 }
-interface PropsFromAppState {
-  memberDoc?: firebase.firestore.DocumentData;
-}
-interface PropsFromDispatch {
-  fetchMemberByUidIfNeeded: typeof fetchMemberByUidIfNeeded;
-}
-type Props = OwnProps & PropsFromAppState & PropsFromDispatch;
 
 // TODO generalize some of these styles into a link type
 const MemberThumbnailElem = styled(Link)`
@@ -72,56 +59,33 @@ MemberThumbnailElem.defaultProps = {
   }
 };
 
+/**
+ * Turns a name into initials, capped at a length of 3.
+ * TODO: Just takes max the first 3 initials; this is probably improvable.
+ */
+function getInitialsForName(name: string): string {
+  return name
+    .split(" ")
+    .map(part => part.charAt(0))
+    .slice(0, 3)
+    .join("")
+    .toUpperCase();
+}
+
 // TODO(#14) improve this thumbnail
-class MemberThumbnail extends React.Component<Props> {
-  public componentDidMount() {
-    this.props.fetchMemberByUidIfNeeded(this.props.uid);
-  }
-
-  public render() {
-    const memberDoc = this.props.memberDoc && this.props.memberDoc.memberDoc;
-    if (!memberDoc) {
-      return (
-        <div className="MemberThumbnail">
-          <Loading />
-        </div>
-      );
-    }
-    const mid = memberDoc.get("mid");
-    const name: string | null = memberDoc.get("full_name");
-    // TODO: why is name sometimes undefined?
-    // TODO: better algorithm for determining initials of names with dashes,
-    // limiting number of characters, etc...
-    const initials =
-      name &&
-      name
-        .split(" ")
-        .map(part => part.charAt(0))
-        .join("")
-        .toUpperCase();
-    const backgroundColor = randomColor.getColor({ text: `${mid}${initials}` });
-    return (
-      <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
-        <MemberThumbnailElem
-          color={this.props.opMeta.inDb ? undefined : gray}
-          to={`/m/${mid}`}
-        >
-          {/* TODO: if thumbnail image exists, show that instead of initials */}
-          <span className="thumbnailImage">{initials}</span>
-          <span className="memberName">{name}</span>
-        </MemberThumbnailElem>
-      </ThemeProvider>
-    );
-  }
+const MemberThumbnail: React.StatelessComponent<Props> = ({member}) => {
+  // TODO: why is name sometimes undefined?
+  // TODO: better algorithm for determining initials of names with dashes,
+  // limiting number of characters, etc...
+  const backgroundColor = randomColor.getColor({ text: `${member.mid}${member.fullName}` });
+  return (
+    <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
+      <MemberThumbnailElem to={`/m/${member.mid}`}>
+        {/* TODO: if thumbnail image exists, show that instead of initials */}
+        <span className="thumbnailImage">{getInitialsForName(member.fullName)}</span>
+        <span className="memberName">{member.fullName}</span>
+      </MemberThumbnailElem>
+    </ThemeProvider>
+  );
 }
-
-function mapStateToProps(
-  state: AppState,
-  ownProps: OwnProps
-): PropsFromAppState {
-  return { memberDoc: state.members.byUid[ownProps.uid] };
-}
-
-export default connect(mapStateToProps, { fetchMemberByUidIfNeeded })(
-  MemberThumbnail
-);
+export default MemberThumbnail;

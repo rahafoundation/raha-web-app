@@ -1,44 +1,65 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 
-import {
-  fetchMemberByMidIfNeeded, fetchMemberByUidIfNeeded
-} from "../../actions";
-import {
-  getAuthMemberDoc,
-  getAuthMemberDocIsLoaded,
-  getMemberDoc
-} from "../../connectors";
-import { getMemberUidToOp, OpLookupTable } from "../../helpers/ops";
-import { MemberEntry } from "../../members";
-import { OpCode } from "../../operations";
 import { AppState } from "../../store";
+import { Uid, Mid } from "../../identifiers";
+import { Member, UidSet, GENESIS_USER } from "../../reducers/membersNew"
+import MemberRelations from "./MemberRelations";
 
 import ActionButton from "../../components/ActionButton";
 import Loading from "../../components/Loading";
 import TrustLevel from "../../components/TrustLevel";
 import InviteVideo from "../../components/InviteVideo";
 
-import MemberRelations from "./MemberRelations";
-
-// TODO: this seems to be duplicated in multiple places
+/* ================
+ * Component types
+ * ================
+ */
 interface OwnProps {
-  uid: string;
-  match: { params: { memberId: string } };
+  match: { params: { memberMid: Mid }}
 }
-type Props = OwnProps & {
-  memberId: string;
-  authMemberDoc: firebase.firestore.DocumentSnapshot;
-  memberDoc: firebase.firestore.DocumentSnapshot;
-  authFirebaseUser: firebase.User | null;
-  authMemberDocIsLoaded: boolean;
-  fetchMemberByMidIfNeeded: typeof fetchMemberByMidIfNeeded;
-  fetchMemberByUidIfNeeded: typeof fetchMemberByUidIfNeeded;
-  uid: string;
-  trustedByUids: OpLookupTable;
-  member: MemberEntry;
-};
+
+interface StateProps {
+  loggedInMember?: Member;
+  profileData?: {
+    profileMember: Member;
+    trustedMembers: Member[];
+    trustedByMembers: Member[];
+    invitedMembers: Member[];
+    invitedByMember: Member | typeof GENESIS_USER;
+  }
+}
+type Props = OwnProps & StateProps;
+
+/* =============
+ * Data helpers
+ * =============
+ */
+function isOwnProfile(loggedInMember: Member | undefined, profileMember: Member): boolean {
+  return !!loggedInMember && loggedInMember.uid === profileMember.uid;
+}
+
+function canTrustUser(loggedInMember: Member | undefined, toTrust: Member): boolean {
+  return (
+    !!loggedInMember && !isOwnProfile(loggedInMember, toTrust) &&
+    !loggedInMember.trusts[toTrust.uid]
+  );
+}
+
+/**
+ * Invite confirmed is defined by satifying one of the following:
+ * a) the user was invited as part of the genesis
+ * b) the user has been trusted by the person inviting them.
+ */
+function isInviteConfirmed(profileMember: Member): boolean {
+  return profileMember.invitedBy === GENESIS_USER || profileMember.invitedBy in profileMember.trustedBy;
+}
+
+/* ==================
+ * Styled components
+ * ==================
+ */
 
 const ProfileElem = styled.main`
   padding: 0 20px;
@@ -56,103 +77,107 @@ const ProfileElem = styled.main`
   }
 `;
 
-class Profile extends React.Component<Props> {
-  public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.memberId) {
-      this.props.fetchMemberByMidIfNeeded(nextProps.memberId);
-    }
+/**
+ * Presentational component for displaying a profile.
+ */
+const ProfileView: React.StatelessComponent<Props> = (props) => {
+  const {
+    profileData, loggedInMember
+  } = props;
+  if (!profileData) {
+    return <Loading />
   }
+  const {
+    profileMember, trustedByMembers, trustedMembers, invitedByMember,
+    invitedMembers
+  } = profileData;
+  const inviteConfirmed = isInviteConfirmed(profileMember);
 
-  // TODO should be can take action
-  public canTrustThisUser() {
-    return (
-      !this.isOwnProfile() &&
-      this.props.authMemberDoc !== null &&
-      this.props.authMemberDoc.id !== this.props.uid &&
-      !this.props.trustedByUids.has(this.props.authMemberDoc.id)
-    );
-  }
+  return (
+    <ProfileElem>
+      <header>
+        <h1 className="memberTitle">
+          {profileMember.fullName}
 
-  public isOwnProfile() {
-    const { authFirebaseUser, memberDoc } = this.props;
-    return (
-      !!authFirebaseUser && memberDoc && authFirebaseUser.uid === memberDoc.id
-    );
-  }
-
-  public render() {
-    const { authMemberDocIsLoaded, member } = this.props;
-    if (!authMemberDocIsLoaded || !member || member.isFetching) {
-      return <Loading />;
-    }
-    const memberDoc = getMemberDoc(member);
-    if (!memberDoc || !memberDoc.get("mid")) {
-      // TODO make below message nice page
-      return <div>Member "{this.props.memberId}" does not exist</div>;
-    }
-    const ownProfile = this.isOwnProfile();
-    const fullName = memberDoc.get("full_name");
-    const inviteConfirmed = memberDoc.get("invite_confirmed");
-    return (
-      <ProfileElem>
-        <header>
-          <h1 className="memberTitle">
-            {fullName}
-
-            {this.canTrustThisUser() && (
-              <ActionButton
-                className="trustButton"
-                toUid={memberDoc.id}
-                toMid={memberDoc.get("mid")}
-              />
-            )}
-          </h1>
-          {this.props.trustedByUids !== undefined && (
-            // TODO pass in correct props. Should MemberRelations mapStateToProps be in redux?
-            <TrustLevel
-              ownProfile={ownProfile}
-              trustLevel={inviteConfirmed ? 3 : 0}
-              networkJoinDate={0}
-              trustedByLevel2={0}
-              trustedByLevel3={0}
+          {canTrustUser(loggedInMember, profileMember) && (
+            <ActionButton
+              className="trustButton"
+              toUid={profileMember.uid}
+              /* TODO: mid shouldn't be required */
+              toMid={profileMember.mid}
             />
           )}
-        </header>
+        </h1>
+        { /* TODO: This component looks like it has extraneous deps */ }
+        <TrustLevel
+          ownProfile={isOwnProfile(loggedInMember, profileMember)}
+          trustLevel={inviteConfirmed ? 3 : 0}
+          networkJoinDate={0}
+          trustedByLevel2={0}
+          trustedByLevel3={0}
+        />
+      </header>
 
-        <main>
-          {inviteConfirmed ? (
-            <InviteVideo memberId={memberDoc.get('mid')} />
-          ) : <div>Pending trust confirmation before showing public video</div>}
+      <main>
+        {inviteConfirmed ? (
+          // TODO: should be using mid
+          // TODO: should be using internationalized message
+          <InviteVideo memberId={profileMember.mid} />
+        ) : <div>Pending trust confirmation before showing public video</div>}
 
-          <MemberRelations uid={memberDoc.id} mid={memberDoc.get("mid")} />
-        </main>
-      </ProfileElem>
-    );
-  }
-}
-
-function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
-  const authMemberDoc = getAuthMemberDoc(state);
-  const memberId = ownProps.match.params.memberId;
-
-  const receivedOps = Object.entries(state.uidToOpMeta).filter(
-    uidOp => uidOp[1].op.data.to_uid === ownProps.uid
+        <MemberRelations
+          invitedByMember={invitedByMember}
+          trustedMembers={trustedMembers}
+          invitedMembers={invitedMembers}
+          trustedByMembers={trustedByMembers}
+        />
+      </main>
+    </ProfileElem>
   );
-  return {
-    authFirebaseUser: state.auth.firebaseUser,
-    authMemberDoc,
-    authMemberDocIsLoaded: getAuthMemberDocIsLoaded(state),
-    memberId,
-    member: state.members.byMid[memberId],
-    trustedByUids: getMemberUidToOp(
-      receivedOps,
-      OpCode.TRUST,
-      x => x.creator_uid
-    )
-  };
 }
 
-export default connect(mapStateToProps, {
-  fetchMemberByMidIfNeeded,
-  fetchMemberByUidIfNeeded
-})(Profile);
+/* ================
+ * Redux container
+ * ================
+ */
+
+ // TODO: make this a selector on the state
+ // TODO: keep a lookup table by Mid, not just Uid, to make this efficient
+function getMemberByMid(state: AppState, mid: Mid): Member | undefined {
+  return Object.values(state.membersNew).find(member => member.mid === mid)
+}
+
+// TODO: make this a selector on the state, not inline in this container
+function getMembersFromUidSet(state: AppState, uids: UidSet): Member[] {
+  return Object.keys(uids).map(uid => state.membersNew[uid])
+}
+
+// TODO: make this a selector on the state, not inline in this container
+function getLoggedInMember(state: AppState) {
+  const loggedInFirebaseUid = state.auth.firebaseUser !== null ? state.auth.firebaseUser.uid : undefined;
+  return loggedInFirebaseUid ? state.membersNew[loggedInFirebaseUid] : undefined
+}
+
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> =
+  (state, ownProps) => {
+    const loggedInMember = getLoggedInMember(state);
+    const profileMember = getMemberByMid(state, ownProps.match.params.memberMid)
+    if (!profileMember) {
+      return { loggedInMember };
+    }
+
+    const invitedByMember = profileMember && profileMember.invitedBy === GENESIS_USER ?
+      GENESIS_USER : state.membersNew[profileMember.invitedBy]
+    return {
+      loggedInMember,
+      profileData: {
+        profileMember,
+        trustedMembers: getMembersFromUidSet(state, profileMember.trusts),
+        trustedByMembers: getMembersFromUidSet(state, profileMember.trustedBy),
+        invitedMembers: getMembersFromUidSet(state, profileMember.invited),
+        invitedByMember
+      }
+    }
+  }
+
+export default connect(mapStateToProps)(ProfileView);
