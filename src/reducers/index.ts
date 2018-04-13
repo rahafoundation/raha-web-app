@@ -1,17 +1,24 @@
-import { Action, combineReducers, Reducer } from 'redux';
-import modal, { ModalState } from './modal';
+import { Action, combineReducers, Reducer } from "redux";
+import modal, { ModalState } from "./modal";
 
 // TODO: get rid of the two below reducers
-import members, { MembersState } from './members';
+import members, { MembersState } from "./members";
 import {
   UidToOpMetaState,
   uidToOpMeta,
   operations,
   OperationsState
-} from './operations';
+} from "./operations";
 
-import { OperationsState as NewOperationsState, reducer as operationsNew } from './operationsNew';
-import { MembersState as NewMembersState, reducer as membersNew } from './membersNew';
+import {
+  OperationsState as NewOperationsState,
+  reducer as operationsNew
+} from "./operationsNew";
+import {
+  MembersState as NewMembersState,
+  reducer as membersNew
+} from "./membersNew";
+import { ApiCallsState, reducer as apiCalls } from "./apiCalls";
 
 import auth, { AuthState } from "./auth";
 
@@ -22,6 +29,7 @@ export interface AppState {
   auth: AuthState;
   operations: OperationsState; // TODO: nuke this
   operationsNew: NewOperationsState;
+  apiCalls: ApiCallsState;
   modal: ModalState;
 }
 const rootReducer = combineReducers({
@@ -31,6 +39,7 @@ const rootReducer = combineReducers({
   auth,
   operations, // TODO: nuke this
   operationsNew,
+  apiCalls,
   modal
 });
 
