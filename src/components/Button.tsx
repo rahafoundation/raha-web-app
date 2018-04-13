@@ -151,6 +151,21 @@ const ButtonElem = styled.button`
  * General purpose button that matches application styles.
  * Not intended for webpage linking, but instead for running
  * code on click.
+ *
+ * ================
+ * Usage examples:
+ * ================
+ * Minimal:
+ *   <Button onClick={() => alert("hi")}>Say Hi</Button>
+ *
+ * Displayed like a link:
+ *   <Button type={ButtonTypes.LINK} onClick={() => alert("hi")}>Say Hi</Button>
+ *
+ * Displayed large:
+ *   <Button size={ButtonTypes.LARGE} onClick={() => alert("hi")}>Say Hi</Button>
+ *
+ * Disabled:
+ *   <Button disabled={true} onClick={() => alert("hi")}>Say Hi</Button>
  */
 const Button: React.StatelessComponent<Props> = props => {
   const { className, style, onClick, children } = props;

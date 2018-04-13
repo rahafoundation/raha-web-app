@@ -24,6 +24,25 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  *
  * react-intl's FormattedMessage class does everything we need, but the syntax
  * for rendering in various ways is not always straightforward.
+ *
+ * ================
+ * Usage examples:
+ * ================
+ * Display a message:
+ *   <IntlMessage id="message.hi" />
+ *
+ * ... in a list element:
+ *   <IntlMessage id="message.hi" tagName="h2" />
+ *
+ * ... only text, without a wrapping html element:
+ *   <IntlMessage id="message.hi" onlyRenderText={true} />
+ *
+ * ... with a variable value:
+ *   <IntlMessage id="message.greeting", values={{greeting: "hi"}}  />
+ *
+ * ... with a custom rendering function:
+ *   import Greeting from "./components/Greeting";
+ *   <IntlMessage id="message.hi" render={(msg) => <Greeting>msg</Greeting>} />
  */
 const IntlMessage: React.StatelessComponent<Props> = props => {
   const baseProps = {
