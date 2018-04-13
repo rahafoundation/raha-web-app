@@ -64,13 +64,14 @@ export const wrapApiCallAction: (
       return result;
     } catch (err) {
       if (err instanceof ApiCallError) {
-        const action: ApiCallsAction = {
+        const failureAction: ApiCallsAction = {
           type: ApiCallsActionType.FAILURE,
           endpoint,
           identifier,
           error: err
         };
-        dispatch(action);
+        dispatch(failureAction);
+        return;
       }
       throw err;
     }
