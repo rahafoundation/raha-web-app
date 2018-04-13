@@ -93,10 +93,9 @@ export class RequestInvite extends React.Component<Props, State> {
   };
 
   private isOwnInvitePage() {
-    // tslint:disable
-    debugger;
     return (
       !this.props.isLoading &&
+      this.props.authFirebaseUser &&
       this.props.authFirebaseUser.uid === this.props.targetMember.uid
     );
   }
@@ -147,10 +146,12 @@ export class RequestInvite extends React.Component<Props, State> {
   private renderLogIn() {
     // TODO while login is loading user should not see the rest of page
     return (
-      <div>
-        <LogIn noRedirect={true} />
-        <FormattedMessage id="sign_up_above" />
-      </div>
+      <section>
+        <div>
+          <LogIn noRedirect={true} />
+          <FormattedMessage id="sign_up_above" />
+        </div>
+      </section>
     );
   }
 
