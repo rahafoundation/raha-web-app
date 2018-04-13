@@ -22,7 +22,7 @@ import { AppState } from "../store";
 
 import { getAuthToken } from "../selectors/auth";
 
-import { ApiEndpoint, callApi } from "../api";
+import { ApiEndpoint, callApi, TrustMemberApiDef } from "../api";
 import { OperationsApiResponse } from "../api/ApiResponse";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -310,10 +310,11 @@ export const trustMember: AsyncActionCreator = (uid: Uid) => {
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<OperationsApiResponse>(
+      const response = await callApi<TrustMemberApiDef>(
         {
           endpoint: ApiEndpoint.TRUST_MEMBER,
-          params: { uid }
+          params: { uid },
+          body: undefined
         },
         authToken
       );

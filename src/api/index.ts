@@ -2,7 +2,10 @@
 import { Uid } from "../identifiers";
 import InvalidApiRequestError from "../errors/ApiCallError/InvalidApiRequestError";
 import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
-import ApiResponse from "./ApiResponse";
+import ApiResponse, {
+  OperationsApiResponse,
+  OperationApiResponse
+} from "./ApiResponse";
 
 // TODO: make this configurable, probably by environment variable
 // It will be useful for several things:
@@ -11,11 +14,63 @@ import ApiResponse from "./ApiResponse";
 // c) different prod/test/staging environments
 const API_BASE = "https://raha-5395e.appspot.com/api/";
 
+/* ==============================
+ * Definitions of how to address
+ * and use API endpoints
+ * ==============================
+ */
+
+/**
+ * Canonical name of an endpoint you can query.
+ */
 export const enum ApiEndpoint {
   TRUST_MEMBER = "TRUST_MEMBER",
   GET_OPERATIONS = "GET_OPERATIONS"
 }
 
+/**
+ * Definition for the arguments you need to call a particular API endpoint
+ */
+interface ApiCallDef<E extends ApiEndpoint, Params, Body> {
+  endpoint: E;
+  params: Params;
+  body: Body;
+}
+type TrustMemberApiCall = ApiCallDef<
+  ApiEndpoint.TRUST_MEMBER,
+  { uid: Uid },
+  void
+>;
+type GetOperationsApiCall = ApiCallDef<ApiEndpoint.GET_OPERATIONS, void, void>;
+/**
+ * All API calls you can make, and the arguments you need to call them.
+ */
+export type ApiCall = TrustMemberApiCall | GetOperationsApiCall;
+
+/**
+ * Definition of how to use an API endpoint, i.e. what you have to provide to
+ * call it, and what it will return to you.
+ */
+interface ApiEndpointDef<Call extends ApiCall, Resp extends ApiResponse> {
+  call: Call;
+  response: Resp;
+}
+
+export type TrustMemberApiEndpoint = ApiEndpointDef<
+  TrustMemberApiCall,
+  OperationApiResponse
+>;
+
+export type GetOperationsApiEndpoint = ApiEndpointDef<
+  GetOperationsApiCall,
+  OperationsApiResponse
+>;
+type ApiDefinition = TrustMemberApiEndpoint | GetOperationsApiEndpoint;
+
+/* =================================
+ * Resolving API endpoint locations
+ * =================================
+ */
 enum HttpVerb {
   GET = "GET",
   POST = "POST",
@@ -25,7 +80,8 @@ enum HttpVerb {
 }
 
 /**
- * Represents details to call an API endpoint over HTTP
+ * The location of an API endpoint. Uri may contain wildcards that must be
+ * resolved, and only represents a path without a domain to send the request to.
  */
 interface ApiEndpointSpec {
   uri: string;
@@ -33,14 +89,8 @@ interface ApiEndpointSpec {
 }
 
 /**
- * Represents details to call an API endpoint over HTTP, with a full url to
- * query and parameters resolved.
+ * Mapping from API endpoints to their corresponding unresolved locations
  */
-interface ResolvedApiEndpointSpec {
-  url: string;
-  method: HttpVerb;
-}
-
 const apiEndpointSpecs: { [key in ApiEndpoint]: ApiEndpointSpec } = {
   [ApiEndpoint.TRUST_MEMBER]: {
     uri: "members/:uid/trust",
@@ -52,25 +102,25 @@ const apiEndpointSpecs: { [key in ApiEndpoint]: ApiEndpointSpec } = {
   }
 };
 
-export type ApiCall =
-  | {
-      endpoint: ApiEndpoint.TRUST_MEMBER;
-      params: {
-        uid: Uid;
-      };
-    }
-  | {
-      endpoint: ApiEndpoint.GET_OPERATIONS;
-      method: "GET";
-    };
+/**
+ * The location of an API endpoint, with a full url to query and parameters
+ * resolved.
+ */
+interface ResolvedApiEndpointSpec {
+  url: string;
+  method: HttpVerb;
+}
 
 /**
  * Determines the URL and HTTP method for an API call.
  */
-export function resolveApiEndpoint(apiCall: ApiCall): ResolvedApiEndpointSpec {
+export function resolveApiEndpoint<Def extends ApiDefinition>(
+  apiCall: Def["call"]
+): ResolvedApiEndpointSpec {
   const { uri, method } = apiEndpointSpecs[apiCall.endpoint];
 
-  if (!("params" in apiCall)) {
+  const params = apiCall.params;
+  if (!params) {
     return { url: `${API_BASE}${uri}`, method };
   }
 
@@ -78,7 +128,7 @@ export function resolveApiEndpoint(apiCall: ApiCall): ResolvedApiEndpointSpec {
 
   const resolvedUri = wildcards.reduce((memo, wildcard) => {
     const paramName = wildcard.slice(1);
-    if (!(paramName in apiCall.params)) {
+    if (!(paramName in params)) {
       throw new InvalidApiRequestError(apiCall);
     }
     const paramValue: string = (apiCall.params as any)[paramName];
@@ -90,12 +140,12 @@ export function resolveApiEndpoint(apiCall: ApiCall): ResolvedApiEndpointSpec {
 }
 
 /**
- * Encapsulates logic for handling API calls.
+ * Call an API endpoint.
  */
-export async function callApi<ResponseBody extends ApiResponse>(
-  apiCall: ApiCall,
+export async function callApi<Def extends ApiDefinition>(
+  apiCall: Def["call"],
   authToken?: string
-): Promise<ResponseBody> {
+): Promise<Def["response"]> {
   const { url, method } = resolveApiEndpoint(apiCall);
   const requestOptions = {
     method,
