@@ -1,46 +1,52 @@
-import { Reducer } from 'redux';
+import { Reducer } from "redux";
 
-import { Uid, Mid, Id } from '../identifiers';
-import { OperationsAction, OperationsActionType } from '../actions';
+import { Uid, Mid, Id } from "../identifiers";
+import { OperationsAction, OperationsActionType } from "../actions";
 
 export enum OperationType {
-  REQUEST_INVITE = 'REQUEST_INVITE',
-  TRUST = 'TRUST'
+  REQUEST_INVITE = "REQUEST_INVITE",
+  TRUST = "TRUST"
 }
 export interface RequestInvitePayload {
-  full_name: string
-  to_uid: Uid
-  to_mid: Mid
+  full_name: string;
+  to_uid: Uid;
+  to_mid: Mid;
 }
 export interface TrustPayload {
-  to_uid: Uid
-  to_mid: Mid
+  to_uid: Uid;
+  to_mid: Mid;
 }
 
-export interface APIOperationBase {
+export interface ApiOperationBase {
   id: Id;
   creator_mid: Mid;
   creator_uid: Uid;
 }
 
-export type APIOperation = APIOperationBase & ({
-  op_code: OperationType.REQUEST_INVITE;
-  data: RequestInvitePayload;
-} | {
-  op_code: OperationType.TRUST;
-  data: TrustPayload
-})
+export type ApiOperation = ApiOperationBase &
+  (
+    | {
+        op_code: OperationType.REQUEST_INVITE;
+        data: RequestInvitePayload;
+      }
+    | {
+        op_code: OperationType.TRUST;
+        data: TrustPayload;
+      });
 
-export type OperationsState = APIOperation[]
+export type OperationsState = ApiOperation[];
 
-export const reducer: Reducer<OperationsState> = (state = [], untypedAction) => {
+export const reducer: Reducer<OperationsState> = (
+  state = [],
+  untypedAction
+) => {
   const action = untypedAction as OperationsAction;
-  switch(action.type) {
-    case (OperationsActionType.SET_OPERATIONS):
-      return action.operations
-    case (OperationsActionType.ADD_OPERATION):
-      return [...state, action.operation];
+  switch (action.type) {
+    case OperationsActionType.SET_OPERATIONS:
+      return action.operations;
+    case OperationsActionType.ADD_OPERATIONS:
+      return [...state, ...action.operations];
     default:
-     return state;
+      return state;
   }
-}
+};
