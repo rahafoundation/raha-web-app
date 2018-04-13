@@ -1,31 +1,27 @@
 {
-    "extends": [
-        "tslint:latest",
-        "tslint-react",
-        "tslint-config-prettier"
-    ],
-    "rules": {
-        // I think putting I in front of interface names doesn't get us anything
-        "interface-name": false,
-        // Sorting keys of object literals is meaningless
-        "object-literal-sort-keys": false,
-        // also meaningless
-        "ordered-imports": false,
-        // also meaningless
-        "member-ordering": false,
-        // Often, like in .reduce calls, this is useful
-        "no-object-literal-type-assertion": false,
-        // submodule imports are often useful
-        "no-submodule-imports": false,
-        // empty interfaces are nice to be explicit sometimes
-        "no-empty-interface": false,
-        // multiple classes in file is useful for child components in React
-        "max-classes-per-file": false,
-        // perf isn't important enough for this inconvenience
-        "jsx-no-lambda": false,
-        // dev dependencies aren't implicit
-        "no-implicit-dependencies": [true, "dev"],
-        // too strict, not useful
-        "variable-name": false
-    }
+  "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    // I think putting I in front of interface names doesn't get us anything
+    "interface-name": false,
+    // Sorting keys of object literals is meaningless
+    "object-literal-sort-keys": false,
+    // also meaningless
+    "ordered-imports": false,
+    // also meaningless
+    "member-ordering": false,
+    // Often, like in .reduce calls, this is useful
+    "no-object-literal-type-assertion": false,
+    // submodule imports are often useful
+    "no-submodule-imports": false,
+    // empty interfaces are nice to be explicit sometimes
+    "no-empty-interface": false,
+    // multiple classes in file is useful for child components in React
+    "max-classes-per-file": false,
+    // perf isn't important enough for this inconvenience
+    "jsx-no-lambda": false,
+    // dev dependencies aren't implicit
+    "no-implicit-dependencies": [true, "dev"],
+    // too strict, not useful
+    "variable-name": false
+  }
 }
