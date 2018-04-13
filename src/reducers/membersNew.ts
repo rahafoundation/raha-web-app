@@ -24,6 +24,10 @@ export interface UidSet {
   [uid: string]: boolean;
 }
 
+function uidsInUidSet(uidSet: UidSet): Uid[] {
+  return Object.keys(uidSet).filter(uid => uidSet[uid]);
+}
+
 /**
  * Members that we're in the process of building up from operations below.
  */
@@ -33,9 +37,9 @@ export class Member {
   public fullName: string;
   public invitedBy: Uid | typeof GENESIS_USER;
 
-  public trustedBy: UidSet;
-  public invited: UidSet;
-  public trusts: UidSet;
+  public trustedBySet: UidSet;
+  public invitedSet: UidSet;
+  public trustsSet: UidSet;
 
   constructor(
     uid: Uid,
@@ -51,9 +55,21 @@ export class Member {
     this.fullName = fullName;
     this.invitedBy = invitedBy;
 
-    this.trusts = trusts || {};
-    this.trustedBy = trustedBy || {};
-    this.invited = invited || {};
+    this.trustsSet = trusts || {};
+    this.trustedBySet = trustedBy || {};
+    this.invitedSet = invited || {};
+  }
+
+  get trusts() {
+    return uidsInUidSet(this.trustsSet);
+  }
+
+  get trustedBy() {
+    return uidsInUidSet(this.trustedBySet);
+  }
+
+  get invited() {
+    return uidsInUidSet(this.invitedSet);
   }
 
   /* =====================
@@ -63,39 +79,49 @@ export class Member {
    * than having them directly on members, to avoid having to keep member
    * states all in sync.
    */
+
+  /**
+   * @returns A new Member with the uid present in its invited set.
+   */
   public inviteMember(uid: Uid) {
     return new Member(
       this.uid,
       this.mid,
       this.fullName,
       this.invitedBy,
-      this.trusts,
-      { ...this.trustedBy, [uid]: true },
-      { ...this.invited, [uid]: true }
+      this.trustsSet,
+      { ...this.trustedBySet, [uid]: true },
+      { ...this.invitedSet, [uid]: true }
     );
   }
 
+  /**
+   * @returns A new Member with the uid present in its trusted set.
+   */
   public trustMember(uid: Uid) {
     return new Member(
       this.uid,
       this.mid,
       this.fullName,
       this.invitedBy,
-      { ...this.trusts, [uid]: true },
-      this.trustedBy,
-      this.invited
+      { ...this.trustsSet, [uid]: true },
+      this.trustedBySet,
+      this.invitedSet
     );
   }
 
+  /**
+   * @returns A new Member with the uid present in its trustedBy set.
+   */
   public beTrustedByMember(uid: Uid) {
     return new Member(
       this.uid,
       this.mid,
       this.fullName,
       this.invitedBy,
-      this.trusts,
-      { ...this.trustedBy, [uid]: true },
-      this.invited
+      this.trustsSet,
+      { ...this.trustedBySet, [uid]: true },
+      this.invitedSet
     );
   }
 }
