@@ -7,18 +7,17 @@ interface BaseProps {
   values?: { [key: string]: MessageValue | JSX.Element };
 }
 
-interface RenderByTagNameProps {
+type RenderByTagNameProps = BaseProps & {
   className?: string;
   tagName?: keyof JSX.IntrinsicElements;
-}
+};
 
-type CustomRendererProps =
-  | { onlyRenderText: boolean }
-  | { render: (message: string[]) => React.ReactNode };
+type RenderTextProps = BaseProps & { onlyRenderText: boolean };
+type CustomRenderProps = BaseProps & {
+  render: (message: string[]) => React.ReactNode;
+};
 
-type Props =
-  | BaseProps
-  | (BaseProps & (RenderByTagNameProps | CustomRendererProps));
+type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
 
 /**
  * Neat component for rendering internationalized text in a variety of ways.
