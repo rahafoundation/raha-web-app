@@ -22,6 +22,8 @@ import { ApiEndpoint } from "../../api";
 
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType } from "../../reducers/apiCalls";
+import { getMembersByUid } from "../../selectors/members";
+import { getLoggedInMember } from "../../selectors/auth";
 
 /* ================
  * Component types
@@ -69,7 +71,7 @@ function canTrustUser(
   return (
     !!loggedInMember &&
     !isOwnProfile(loggedInMember, toTrust) &&
-    !loggedInMember.trusts[toTrust.uid]
+    !loggedInMember.trustsSet[toTrust.uid]
   );
 }
 
@@ -81,7 +83,7 @@ function canTrustUser(
 function isInviteConfirmed(profileMember: Member): boolean {
   return (
     profileMember.invitedBy === GENESIS_USER ||
-    profileMember.invitedBy in profileMember.trustedBy
+    profileMember.invitedBy in profileMember.trustedBySet
   );
 }
 
@@ -181,20 +183,6 @@ const ProfileView: React.StatelessComponent<Props> = props => {
  * ================
  */
 
-// TODO: make this a selector on the state, not inline in this container
-function getMembersFromUidSet(state: AppState, uids: UidSet): Member[] {
-  return Object.keys(uids).map(uid => state.membersNew.byUid[uid]);
-}
-
-// TODO: make this a selector on the state, not inline in this container
-function getLoggedInMember(state: AppState) {
-  const loggedInFirebaseUid =
-    state.auth.firebaseUser !== null ? state.auth.firebaseUser.uid : undefined;
-  return loggedInFirebaseUid
-    ? state.membersNew.byUid[loggedInFirebaseUid]
-    : undefined;
-}
-
 const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state,
   ownProps
@@ -223,9 +211,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     loggedInMember,
     profileData: {
       profileMember,
-      trustedMembers: getMembersFromUidSet(state, profileMember.trusts),
-      trustedByMembers: getMembersFromUidSet(state, profileMember.trustedBy),
-      invitedMembers: getMembersFromUidSet(state, profileMember.invited),
+      trustedMembers: getMembersByUid(state, profileMember.trusts),
+      trustedByMembers: getMembersByUid(state, profileMember.trustedBy),
+      invitedMembers: getMembersByUid(state, profileMember.invited),
       invitedByMember
     },
     trustApiCallIsPending
