@@ -147,25 +147,29 @@ export async function callApi<Def extends ApiDefinition>(
   authToken?: string
 ): Promise<Def["response"]> {
   const { url, method } = resolveApiEndpoint(apiCall);
-  const requestOptions = {
+  const body = apiCall.body;
+  const requestOptions: RequestInit = {
     method,
+    cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${authToken}`
-    }
-    // TODO: whenever we add an endpoint that requires a body, uncomment below
-    // ...("body" in endpoint ? {body: endpoint.body} : {})
+      Authorization: `Bearer ${authToken}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(!!apiCall.body ? { body: apiCall.body } : {})
   };
 
   let res: Response;
-  // TODO: figure out how we want to handle fetch throwing, i.e. the request for
-  // network reasons failing;
   try {
     res = await fetch(url, requestOptions);
   } catch (err) {
+    // TODO: figure out how we want to handle fetch throwing, i.e. the request
+    // for network reasons failing; Something else is catching this and
+    // preventing it from hard crashing, but I'm not sure what. Can test by
+    // using Chrome network conditions to simulate being offline, then hit an
+    // API endpoint.
     // TODO: real logging
-    // TODO: handle network errors more elegantly than just crashing
     // tslint:disable-next-line:no-console
-    console.error(err);
+    console.error("Fetch failed", err);
     throw err;
   }
 
