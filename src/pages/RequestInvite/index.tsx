@@ -61,8 +61,7 @@ type Props = OwnProps & {
   authFullName: string | null;
   postOperation: typeof postOperation;
   targetMember: Member;
-  notSignedIn: boolean;
-  authFirebaseUser: any; // { uid: string };
+  authFirebaseUser: { uid: string } | null;
 
   isLoading: boolean;
 };
@@ -119,7 +118,7 @@ export class RequestInvite extends React.Component<Props, State> {
     const fullName = this.state.fullName;
 
     if (!fullName) {
-      this.setState({ errorMessage: "Please enter a valid full name" });
+      this.setState({ errorMessage: "Please enter a valid full name!" });
       return;
     }
 
@@ -129,7 +128,7 @@ export class RequestInvite extends React.Component<Props, State> {
     // TODO: should null authFullName be handled this way?
     const requestOp = getRequestInviteOperation(
       creatorMid,
-      this.props.authFirebaseUser.uid,
+      (this.props.authFirebaseUser as { uid: string }).uid,
       targetMember.mid,
       targetMember.uid,
       fullName
@@ -158,7 +157,10 @@ export class RequestInvite extends React.Component<Props, State> {
   private renderForm() {
     const uploadRef =
       storageRef &&
-      getPrivateVideoInviteRef(storageRef, this.props.authFirebaseUser.uid);
+      getPrivateVideoInviteRef(
+        storageRef,
+        (this.props.authFirebaseUser as { uid: string }).uid
+      );
     return (
       <form>
         <h3>Upload your invite video</h3>
@@ -279,7 +281,7 @@ export class RequestInvite extends React.Component<Props, State> {
 
 function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   const isAuthLoaded = state.auth.isLoaded;
-  const authFirebaseUser = isAuthLoaded ? state.auth.firebaseUser : undefined;
+  const authFirebaseUser = state.auth.firebaseUser;
   const authMember: Member | undefined = authFirebaseUser
     ? state.membersNew[authFirebaseUser.uid]
     : undefined;
@@ -301,7 +303,6 @@ function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   return {
     authFirebaseUser,
     authFullName,
-    notSignedIn: !!authFirebaseUser,
 
     targetMember,
 
