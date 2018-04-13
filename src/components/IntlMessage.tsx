@@ -7,17 +7,25 @@ interface BaseProps {
   values?: { [key: string]: MessageValue | JSX.Element };
 }
 
-type ClassNameRenderers = { className?: string } & ({
+interface RenderByTagNameProps {
+  className?: string;
   tagName?: keyof JSX.IntrinsicElements;
-});
-type IndependentRenderers =
+}
+
+type CustomRendererProps =
   | { onlyRenderText: boolean }
   | { render: (message: string[]) => React.ReactNode };
 
 type Props =
   | BaseProps
-  | (BaseProps & (ClassNameRenderers | IndependentRenderers));
+  | (BaseProps & (RenderByTagNameProps | CustomRendererProps));
 
+/**
+ * Neat component for rendering internationalized text in a variety of ways.
+ *
+ * react-intl's FormattedMessage class does everything we need, but the syntax
+ * for rendering in various ways is not always straightforward.
+ */
 const IntlMessage: React.StatelessComponent<Props> = props => {
   const baseProps = {
     id: props.id,
