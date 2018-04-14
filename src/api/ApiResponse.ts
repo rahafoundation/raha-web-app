@@ -1,8 +1,8 @@
-import { ApiOperation } from "../reducers/operationsNew";
+import { Operation } from "../reducers/operationsNew";
 import { ApiEndpoint } from "./";
 
-export type OperationApiResponse = ApiOperation;
-export type OperationsApiResponse = ApiOperation[];
+export type OperationApiResponse = Operation;
+export type OperationsApiResponse = Operation[];
 
 // as more response types appear, expand this type
 type ApiResponse = OperationApiResponse | OperationsApiResponse;

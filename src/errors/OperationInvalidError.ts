@@ -1,10 +1,10 @@
 import ApplicationError from "./ApplicationError";
-import { ApiOperation } from "../reducers/operationsNew";
+import { Operation } from "../reducers/operationsNew";
 
 export default class OperationInvalidError extends ApplicationError {
-  public readonly operation: ApiOperation;
+  public readonly operation: Operation;
 
-  constructor(message: string, operation: ApiOperation) {
+  constructor(message: string, operation: Operation) {
     super(`${message} | Operation: ${JSON.stringify(operation)}`);
 
     this.operation = operation;

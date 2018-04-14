@@ -10,7 +10,7 @@ import styled from "styled-components";
 import { trustMember } from "../../actions";
 import { AppState } from "../../store";
 import { Uid, Mid } from "../../identifiers";
-import { Member, UidSet, GENESIS_USER } from "../../reducers/membersNew";
+import { Member, UidSet, GENESIS_MEMBER } from "../../reducers/membersNew";
 import MemberRelations from "./MemberRelations";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
@@ -40,7 +40,7 @@ interface StateProps {
     trustedMembers: Member[];
     trustedByMembers: Member[];
     invitedMembers: Member[];
-    invitedByMember: Member | typeof GENESIS_USER;
+    invitedByMember: Member | typeof GENESIS_MEMBER;
   };
   trustApiCallIsPending: boolean;
 }
@@ -82,7 +82,7 @@ function canTrustUser(
  */
 function isInviteConfirmed(profileMember: Member): boolean {
   return (
-    profileMember.invitedBy === GENESIS_USER ||
+    profileMember.invitedBy === GENESIS_MEMBER ||
     profileMember.invitedBy in profileMember.trustedBySet
   );
 }
@@ -204,8 +204,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     trustActionApiCallStatus.status === ApiCallStatusType.STARTED;
 
   const invitedByMember =
-    profileMember && profileMember.invitedBy === GENESIS_USER
-      ? GENESIS_USER
+    profileMember && profileMember.invitedBy === GENESIS_MEMBER
+      ? GENESIS_MEMBER
       : state.membersNew.byUid[profileMember.invitedBy];
   return {
     loggedInMember,

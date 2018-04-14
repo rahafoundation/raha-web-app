@@ -2,7 +2,7 @@ import { Reducer } from "redux";
 
 import { Uid, Mid } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
-import { ApiOperation, OperationType } from "./operationsNew";
+import { Operation, OperationType } from "./operationsNew";
 import OperationInvalidError from "../errors/OperationInvalidError";
 
 const GENESIS_REQUEST_INVITE_OPS = [
@@ -17,7 +17,7 @@ const GENESIS_TRUST_OPS = [
   "uAFLhBjYtrpTXOZkJ6BD",
   "y5EKzzihWm8RlDCcfv6d"
 ];
-export const GENESIS_USER = Symbol("GENESIS");
+export const GENESIS_MEMBER = Symbol("GENESIS");
 
 export interface UidSet {
   // can't use type Uid, bc this error: https://github.com/Microsoft/TypeScript/issues/7374
@@ -35,7 +35,7 @@ export class Member {
   public uid: Uid;
   public mid: Mid;
   public fullName: string;
-  public invitedBy: Uid | typeof GENESIS_USER;
+  public invitedBy: Uid | typeof GENESIS_MEMBER;
 
   public trustedBySet: UidSet;
   public invitedSet: UidSet;
@@ -45,7 +45,7 @@ export class Member {
     uid: Uid,
     mid: Mid,
     fullName: string,
-    invitedBy: Uid | typeof GENESIS_USER,
+    invitedBy: Uid | typeof GENESIS_MEMBER,
     trusts?: UidSet,
     trustedBy?: UidSet,
     invited?: UidSet
@@ -140,7 +140,7 @@ export interface MembersState {
  * @returns true if relevant/false otherwise
  * @throws OperationInvalidError if invalid
  */
-function operationIsRelevantAndValid(operation: ApiOperation): boolean {
+function operationIsRelevantAndValid(operation: Operation): boolean {
   if (!operation.creator_uid) {
     if (GENESIS_TRUST_OPS.includes(operation.id)) {
       return false; // no need for the genesis ops to be reflected in app state.
@@ -165,7 +165,7 @@ function operationIsRelevantAndValid(operation: ApiOperation): boolean {
 function assertUidPresentInState(
   prevState: MembersState,
   uid: Uid,
-  operation: ApiOperation
+  operation: Operation
 ) {
   if (!(uid in prevState.byUid)) {
     throw new OperationInvalidError(
@@ -196,7 +196,7 @@ function addMembersToState(
 
 function applyOperation(
   prevState: MembersState,
-  operation: ApiOperation
+  operation: Operation
 ): MembersState {
   const { creator_mid, creator_uid, op_code, data } = operation;
 
@@ -213,7 +213,7 @@ function applyOperation(
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member(creator_uid, creator_mid, full_name, GENESIS_USER)
+            new Member(creator_uid, creator_mid, full_name, GENESIS_MEMBER)
           );
         }
 

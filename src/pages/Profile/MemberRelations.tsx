@@ -5,7 +5,7 @@ import MemberList from "./MemberList";
 
 import { green, interactive } from "../../constants/palette";
 
-import { Member, GENESIS_USER } from "../../reducers/membersNew";
+import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
 /* ================
  * Component types
@@ -16,7 +16,7 @@ interface Props {
   trustedMembers: Member[];
   trustedByMembers: Member[];
   invitedMembers: Member[];
-  invitedByMember: Member | typeof GENESIS_USER;
+  invitedByMember: Member | typeof GENESIS_MEMBER;
 }
 
 /* ==================
@@ -55,7 +55,7 @@ const MemberRelations: React.StatelessComponent<Props> = ({
     // TODO: handle the Invited By section differently than the rest, since
     // it is a different sort of data—a single, invited member, not a list of
     // them.
-    ...(invitedByMember === GENESIS_USER
+    ...(invitedByMember === GENESIS_MEMBER
       ? {}
       : {
           invited_by: [invitedByMember]
