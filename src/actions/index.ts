@@ -10,9 +10,14 @@ import { ThunkAction } from "redux-thunk";
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";
 // TODO: get rid of old operations
-import { OpDoc, Operation, OperationData, OpMeta } from "../operations";
 import {
-  ApiOperation,
+  OpDoc,
+  Operation as LegacyOperation,
+  OperationData,
+  OpMeta
+} from "../operations";
+import {
+  Operation,
   OperationType,
   OperationsState
 } from "../reducers/operationsNew";
@@ -176,14 +181,17 @@ export interface ReceiveOpsAction extends Action {
 }
 export interface PostOpAction extends Action {
   type: typeof POST_OP;
-  value: Operation;
+  value: LegacyOperation;
 }
 export interface AckpPostOpAction extends Action {
   type: typeof ACKP_POST_OP;
   value: OpMeta;
 }
 
-const postOp: ActionCreator<PostOpAction> = (uid: string, op: Operation) => ({
+const postOp: ActionCreator<PostOpAction> = (
+  uid: string,
+  op: LegacyOperation
+) => ({
   type: POST_OP,
   value: {
     uid,
@@ -252,11 +260,11 @@ export enum OperationsActionType {
 }
 export interface SetOperationsAction {
   type: OperationsActionType.SET_OPERATIONS;
-  operations: ApiOperation[];
+  operations: Operation[];
 }
 export interface AddOperationsAction {
   type: OperationsActionType.ADD_OPERATIONS;
-  operations: ApiOperation[];
+  operations: Operation[];
 }
 export type OperationsAction = SetOperationsAction | AddOperationsAction;
 
@@ -285,7 +293,7 @@ export const refreshOperations: ActionCreator<typeof _refreshOperations> = () =>
   _refreshOperations;
 
 export const applyOperation: AsyncActionCreator = (
-  operation: ApiOperation
+  operation: Operation
 ) => async (dispatch, getState) => {
   const action: AddOperationsAction = {
     type: OperationsActionType.ADD_OPERATIONS,

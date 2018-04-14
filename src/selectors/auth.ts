@@ -12,7 +12,6 @@ export async function getAuthToken(
   return authToken;
 }
 
-// TODO: make this a selector on the state, not inline in this container
 export function getLoggedInMember(state: AppState) {
   const loggedInFirebaseUid =
     state.auth.firebaseUser !== null ? state.auth.firebaseUser.uid : undefined;

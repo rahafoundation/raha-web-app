@@ -83,7 +83,7 @@ enum HttpVerb {
  * The location of an API endpoint. Uri may contain wildcards that must be
  * resolved, and only represents a path without a domain to send the request to.
  */
-interface ApiEndpointSpec {
+interface ApiEndpointLocation {
   uri: string;
   method: HttpVerb;
 }
@@ -91,7 +91,7 @@ interface ApiEndpointSpec {
 /**
  * Mapping from API endpoints to their corresponding unresolved locations
  */
-const apiEndpointSpecs: { [key in ApiEndpoint]: ApiEndpointSpec } = {
+const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   [ApiEndpoint.TRUST_MEMBER]: {
     uri: "members/:uid/trust",
     method: HttpVerb.POST
@@ -113,11 +113,15 @@ interface ResolvedApiEndpointSpec {
 
 /**
  * Determines the URL and HTTP method for an API call.
+ *
+ * Searches the URI for wildcards (denoted by path values that start with a
+ * colon, like /members/:memberId) and replaces them with matching named params.
+ * Also prepends the API's base URL.
  */
 export function resolveApiEndpoint<Def extends ApiDefinition>(
   apiCall: Def["call"]
 ): ResolvedApiEndpointSpec {
-  const { uri, method } = apiEndpointSpecs[apiCall.endpoint];
+  const { uri, method } = apiEndpointLocations[apiCall.endpoint];
 
   const params = apiCall.params;
   if (!params) {
@@ -141,6 +145,10 @@ export function resolveApiEndpoint<Def extends ApiDefinition>(
 
 /**
  * Call an API endpoint.
+ *
+ * @throws ApiCallError if the API request fails
+ * @throws Error if fetch fails for network reasons
+ * @throws Error if JSON can't be parsed
  */
 export async function callApi<Def extends ApiDefinition>(
   apiCall: Def["call"],

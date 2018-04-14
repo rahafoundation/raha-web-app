@@ -17,13 +17,13 @@ export interface TrustPayload {
   to_mid: Mid;
 }
 
-export interface ApiOperationBase {
+export interface OperationBase {
   id: Id;
   creator_mid: Mid;
   creator_uid: Uid;
 }
 
-export type ApiOperation = ApiOperationBase &
+export type Operation = OperationBase &
   (
     | {
         op_code: OperationType.REQUEST_INVITE;
@@ -34,7 +34,7 @@ export type ApiOperation = ApiOperationBase &
         data: TrustPayload;
       });
 
-export type OperationsState = ApiOperation[];
+export type OperationsState = Operation[];
 
 export const reducer: Reducer<OperationsState> = (
   state = [],

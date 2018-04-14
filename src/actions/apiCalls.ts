@@ -37,7 +37,10 @@ export type ApiCallsAction =
  * @param endpoint API endpoint being hit
  * @param identifier A way of identifying the outgoing API call. For example, if
  * the logged in user calls the API to trust another user, that other user's UID
- * would work.
+ * would work. These should be unique, especially for non-idempotent calls, so
+ * that they don't overwrite the state of earlier calls to the same endpoint.
+ *
+ * TODO: come up with a way to overcome this restriction.
  */
 export const wrapApiCallAction: (
   asyncAction: AsyncAction,
