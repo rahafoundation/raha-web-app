@@ -11,14 +11,14 @@ export function getStatusOfApiCall(
   state: AppState,
   endpoint: ApiEndpoint,
   identifier: string
-): ApiCallStatus | null {
+): ApiCallStatus | undefined {
   const apiCallsForEndpoint = state.apiCalls[endpoint];
   if (apiCallsForEndpoint === undefined) {
-    return null;
+    return undefined;
   }
   const apiCallStatus = apiCallsForEndpoint[identifier];
   if (apiCallStatus === undefined) {
-    return null;
+    return undefined;
   }
 
   return apiCallStatus;
