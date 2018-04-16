@@ -6,6 +6,8 @@ import ApiResponse, {
   OperationsApiResponse,
   OperationApiResponse
 } from "./ApiResponse";
+import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
+import NetworkError from "../errors/ApiCallError/NetworkError";
 
 // TODO: make this configurable, probably by environment variable
 // It will be useful for several things:
@@ -31,17 +33,21 @@ export const enum ApiEndpoint {
 /**
  * Definition for the arguments you need to call a particular API endpoint
  */
-interface ApiCallDef<E extends ApiEndpoint, Params, Body> {
+interface ApiCallDefinition<E extends ApiEndpoint, Params, Body> {
   endpoint: E;
   params: Params;
   body: Body;
 }
-type TrustMemberApiCall = ApiCallDef<
+type TrustMemberApiCall = ApiCallDefinition<
   ApiEndpoint.TRUST_MEMBER,
   { uid: Uid },
   void
 >;
-type GetOperationsApiCall = ApiCallDef<ApiEndpoint.GET_OPERATIONS, void, void>;
+type GetOperationsApiCall = ApiCallDefinition<
+  ApiEndpoint.GET_OPERATIONS,
+  void,
+  void
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
@@ -51,20 +57,24 @@ export type ApiCall = TrustMemberApiCall | GetOperationsApiCall;
  * Definition of how to use an API endpoint, i.e. what you have to provide to
  * call it, and what it will return to you.
  */
-interface ApiEndpointDef<Call extends ApiCall, Resp extends ApiResponse> {
+interface ApiEndpointDefinition<
+  Call extends ApiCall,
+  Resp extends ApiResponse
+> {
   call: Call;
   response: Resp;
 }
 
-export type TrustMemberApiEndpoint = ApiEndpointDef<
+export type TrustMemberApiEndpoint = ApiEndpointDefinition<
   TrustMemberApiCall,
   OperationApiResponse
 >;
 
-export type GetOperationsApiEndpoint = ApiEndpointDef<
+export type GetOperationsApiEndpoint = ApiEndpointDefinition<
   GetOperationsApiCall,
   OperationsApiResponse
 >;
+
 type ApiDefinition = TrustMemberApiEndpoint | GetOperationsApiEndpoint;
 
 /* =================================
@@ -160,25 +170,21 @@ export async function callApi<Def extends ApiDefinition>(
     method,
     cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       "content-type": "application/json"
     },
-    body: JSON.stringify(!!apiCall.body ? { body: apiCall.body } : {})
+    ...(apiCall.body ? { body: JSON.stringify(apiCall.body) } : {})
   };
 
   let res: Response;
   try {
     res = await fetch(url, requestOptions);
   } catch (err) {
-    // TODO: figure out how we want to handle fetch throwing, i.e. the request
-    // for network reasons failing; Something else is catching this and
-    // preventing it from hard crashing, but I'm not sure what. Can test by
-    // using Chrome network conditions to simulate being offline, then hit an
-    // API endpoint.
-    // TODO: real logging
-    // tslint:disable-next-line:no-console
-    console.error("Fetch failed", err);
-    throw err;
+    throw new NetworkError(err);
+  }
+
+  if (res.status === 403) {
+    throw new UnauthenticatedError();
   }
 
   if (res.status > 399) {

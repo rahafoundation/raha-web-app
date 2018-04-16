@@ -27,7 +27,12 @@ import { AppState } from "../store";
 
 import { getAuthToken } from "../selectors/auth";
 
-import { ApiEndpoint, callApi, TrustMemberApiEndpoint } from "../api";
+import {
+  ApiEndpoint,
+  callApi,
+  TrustMemberApiEndpoint,
+  GetOperationsApiEndpoint
+} from "../api";
 import { OperationsApiResponse } from "../api/ApiResponse";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -271,24 +276,22 @@ export type OperationsAction = SetOperationsAction | AddOperationsAction;
 // TODO: these operations methods are likely correct, but long term inefficient.
 // We can rely on it now given that the number and size of operations are small,
 // but later rely on cached results instead.
-const _refreshOperations: ThunkAction<
-  void,
-  AppState,
-  void
-> = async dispatch => {
-  // TODO: transition to API call helper
-  const res = await fetch("https://raha-5395e.appspot.com/api/operations");
-  if (res.status !== 200) {
-    // TODO: we should probably do something on failure
-    return;
-  }
-  const operations = await res.json();
-  const action: OperationsAction = {
-    type: OperationsActionType.SET_OPERATIONS,
-    operations
-  };
-  dispatch(action);
-};
+const _refreshOperations: ThunkAction<void, AppState, void> = wrapApiCallAction(
+  async dispatch => {
+    const operations = await callApi<GetOperationsApiEndpoint>({
+      endpoint: ApiEndpoint.GET_OPERATIONS,
+      params: undefined,
+      body: undefined
+    });
+    const action: OperationsAction = {
+      type: OperationsActionType.SET_OPERATIONS,
+      operations
+    };
+    dispatch(action);
+  },
+  ApiEndpoint.GET_OPERATIONS,
+  Date.now().toString()
+);
 export const refreshOperations: ActionCreator<typeof _refreshOperations> = () =>
   _refreshOperations;
 
@@ -314,9 +317,6 @@ export const trustMember: AsyncActionCreator = (uid: Uid) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
 
       const response = await callApi<TrustMemberApiEndpoint>(
         {

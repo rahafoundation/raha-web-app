@@ -1,11 +1,13 @@
-import ApplicationError from "../ApplicationError";
+import ApiCallError from "./";
 
 /**
- * Represents a related to making an API call.
+ * If the network request failed (i.e. fetch threw), this error wraps it
  */
-export default abstract class ApiCallError extends ApplicationError {
-  constructor(message: string) {
-    super(message);
+export default class NetworkError extends ApiCallError {
+  public readonly error: Error;
+  constructor(error: Error) {
+    super("Network request failed");
+    this.error = error;
 
     // this is necessary, typescript or not, for proper subclassing of builtins:
     // https://github.com/Microsoft/TypeScript-wiki/blob/master/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
@@ -13,6 +15,6 @@ export default abstract class ApiCallError extends ApplicationError {
     // TODO: once react-scripts 2.0 is out, we can use Babel Macros to do this automatically.
     // https://github.com/facebook/create-react-app/projects/3
     // https://github.com/loganfsmyth/babel-plugin-transform-builtin-extend
-    Object.setPrototypeOf(this, ApiCallError.prototype);
+    Object.setPrototypeOf(this, NetworkError.prototype);
   }
 }
