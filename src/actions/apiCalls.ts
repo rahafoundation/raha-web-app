@@ -3,9 +3,9 @@ import ApiCallError from "../errors/ApiCallError";
 import { AsyncAction } from ".";
 
 export const enum ApiCallsActionType {
-  STARTED = "STARTED",
-  SUCCESS = "SUCCESS",
-  FAILURE = "FAILURE"
+  STARTED = "API_CALLS.STARTED",
+  SUCCESS = "API_CALLS.SUCCESS",
+  FAILURE = "API_CALLS.FAILURE"
 }
 
 export interface ApiCallsActionBase {
