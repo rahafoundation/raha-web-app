@@ -170,17 +170,16 @@ export async function callApi<Def extends ApiDefinition>(
     method,
     cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       "content-type": "application/json"
     },
-    body: JSON.stringify(!!apiCall.body ? { body: apiCall.body } : {})
+    ...(apiCall.body ? { body: JSON.stringify(apiCall.body) } : {})
   };
 
   let res: Response;
   try {
     res = await fetch(url, requestOptions);
   } catch (err) {
-    // TODO: real logging
     throw new NetworkError(err);
   }
 
