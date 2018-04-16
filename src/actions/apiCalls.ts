@@ -66,17 +66,20 @@ export const wrapApiCallAction: (
       dispatch(successAction);
       return result;
     } catch (err) {
-      if (err instanceof ApiCallError) {
-        const failureAction: ApiCallsAction = {
-          type: ApiCallsActionType.FAILURE,
-          endpoint,
-          identifier,
-          error: err
-        };
-        dispatch(failureAction);
-        return;
+      // tslint:disable-next-line:no-console
+      console.error("API Call failed: ", err);
+      const failureAction: ApiCallsAction = {
+        type: ApiCallsActionType.FAILURE,
+        endpoint,
+        identifier,
+        error: err
+      };
+      dispatch(failureAction);
+
+      // continue throwing unrelated errors
+      if (!(err instanceof ApiCallError)) {
+        throw err;
       }
-      throw err;
     }
   };
 };
