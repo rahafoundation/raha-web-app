@@ -13,23 +13,23 @@ import { RequestInvite } from "./";
 function setup() {
   const props = {
     isLoading: false,
-    authFirebaseUser: {
+    loggedInFirebaseUser: {
       uid: "me"
     },
-    targetMember: new Member(
+    loggedInFullName: "Member Me",
+    requestingFromMember: new Member(
       "me$1234", // target mid
       "ijalir", // target uid
       "Member Me", // name
       "Inviting Friend"
     ),
-    notSignedIn: false,
-    authFullName: "Member Me",
     postOperation: (op: OperationData) => () => {
       /* no-op */
     },
     match: {
       params: { memberId: "me$1234" }
-    }
+    },
+    isOwnInvitePage: false
   };
 
   const enzymeWrapper = shallow(<RequestInvite {...props} />);

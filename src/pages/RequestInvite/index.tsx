@@ -58,12 +58,13 @@ interface OwnProps {
 }
 
 type Props = OwnProps & {
-  authFullName: string | null;
+  loggedInFullName: string | null;
   postOperation: typeof postOperation;
-  targetMember: Member;
-  authFirebaseUser: { uid: string } | null;
+  requestingFromMember: Member | undefined;
+  loggedInFirebaseUser: { uid: string } | null;
 
   isLoading: boolean;
+  isOwnInvitePage: boolean;
 };
 
 export class RequestInvite extends React.Component<Props, State> {
@@ -71,13 +72,13 @@ export class RequestInvite extends React.Component<Props, State> {
     super(props);
     this.state = {
       videoUrl: null,
-      fullName: props.authFullName
+      fullName: props.loggedInFullName
     };
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.authFullName !== this.props.authFullName) {
-      this.setState({ fullName: nextProps.authFullName });
+    if (nextProps.loggedInFullName !== this.props.loggedInFullName) {
+      this.setState({ fullName: nextProps.loggedInFullName });
     }
   }
 
@@ -85,19 +86,11 @@ export class RequestInvite extends React.Component<Props, State> {
     this.setState({ videoUrl: event.currentTarget.value });
   };
 
-  private readonly setAuthFullName = (
+  private readonly setloggedInFullName = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     this.setState({ fullName: event.currentTarget.value });
   };
-
-  private isOwnInvitePage() {
-    return (
-      !this.props.isLoading &&
-      this.props.authFirebaseUser &&
-      this.props.authFirebaseUser.uid === this.props.targetMember.uid
-    );
-  }
 
   private readonly handleOnSubmit = async (
     event: React.MouseEvent<HTMLButtonElement>
@@ -105,7 +98,7 @@ export class RequestInvite extends React.Component<Props, State> {
     event.stopPropagation();
     event.preventDefault();
 
-    if (this.isOwnInvitePage()) {
+    if (this.props.isOwnInvitePage) {
       this.setState({ errorMessage: "Sorry, cannot invite yourself!" });
       return;
     }
@@ -122,15 +115,23 @@ export class RequestInvite extends React.Component<Props, State> {
       return;
     }
 
-    const targetMember = this.props.targetMember;
+    const requestingFromMember = this.props.requestingFromMember;
     // TODO: is this how we want to handle lack of name?
     const creatorMid = getMemberId(fullName);
-    // TODO: should null authFullName be handled this way?
+    // TODO: should null loggedInFullName be handled this way?
+
+    if (!requestingFromMember || !this.props.loggedInFirebaseUser) {
+      this.setState({
+        errorMessage: "An error occurred. Could not find the expected users."
+      });
+      return;
+    }
+
     const requestOp = getRequestInviteOperation(
       creatorMid,
-      (this.props.authFirebaseUser as { uid: string }).uid,
-      targetMember.mid,
-      targetMember.uid,
+      this.props.loggedInFirebaseUser.uid,
+      requestingFromMember.mid,
+      requestingFromMember.uid,
       fullName
     );
     try {
@@ -159,14 +160,14 @@ export class RequestInvite extends React.Component<Props, State> {
       storageRef &&
       getPrivateVideoInviteRef(
         storageRef,
-        (this.props.authFirebaseUser as { uid: string }).uid
+        (this.props.loggedInFirebaseUser as { uid: string }).uid
       );
     return (
       <form>
         <h3>Upload your invite video</h3>
         <input
           value={this.state.fullName || ""}
-          onChange={this.setAuthFullName}
+          onChange={this.setloggedInFullName}
           placeholder="First and last name"
           className="InviteInput DisplayNameInput"
         />
@@ -217,6 +218,11 @@ export class RequestInvite extends React.Component<Props, State> {
   }
 
   public render() {
+    if (this.props.isLoading) {
+      return <Loading />;
+    }
+
+    const requestingFromMember = this.props.requestingFromMember as Member;
     // TODO check if user already invited
     if (this.state.submitted) {
       // TODO we should instead redirect to profileUrl, which should display this message along with their invite video.
@@ -224,19 +230,17 @@ export class RequestInvite extends React.Component<Props, State> {
       return (
         <div>
           Your video has been submitted for review! After approval by us and{" "}
-          {this.props.targetMember.fullName}, your profile will appear at{" "}
+          {requestingFromMember.fullName}, your profile will appear at{" "}
           <a href={profileUrl}>{profileUrl}</a>. We are available at{" "}
           <a href="mailto:help@raha.io">help@raha.io</a> if you have any
           questions.
         </div>
       );
     }
-    if (this.props.isLoading) {
-      return <Loading />;
-    }
+
     return (
       <RequestInviteElem>
-        {this.isOwnInvitePage() && (
+        {this.props.isOwnInvitePage && (
           <section>
             <FormattedMessage id="own_invite_page" />
           </section>
@@ -245,20 +249,20 @@ export class RequestInvite extends React.Component<Props, State> {
           <FormattedMessage
             id="request_invite"
             values={{
-              full_name: this.props.targetMember.fullName,
-              mid: this.props.targetMember.mid
+              full_name: requestingFromMember.fullName,
+              mid: requestingFromMember.mid
             }}
           />
         </section>
         <InviteVideo
           className="inviteVideo"
-          memberId={this.props.targetMember.mid}
+          memberId={requestingFromMember.mid}
         />
         <section>
           <FormattedMessage
             id="invite_me_intro"
             values={{
-              full_name: this.props.targetMember.fullName,
+              full_name: requestingFromMember.fullName,
               completely_free: (
                 <span className="completelyFree">
                   <FormattedMessage id="completely_free" />
@@ -269,7 +273,7 @@ export class RequestInvite extends React.Component<Props, State> {
         </section>
         {this.props.isLoading ? (
           <Loading />
-        ) : this.props.authFirebaseUser ? (
+        ) : this.props.loggedInFirebaseUser ? (
           this.renderForm()
         ) : (
           this.renderLogIn()
@@ -281,32 +285,32 @@ export class RequestInvite extends React.Component<Props, State> {
 
 function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
   const isAuthLoaded = state.auth.isLoaded;
-  const authFirebaseUser = state.auth.firebaseUser;
-  const authMember: Member | undefined = authFirebaseUser
-    ? state.membersNew[authFirebaseUser.uid]
+  const loggedInFirebaseUser = state.auth.firebaseUser;
+  const loggedInMember: Member | undefined = loggedInFirebaseUser
+    ? state.membersNew.byUid[loggedInFirebaseUser.uid]
     : undefined;
-  const authFullName: string | undefined | null = authMember
-    ? authMember.fullName
-    : authFirebaseUser ? authFirebaseUser.displayName : undefined;
+  const loggedInFullName: string | undefined | null = loggedInMember
+    ? loggedInMember.fullName
+    : loggedInFirebaseUser ? loggedInFirebaseUser.displayName : undefined;
 
-  const targetMid = ownProps.match.params.memberId;
-  const targetMember: Member | undefined = Object.values(state.membersNew).find(
-    m => m.mid === targetMid
-  );
+  const requestingFromMid = ownProps.match.params.memberId;
+  const requestingFromMember = state.membersNew.byMid[requestingFromMid];
 
-  const isLoading =
-    // Loading auth
-    !isAuthLoaded ||
-    // Member state is unpopulated
-    Object.entries(state.membersNew).length === 0;
+  const isLoading = !isAuthLoaded || !requestingFromMember;
+
+  const isOwnInvitePage =
+    !isLoading &&
+    !!loggedInFirebaseUser &&
+    loggedInFirebaseUser.uid === requestingFromMember.uid;
 
   return {
-    authFirebaseUser,
-    authFullName,
+    loggedInFirebaseUser,
+    loggedInFullName,
 
-    targetMember,
+    requestingFromMember,
 
-    isLoading
+    isLoading,
+    isOwnInvitePage
   };
 }
 
