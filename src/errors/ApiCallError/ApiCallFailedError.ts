@@ -28,12 +28,16 @@ export default class ApiCallFailedError extends ApiCallError {
     // Sentry
     this.requestOptions = {
       ...requestOptions,
-      headers: {
-        ...requestOptions.headers,
-        ...(requestOptions.headers && "Authentication" in requestOptions.headers
-          ? { Authentication: "REDACTED" }
-          : {})
-      }
+      ...(requestOptions.headers
+        ? {
+            headers: {
+              ...requestOptions.headers,
+              ...("Authentication" in requestOptions.headers
+                ? { Authentication: "REDACTED" }
+                : {})
+            }
+          }
+        : {})
     };
 
     // this is necessary, typescript or not, for proper subclassing of builtins:
