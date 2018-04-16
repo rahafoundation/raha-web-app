@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  connect,
-  MapStateToProps,
-  MapDispatchToProps,
-  MergeProps
-} from "react-redux";
+import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
 import { trustMember } from "../../actions";

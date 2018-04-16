@@ -1,7 +1,6 @@
 import * as React from "react";
 import styledUntyped, { ThemedBaseStyledInterface } from "styled-components";
 
-import { postOperation } from "../actions";
 import { getAuthMemberDoc } from "../connectors";
 import { interactive, gray } from "../constants/palette";
 import { MemberDoc } from "../members";
