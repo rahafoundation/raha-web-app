@@ -58,12 +58,12 @@ const IntlMessage: React.StatelessComponent<Props> = props => {
         if ("render" in props) {
           return props.render(message);
         }
-        const tagName =
+        const TagName =
           "tagName" in props && props.tagName !== undefined
             ? props.tagName
             : "span";
         const className = "className" in props ? props.className : undefined;
-        return React.createElement(tagName, { className });
+        return <TagName className={className}>{message}</TagName>;
       }}
     </FormattedMessage>
   );
