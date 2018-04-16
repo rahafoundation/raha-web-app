@@ -317,9 +317,6 @@ export const trustMember: AsyncActionCreator = (uid: Uid) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
 
       const response = await callApi<TrustMemberApiEndpoint>(
         {
