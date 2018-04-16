@@ -44,7 +44,11 @@ type TrustMemberApiCall = ApiCallDefinition<
   { uid: Uid },
   void
 >;
-type GetOperationsApiCall = ApiCallDef<ApiEndpoint.GET_OPERATIONS, void, void>;
+type GetOperationsApiCall = ApiCallDefinition<
+  ApiEndpoint.GET_OPERATIONS,
+  void,
+  void
+>;
 type RequestInviteApiCall = ApiCallDefinition<
   ApiEndpoint.REQUEST_INVITE,
   { uid: Uid },
@@ -80,7 +84,7 @@ export type GetOperationsApiEndpoint = ApiEndpointDefinition<
   OperationsApiResponse
 >;
 
-export type RequestInviteApiEndpoint = ApiEndpointDef<
+export type RequestInviteApiEndpoint = ApiEndpointDefinition<
   RequestInviteApiCall,
   OperationApiResponse
 >;

@@ -31,7 +31,7 @@ import {
   ApiEndpoint,
   callApi,
   TrustMemberApiEndpoint,
-  GetOperationsApiEndpoint
+  GetOperationsApiEndpoint,
   RequestInviteApiEndpoint
 } from "../api";
 import { OperationsApiResponse } from "../api/ApiResponse";
