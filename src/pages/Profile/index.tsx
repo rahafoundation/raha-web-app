@@ -21,9 +21,11 @@ import IntlMessage from "../../components/IntlMessage";
 import { ApiEndpoint } from "../../api";
 
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
-import { ApiCallStatusType } from "../../reducers/apiCalls";
+import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { getMembersByUid } from "../../selectors/members";
 import { getLoggedInMember } from "../../selectors/auth";
+
+import { green } from "../../constants/palette";
 
 /* ================
  * Component types
@@ -42,7 +44,7 @@ interface StateProps {
     invitedMembers: Member[];
     invitedByMember: Member | typeof GENESIS_MEMBER;
   };
-  trustApiCallIsPending: boolean;
+  trustApiCallStatus?: ApiCallStatus;
 }
 interface DispatchProps {
   trustMember: typeof trustMember;
@@ -64,14 +66,21 @@ function isOwnProfile(
   return !!loggedInMember && loggedInMember.uid === profileMember.uid;
 }
 
-function canTrustUser(
+function trustsMember(
+  loggedInMember: Member | undefined,
+  toTrust: Member
+): boolean {
+  return !!loggedInMember && loggedInMember.trustsSet[toTrust.uid];
+}
+
+function canTrustMember(
   loggedInMember: Member | undefined,
   toTrust: Member
 ): boolean {
   return (
     !!loggedInMember &&
     !isOwnProfile(loggedInMember, toTrust) &&
-    !loggedInMember.trustsSet[toTrust.uid]
+    !trustsMember(loggedInMember, toTrust)
   );
 }
 
@@ -101,8 +110,20 @@ const ProfileElem = styled.main`
       display: flex;
       align-items: center;
 
-      .trustButton {
+      > * {
         margin-left: 20px;
+      }
+
+      > .trustApiFailure,
+      .trustApiSuccess {
+        font-size: 1rem;
+        font-weight: 400;
+      }
+      > .trustApiSuccess {
+        color: ${green};
+      }
+      > .trustApiFailure {
+        color: red;
       }
     }
   }
@@ -124,6 +145,9 @@ const ProfileView: React.StatelessComponent<Props> = props => {
     invitedMembers
   } = profileData;
   const inviteConfirmed = isInviteConfirmed(profileMember);
+  const trustApiCallStatus = props.trustApiCallStatus
+    ? props.trustApiCallStatus.status
+    : undefined;
 
   return (
     <ProfileElem>
@@ -132,21 +156,33 @@ const ProfileView: React.StatelessComponent<Props> = props => {
           {profileMember.fullName}
 
           {props.trust &&
-            canTrustUser(loggedInMember, profileMember) && (
+            canTrustMember(loggedInMember, profileMember) && (
               <Button
                 className="trustButton"
                 size={ButtonSize.LARGE}
                 type={ButtonType.PRIMARY}
                 onClick={props.trust}
-                disabled={props.trustApiCallIsPending}
+                disabled={trustApiCallStatus === ApiCallStatusType.STARTED}
               >
-                {props.trustApiCallIsPending ? (
+                {trustApiCallStatus === ApiCallStatusType.STARTED ? (
                   <Loading />
                 ) : (
                   <IntlMessage onlyRenderText={true} id="profile.trustButton" />
                 )}
               </Button>
             )}
+          {trustsMember(loggedInMember, profileMember) && (
+            <IntlMessage
+              className="trustApiSuccess"
+              id="profile.trustedMember"
+            />
+          )}
+          {trustApiCallStatus === ApiCallStatusType.FAILURE && (
+            <IntlMessage
+              className="trustApiFailure"
+              id="profile.trustFailure"
+            />
+          )}
         </h1>
         {/* TODO: This component looks like it has extraneous deps */}
         <TrustLevel
@@ -191,22 +227,20 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const profileMember = state.membersNew.byMid[ownProps.match.params.memberMid];
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized
-    return { loggedInMember, trustApiCallIsPending: false };
+    return { loggedInMember };
   }
 
-  const trustActionApiCallStatus = getStatusOfApiCall(
+  const trustApiCallStatus = getStatusOfApiCall(
     state,
     ApiEndpoint.TRUST_MEMBER,
     profileMember.uid
   );
-  const trustApiCallIsPending =
-    trustActionApiCallStatus !== null &&
-    trustActionApiCallStatus.status === ApiCallStatusType.STARTED;
 
   const invitedByMember =
     profileMember && profileMember.invitedBy === GENESIS_MEMBER
       ? GENESIS_MEMBER
       : state.membersNew.byUid[profileMember.invitedBy];
+
   return {
     loggedInMember,
     profileData: {
@@ -216,7 +250,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
       invitedMembers: getMembersByUid(state, profileMember.invited),
       invitedByMember
     },
-    trustApiCallIsPending
+    trustApiCallStatus
   };
 };
 
