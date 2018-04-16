@@ -33,17 +33,21 @@ export const enum ApiEndpoint {
 /**
  * Definition for the arguments you need to call a particular API endpoint
  */
-interface ApiCallDef<E extends ApiEndpoint, Params, Body> {
+interface ApiCallDefinition<E extends ApiEndpoint, Params, Body> {
   endpoint: E;
   params: Params;
   body: Body;
 }
-type TrustMemberApiCall = ApiCallDef<
+type TrustMemberApiCall = ApiCallDefinition<
   ApiEndpoint.TRUST_MEMBER,
   { uid: Uid },
   void
 >;
-type GetOperationsApiCall = ApiCallDef<ApiEndpoint.GET_OPERATIONS, void, void>;
+type GetOperationsApiCall = ApiCallDefinition<
+  ApiEndpoint.GET_OPERATIONS,
+  void,
+  void
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
@@ -53,20 +57,24 @@ export type ApiCall = TrustMemberApiCall | GetOperationsApiCall;
  * Definition of how to use an API endpoint, i.e. what you have to provide to
  * call it, and what it will return to you.
  */
-interface ApiEndpointDef<Call extends ApiCall, Resp extends ApiResponse> {
+interface ApiEndpointDefinition<
+  Call extends ApiCall,
+  Resp extends ApiResponse
+> {
   call: Call;
   response: Resp;
 }
 
-export type TrustMemberApiEndpoint = ApiEndpointDef<
+export type TrustMemberApiEndpoint = ApiEndpointDefinition<
   TrustMemberApiCall,
   OperationApiResponse
 >;
 
-export type GetOperationsApiEndpoint = ApiEndpointDef<
+export type GetOperationsApiEndpoint = ApiEndpointDefinition<
   GetOperationsApiCall,
   OperationsApiResponse
 >;
+
 type ApiDefinition = TrustMemberApiEndpoint | GetOperationsApiEndpoint;
 
 /* =================================
