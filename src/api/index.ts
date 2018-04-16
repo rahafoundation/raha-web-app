@@ -183,6 +183,10 @@ export async function callApi<Def extends ApiDefinition>(
     throw new NetworkError(err);
   }
 
+  if (res.status === 403) {
+    throw new UnauthenticatedError();
+  }
+
   if (res.status > 399) {
     throw new ApiCallFailedError(url, requestOptions, res);
   }
