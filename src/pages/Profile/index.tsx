@@ -1,16 +1,29 @@
 import * as React from "react";
-import { connect, MapStateToProps } from "react-redux";
+import {
+  connect,
+  MapStateToProps,
+  MapDispatchToProps,
+  MergeProps
+} from "react-redux";
 import styled from "styled-components";
 
+import { trustMember } from "../../actions";
 import { AppState } from "../../store";
 import { Uid, Mid } from "../../identifiers";
-import { Member, UidSet, GENESIS_USER } from "../../reducers/membersNew";
+import { Member, UidSet, GENESIS_MEMBER } from "../../reducers/membersNew";
 import MemberRelations from "./MemberRelations";
 
-import ActionButton from "../../components/ActionButton";
+import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import Loading from "../../components/Loading";
 import TrustLevel from "../../components/TrustLevel";
 import InviteVideo from "../../components/InviteVideo";
+import IntlMessage from "../../components/IntlMessage";
+import { ApiEndpoint } from "../../api";
+
+import { getStatusOfApiCall } from "../../selectors/apiCalls";
+import { ApiCallStatusType } from "../../reducers/apiCalls";
+import { getMembersByUid } from "../../selectors/members";
+import { getLoggedInMember } from "../../selectors/auth";
 
 /* ================
  * Component types
@@ -27,10 +40,18 @@ interface StateProps {
     trustedMembers: Member[];
     trustedByMembers: Member[];
     invitedMembers: Member[];
-    invitedByMember: Member | typeof GENESIS_USER;
+    invitedByMember: Member | typeof GENESIS_MEMBER;
   };
+  trustApiCallIsPending: boolean;
 }
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+  trustMember: typeof trustMember;
+}
+type MergedProps = StateProps & {
+  trust?: () => void;
+};
+
+type Props = OwnProps & MergedProps;
 
 /* =============
  * Data helpers
@@ -50,7 +71,7 @@ function canTrustUser(
   return (
     !!loggedInMember &&
     !isOwnProfile(loggedInMember, toTrust) &&
-    !loggedInMember.trusts[toTrust.uid]
+    !loggedInMember.trustsSet[toTrust.uid]
   );
 }
 
@@ -61,8 +82,8 @@ function canTrustUser(
  */
 function isInviteConfirmed(profileMember: Member): boolean {
   return (
-    profileMember.invitedBy === GENESIS_USER ||
-    profileMember.invitedBy in profileMember.trustedBy
+    profileMember.invitedBy === GENESIS_MEMBER ||
+    profileMember.invitedBy in profileMember.trustedBySet
   );
 }
 
@@ -110,14 +131,22 @@ const ProfileView: React.StatelessComponent<Props> = props => {
         <h1 className="memberTitle">
           {profileMember.fullName}
 
-          {canTrustUser(loggedInMember, profileMember) && (
-            <ActionButton
-              className="trustButton"
-              toUid={profileMember.uid}
-              /* TODO: mid shouldn't be required */
-              toMid={profileMember.mid}
-            />
-          )}
+          {props.trust &&
+            canTrustUser(loggedInMember, profileMember) && (
+              <Button
+                className="trustButton"
+                size={ButtonSize.LARGE}
+                type={ButtonType.PRIMARY}
+                onClick={props.trust}
+                disabled={props.trustApiCallIsPending}
+              >
+                {props.trustApiCallIsPending ? (
+                  <Loading />
+                ) : (
+                  <IntlMessage onlyRenderText={true} id="profile.trustButton" />
+                )}
+              </Button>
+            )}
         </h1>
         {/* TODO: This component looks like it has extraneous deps */}
         <TrustLevel
@@ -154,50 +183,62 @@ const ProfileView: React.StatelessComponent<Props> = props => {
  * ================
  */
 
-// TODO: make this a selector on the state
-// TODO: keep a lookup table by Mid, not just Uid, to make this efficient
-function getMemberByMid(state: AppState, mid: Mid): Member | undefined {
-  return Object.values(state.membersNew).find(member => member.mid === mid);
-}
-
-// TODO: make this a selector on the state, not inline in this container
-function getMembersFromUidSet(state: AppState, uids: UidSet): Member[] {
-  return Object.keys(uids).map(uid => state.membersNew[uid]);
-}
-
-// TODO: make this a selector on the state, not inline in this container
-function getLoggedInMember(state: AppState) {
-  const loggedInFirebaseUid =
-    state.auth.firebaseUser !== null ? state.auth.firebaseUser.uid : undefined;
-  return loggedInFirebaseUid
-    ? state.membersNew[loggedInFirebaseUid]
-    : undefined;
-}
-
 const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state,
   ownProps
 ) => {
   const loggedInMember = getLoggedInMember(state);
-  const profileMember = getMemberByMid(state, ownProps.match.params.memberMid);
+  const profileMember = state.membersNew.byMid[ownProps.match.params.memberMid];
   if (!profileMember) {
-    return { loggedInMember };
+    // trust action could not have been initiated if profile never was initialized
+    return { loggedInMember, trustApiCallIsPending: false };
   }
 
+  const trustActionApiCallStatus = getStatusOfApiCall(
+    state,
+    ApiEndpoint.TRUST_MEMBER,
+    profileMember.uid
+  );
+  const trustApiCallIsPending =
+    trustActionApiCallStatus !== null &&
+    trustActionApiCallStatus.status === ApiCallStatusType.STARTED;
+
   const invitedByMember =
-    profileMember && profileMember.invitedBy === GENESIS_USER
-      ? GENESIS_USER
-      : state.membersNew[profileMember.invitedBy];
+    profileMember && profileMember.invitedBy === GENESIS_MEMBER
+      ? GENESIS_MEMBER
+      : state.membersNew.byUid[profileMember.invitedBy];
   return {
     loggedInMember,
     profileData: {
       profileMember,
-      trustedMembers: getMembersFromUidSet(state, profileMember.trusts),
-      trustedByMembers: getMembersFromUidSet(state, profileMember.trustedBy),
-      invitedMembers: getMembersFromUidSet(state, profileMember.invited),
+      trustedMembers: getMembersByUid(state, profileMember.trusts),
+      trustedByMembers: getMembersByUid(state, profileMember.trustedBy),
+      invitedMembers: getMembersByUid(state, profileMember.invited),
       invitedByMember
+    },
+    trustApiCallIsPending
+  };
+};
+
+const mergeProps: MergeProps<
+  StateProps,
+  DispatchProps,
+  OwnProps,
+  MergedProps
+> = (stateProps, dispatchProps, ownProps) => {
+  if (!stateProps.profileData) {
+    return stateProps;
+  }
+
+  const profileUid = stateProps.profileData.profileMember.uid;
+  return {
+    ...stateProps,
+    trust: () => {
+      dispatchProps.trustMember(profileUid);
     }
   };
 };
 
-export default connect(mapStateToProps)(ProfileView);
+export default connect(mapStateToProps, { trustMember }, mergeProps)(
+  ProfileView
+);

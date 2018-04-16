@@ -1,28 +1,48 @@
 // TODO: for all these action types, may make sense to use a
 // Redux flux standard actions action creator lib, as the types get redundant
 
+// TODO: consider splitting this into many pieces
+
 import * as firebase from "firebase";
 import { Action, ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { db } from "./firebaseInit";
-import { MemberDoc, MemberEntry } from "./members";
+import { db } from "../firebaseInit";
+import { MemberDoc, MemberEntry } from "../members";
 // TODO: get rid of old operations
-import { OpDoc, Operation, OperationData, OpMeta } from "./operations";
 import {
-  APIOperation,
+  OpDoc,
+  Operation as LegacyOperation,
+  OperationData,
+  OpMeta
+} from "../operations";
+import {
+  Operation,
   OperationType,
   OperationsState
-} from "./reducers/operationsNew";
-import { MembersState, MemberLookupTable } from "./reducers/membersNew";
-import { Uid, Mid } from "./identifiers";
-import { AppState } from "./store";
+} from "../reducers/operationsNew";
+import { MembersState, MemberLookupTable } from "../reducers/membersNew";
+import { Uid, Mid } from "../identifiers";
+import { AppState } from "../store";
+
+import { getAuthToken } from "../selectors/auth";
+
+import { ApiEndpoint, callApi, TrustMemberApiEndpoint } from "../api";
+import { OperationsApiResponse } from "../api/ApiResponse";
+
+import { wrapApiCallAction } from "./apiCalls";
+
+import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
+import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 
 export const RECEIVE_MEMBER = "RECEIVE_MEMBER";
 export const REQUEST_MEMBER_BY_MID = "REQUEST_MEMBER_BY_MID";
 export const REQUEST_MEMBER_BY_UID = "REQUEST_MEMBER_BY_UID";
 export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_MODAL = "HIDE_MODAL";
+
+export type AsyncAction = ThunkAction<void, AppState, void>;
+export type AsyncActionCreator = ActionCreator<AsyncAction>;
 
 // TODO: is there anything more specific than this?
 export interface ReceiveMemberAction extends Action {
@@ -131,17 +151,19 @@ function shouldFetchMemberByMid(getState: () => AppState, mid: string) {
   return shouldFetchMember(member);
 }
 
-export const fetchMemberByUidIfNeeded: ActionCreator<
-  ThunkAction<void, AppState, void>
-> = (uid: string) => (dispatch, getState) => {
+export const fetchMemberByUidIfNeeded: AsyncActionCreator = (uid: string) => (
+  dispatch,
+  getState
+) => {
   if (shouldFetchMemberByUid(getState, uid)) {
     fetchMemberByUid(dispatch, uid);
   }
 };
 
-export const fetchMemberByMidIfNeeded: ActionCreator<
-  ThunkAction<void, AppState, void>
-> = (mid: string) => (dispatch, getState) => {
+export const fetchMemberByMidIfNeeded: AsyncActionCreator = (mid: string) => (
+  dispatch,
+  getState
+) => {
   if (shouldFetchMemberByMid(getState, mid)) {
     fetchMemberByMid(dispatch, mid);
   }
@@ -159,14 +181,17 @@ export interface ReceiveOpsAction extends Action {
 }
 export interface PostOpAction extends Action {
   type: typeof POST_OP;
-  value: Operation;
+  value: LegacyOperation;
 }
 export interface AckpPostOpAction extends Action {
   type: typeof ACKP_POST_OP;
   value: OpMeta;
 }
 
-const postOp: ActionCreator<PostOpAction> = (uid: string, op: Operation) => ({
+const postOp: ActionCreator<PostOpAction> = (
+  uid: string,
+  op: LegacyOperation
+) => ({
   type: POST_OP,
   value: {
     uid,
@@ -183,7 +208,7 @@ const ackPostOp: ActionCreator<AckpPostOpAction> = (uid: string) => ({
   }
 });
 
-export const postOperation: ActionCreator<ThunkAction<void, AppState, void>> = (
+export const postOperation: AsyncActionCreator = (
   op: OperationData
 ) => async dispatch => {
   const opDoc = db.collection("operations").doc();
@@ -199,9 +224,9 @@ const receiveOperations: ActionCreator<ReceiveOpsAction> = (
   opDocs
 });
 
-export const fetchOperations: ActionCreator<
-  ThunkAction<void, AppState, void>
-> = (query: firebase.firestore.Query) => async dispatch => {
+export const fetchOperations: AsyncActionCreator = (
+  query: firebase.firestore.Query
+) => async dispatch => {
   const snap = await query.get();
   dispatch(receiveOperations(snap.docs));
 };
@@ -220,9 +245,9 @@ const setFirebaseUser: ActionCreator<SetFirebaseUserAction> = (
   firebaseUser
 });
 
-export const authSetFirebaseUser: ActionCreator<
-  ThunkAction<void, AppState, void>
-> = (firebaseUser: firebase.User) => dispatch => {
+export const authSetFirebaseUser: AsyncActionCreator = (
+  firebaseUser: firebase.User
+) => dispatch => {
   if (firebaseUser) {
     dispatch(fetchMemberByUidIfNeeded(firebaseUser.uid));
   }
@@ -231,17 +256,17 @@ export const authSetFirebaseUser: ActionCreator<
 
 export enum OperationsActionType {
   SET_OPERATIONS = "SET_OPERATIONS",
-  ADD_OPERATION = "ADD_OPERATION"
+  ADD_OPERATIONS = "ADD_OPERATIONS"
 }
 export interface SetOperationsAction {
   type: OperationsActionType.SET_OPERATIONS;
-  operations: APIOperation[];
+  operations: Operation[];
 }
-export interface AddOperationAction {
-  type: OperationsActionType.ADD_OPERATION;
-  operation: APIOperation;
+export interface AddOperationsAction {
+  type: OperationsActionType.ADD_OPERATIONS;
+  operations: Operation[];
 }
-export type OperationsAction = SetOperationsAction | AddOperationAction;
+export type OperationsAction = SetOperationsAction | AddOperationsAction;
 
 // TODO: these operations methods are likely correct, but long term inefficient.
 // We can rely on it now given that the number and size of operations are small,
@@ -251,8 +276,7 @@ const _refreshOperations: ThunkAction<
   AppState,
   void
 > = async dispatch => {
-  // TODO: API calls should be wrapped in try/catch blocks; that can be encapsulated
-  // into a helper.
+  // TODO: transition to API call helper
   const res = await fetch("https://raha-5395e.appspot.com/api/operations");
   if (res.status !== 200) {
     // TODO: we should probably do something on failure
@@ -268,24 +292,48 @@ const _refreshOperations: ThunkAction<
 export const refreshOperations: ActionCreator<typeof _refreshOperations> = () =>
   _refreshOperations;
 
-export const applyOperation: (
-  op: APIOperation
-) => ThunkAction<void, AppState, void> = (operation: APIOperation) => async (
-  dispatch,
-  getState
-) => {
-  dispatch({
-    type: OperationsActionType.ADD_OPERATION,
-    operation
-  });
+export const applyOperation: AsyncActionCreator = (
+  operation: Operation
+) => async (dispatch, getState) => {
+  const action: AddOperationsAction = {
+    type: OperationsActionType.ADD_OPERATIONS,
+    operations: [operation]
+  };
+  dispatch(action);
 };
 
-export type MembersAction = SetOperationsAction | AddOperationAction;
-export const refreshMembers: ActionCreator<
-  ThunkAction<void, AppState, void>
-> = () => {
+export type MembersAction = SetOperationsAction | AddOperationsAction;
+export const refreshMembers: AsyncActionCreator = () => {
   return async (dispatch, getState) => {
     // TODO: make this request cached members, not reconstruct from operations
     await _refreshOperations(dispatch, getState, undefined);
   };
+};
+
+export const trustMember: AsyncActionCreator = (uid: Uid) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const response = await callApi<TrustMemberApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.TRUST_MEMBER,
+          params: { uid },
+          body: undefined
+        },
+        authToken
+      );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [response]
+      };
+      dispatch(action);
+    },
+    ApiEndpoint.TRUST_MEMBER,
+    uid
+  );
 };
