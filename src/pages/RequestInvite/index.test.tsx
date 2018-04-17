@@ -6,41 +6,36 @@ import * as ReactDOM from "react-dom";
 
 import { mountWithIntl } from "../../helpers/intl-enzyme-test-helper";
 import { OperationData } from "../../operations";
+import { Member } from "../../reducers/membersNew";
 import { RequestInvite } from "./";
+import { Uid } from "../../identifiers";
 
 // ref: pattern for testing connected components
 function setup() {
   const props = {
-    isAuthLoaded: true,
-    authFirebaseUser: {
+    isLoading: false,
+    loggedInFirebaseUser: {
       uid: "me"
     },
-    memberId: "me$1234",
-    isToMemberDocLoaded: true,
-    isAuthMemberDocLoaded: true,
-    notSignedIn: false,
-    authFullName: "Member Me",
-    toMemberDoc: {
-      get: (key: string) => {
-        if (key === "mid") {
-          return "friend$1234";
-        }
-        return undefined;
-      },
-      id: "ijalir"
-    },
-    postOperation: (op: OperationData) => () => {
-      /* no-op */
-    },
-    fetchMemberByMidIfNeeded: (mid: string) => () => {
-      /* no-op */
-    },
-    fetchMemberByUidIfNeeded: (uid: string) => () => {
+    loggedInFullName: "Member Me",
+    requestingFromMember: new Member(
+      "me$1234", // target mid
+      "ijalir", // target uid
+      "Member Me", // name
+      "Inviting Friend"
+    ),
+    requestInviteFromMember: (
+      uid: Uid,
+      fullName: string,
+      videoUrl: string,
+      creatorMid: string
+    ) => () => {
       /* no-op */
     },
     match: {
       params: { memberId: "me$1234" }
-    }
+    },
+    isOwnInvitePage: false
   };
 
   const enzymeWrapper = shallow(<RequestInvite {...props} />);
@@ -58,7 +53,10 @@ describe("RequestInvite component", () => {
 
   it("sets an initial state", () => {
     const { enzymeWrapper } = setup();
-    expect(enzymeWrapper.state()).toEqual({"fullName": "Member Me", "videoUrl": null});
+    expect(enzymeWrapper.state()).toEqual({
+      fullName: "Member Me",
+      videoUrl: null
+    });
   });
 
   it("sets the full name on render", () => {
@@ -96,7 +94,16 @@ describe("RequestInvite component", () => {
   it("displays an error message when trying to submit without video url", () => {
     const { props, enzymeWrapper } = setup();
     const button = enzymeWrapper.find(".InviteButton");
-    button.simulate("click", { stopPropagation() { /* no-op */ }, preventDefault() { /* no-op */ }});
-    expect(enzymeWrapper.state().errorMessage).toEqual('Please upload a valid video first!');
+    button.simulate("click", {
+      stopPropagation() {
+        /* no-op */
+      },
+      preventDefault() {
+        /* no-op */
+      }
+    });
+    expect(enzymeWrapper.state().errorMessage).toEqual(
+      "Please upload a valid video first!"
+    );
   });
 });
