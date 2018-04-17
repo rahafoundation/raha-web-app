@@ -190,9 +190,9 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-intl@^2.3.5":
-  version "2.3.5"
-  resolved "https://registry.npmjs.org/@types/react-intl/-/react-intl-2.3.5.tgz#eafa170d83c06302416075867a6fd219c1cf84d8"
+"@types/react-intl@^2.3.7":
+  version "2.3.7"
+  resolved "https://registry.npmjs.org/@types/react-intl/-/react-intl-2.3.7.tgz#40bae586f11d19894621ed40170dd75c3e0f5708"
 
 "@types/react-modal@^3.1.2":
   version "3.1.2"
