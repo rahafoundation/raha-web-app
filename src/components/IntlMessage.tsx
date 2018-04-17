@@ -29,25 +29,30 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  * Usage examples:
  * ================
  * Display a message:
- *   <IntlMessage id="message.hi" />
+ *   <IntlMessage id="hi" />
  *
  * ... in a list element:
- *   <IntlMessage id="message.hi" tagName="h2" />
+ *   <IntlMessage id="hi" tagName="h2" />
  *
  * ... only text, without a wrapping html element:
- *   <IntlMessage id="message.hi" onlyRenderText={true} />
+ *   <IntlMessage id="hi" onlyRenderText={true} />
  *
  * ... with a variable value:
- *   <IntlMessage id="message.greeting", values={{greeting: "hi"}}  />
+ *   <IntlMessage id="greeting", values={{greeting: "hi"}}  />
  *
  * ... with a custom rendering function, on a message with only one part:
  *   import Greeting from "./components/Greeting";
- *   <IntlMessage id="message.hi" render={(name) => <Greeting name={name} />
+ *   <IntlMessage id="hi" render={(name) => <Greeting name={name} />
  *
  * ... with a custom rendering function, on a message with many parts:
- *   <IntlMessage id="message.hi" render={(...messages) =>
- *     messages.map((msg, idx) => <p key="idx">{msg}</p>)
+ *   <IntlMessage 
+ *     id="generatedPassage" 
+ *     values={{ ... }}
+ *     render={(...messages) =>
+ *       messages.map((msg, idx) => <p key="idx">{msg}</p>)}
  *   />
+ * 
+ * (Messages can have several parts if you are injecting values into the message)
  */
 const IntlMessage: React.StatelessComponent<Props> = props => {
   const baseProps = {
