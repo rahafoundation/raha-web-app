@@ -1,7 +1,7 @@
 ## Develop locally
 
 1. For Mac users, use [`homebrew`](https://brew.sh/) to [install `yarn`](https://yarnpkg.com/lang/en/docs/install/).
-1. Run `yarn run use-test-db`.
+1. Run `yarn run use-test-config`.
 1. Run `yarn start`.
 1. Visit [http://localhost:3000/](http://localhost:3000/) to view local app.
 1. Look at [`package.json`](package.json) `scripts` section for the other commands you can run, e.g. `yarn build`.
@@ -13,7 +13,7 @@
 
 ## Deploy
 
-1. `yarn run use-prod-db`
+1. `yarn run use-prod-config`
 1. `yarn build` # Bundle everything for production
 1. `serve -s build` # Test out on both web and mobile
 1. `firebase deploy --project <project-id>` # Deploy everything
