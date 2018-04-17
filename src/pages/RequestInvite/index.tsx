@@ -43,6 +43,7 @@ const RequestInviteElem = styled.main`
 `;
 
 interface State {
+  // TODO: Just use undefined.
   videoUrl: string | null | undefined; // Will contain video auth token, for this client only do not store
   errorMessage?: string;
   fullName: string | null | undefined;
