@@ -14,7 +14,7 @@ type RenderByTagNameProps = BaseProps & {
 
 type RenderTextProps = BaseProps & { onlyRenderText: boolean };
 type CustomRenderProps = BaseProps & {
-  render: (message: string[]) => React.ReactNode;
+  render: (...message: Array<string | JSX.Element>) => React.ReactNode;
 };
 
 type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
@@ -40,9 +40,14 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  * ... with a variable value:
  *   <IntlMessage id="message.greeting", values={{greeting: "hi"}}  />
  *
- * ... with a custom rendering function:
+ * ... with a custom rendering function, on a message with only one part:
  *   import Greeting from "./components/Greeting";
- *   <IntlMessage id="message.hi" render={(msg) => <Greeting>msg</Greeting>} />
+ *   <IntlMessage id="message.hi" render={(name) => <Greeting name={name} />
+ *
+ * ... with a custom rendering function, on a message with many parts:
+ *   <IntlMessage id="message.hi" render={(...messages) =>
+ *     messages.map((msg, idx) => <p key="idx">{msg}</p>)
+ *   />
  */
 const IntlMessage: React.StatelessComponent<Props> = props => {
   const baseProps = {
@@ -56,7 +61,7 @@ const IntlMessage: React.StatelessComponent<Props> = props => {
           return message;
         }
         if ("render" in props) {
-          return props.render(message);
+          return props.render(...message);
         }
 
         const tagName =
