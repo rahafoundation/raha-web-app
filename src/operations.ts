@@ -1,12 +1,12 @@
 export enum OpCode {
-  ADMIN = 'ADMIN',
-  FLAG = 'FLAG',
-  REQUEST_INVITE = 'REQUEST_INVITE',
-  TRUST = 'TRUST',
-  UNADMIN = 'UNADMIN',
-  UNFLAG = 'UNFLAG',
-  UNTRUST = 'UNTRUST',
-  VOTE = 'VOTE'
+  ADMIN = "ADMIN",
+  FLAG = "FLAG",
+  REQUEST_INVITE = "REQUEST_INVITE",
+  TRUST = "TRUST",
+  UNADMIN = "UNADMIN",
+  UNFLAG = "UNFLAG",
+  UNTRUST = "UNTRUST",
+  VOTE = "VOTE"
 }
 
 interface ToId {
@@ -43,7 +43,10 @@ export interface OperationData {
 }
 
 const getOperation = (
-  opCode: OpCode, creatorMid: string, creatorUid: string, data: OpData
+  opCode: OpCode,
+  creatorMid: string,
+  creatorUid: string,
+  data: OpData
 ): OperationData => {
   return {
     block_at: null,
@@ -58,24 +61,13 @@ const getOperation = (
 };
 
 export const getTrustOperation = (
-  creatorMid: string, creatorUid: string, toMid: string, toUid: string
-): OperationData => {
-  return getOperation(OpCode.TRUST, creatorMid, creatorUid, { to_uid: toUid, to_mid: toMid });
-};
-
-export const getRequestInviteOperation = (
   creatorMid: string,
   creatorUid: string,
   toMid: string,
-  toUid: string,
-  fullName: string
+  toUid: string
 ): OperationData => {
-  return getOperation(
-    OpCode.REQUEST_INVITE,
-    creatorMid,
-    creatorUid,
-    {
-      to_uid: toUid, to_mid: toMid, full_name: fullName
-    }
-  );
+  return getOperation(OpCode.TRUST, creatorMid, creatorUid, {
+    to_uid: toUid,
+    to_mid: toMid
+  });
 };

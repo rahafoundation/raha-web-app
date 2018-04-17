@@ -1,13 +1,12 @@
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
-import { connect } from "react-redux";
+import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
-import { postOperation } from "../../actions";
+import { requestInviteFromMember } from "../../actions";
 import { getPrivateVideoInviteRef } from "../../connectors";
 import { getMemberId, MemberDoc } from "../../members";
 import { Member } from "../../reducers/membersNew";
-import { getRequestInviteOperation } from "../../operations";
 import { storageRef } from "../../firebaseInit";
 import { AppState } from "../../store";
 
@@ -44,9 +43,10 @@ const RequestInviteElem = styled.main`
 `;
 
 interface State {
-  videoUrl: string | null; // Will contain video auth token, for this client only do not store
+  // TODO: Just use undefined.
+  videoUrl: string | null | undefined; // Will contain video auth token, for this client only do not store
   errorMessage?: string;
-  fullName: string | null;
+  fullName: string | null | undefined;
   submitted?: boolean;
   creatorMid?: string;
 }
@@ -57,15 +57,29 @@ interface OwnProps {
   match: { params: { memberId: string } };
 }
 
-type Props = OwnProps & {
-  loggedInFullName: string | null;
-  postOperation: typeof postOperation;
-  requestingFromMember: Member | undefined;
+interface StateProps {
+  loggedInFullName: string | undefined | null;
   loggedInFirebaseUser: { uid: string } | null;
+
+  requestingFromMember: Member | undefined;
 
   isLoading: boolean;
   isOwnInvitePage: boolean;
+}
+
+type MergedProps = StateProps & {
+  requestInvite?: (
+    fullName: string,
+    videoUrl: string,
+    creatorMid: string
+  ) => void;
 };
+
+interface DispatchProps {
+  requestInviteFromMember: typeof requestInviteFromMember;
+}
+
+type Props = OwnProps & MergedProps;
 
 export class RequestInvite extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -127,15 +141,16 @@ export class RequestInvite extends React.Component<Props, State> {
       return;
     }
 
-    const requestOp = getRequestInviteOperation(
-      creatorMid,
-      this.props.loggedInFirebaseUser.uid,
-      requestingFromMember.mid,
-      requestingFromMember.uid,
-      fullName
-    );
     try {
-      await this.props.postOperation(requestOp);
+      if (this.props.requestInvite) {
+        await this.props.requestInvite(
+          fullName,
+          this.state.videoUrl,
+          creatorMid
+        );
+      } else {
+        this.setState({ errorMessage: "Failed to request invite." });
+      }
     } catch (e) {
       this.setState({ errorMessage: "Failed to request invite" });
       return;
@@ -283,7 +298,10 @@ export class RequestInvite extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
+  state: AppState,
+  ownProps: OwnProps
+) => {
   const isAuthLoaded = state.auth.isLoaded;
   const loggedInFirebaseUser = state.auth.firebaseUser;
   const loggedInMember: Member | undefined = loggedInFirebaseUser
@@ -312,8 +330,34 @@ function mapStateToProps(state: AppState, ownProps: OwnProps): Partial<Props> {
     isLoading,
     isOwnInvitePage
   };
-}
+};
 
-export default connect(mapStateToProps, {
-  postOperation
-})(RequestInvite);
+const mergeProps: MergeProps<
+  StateProps,
+  DispatchProps,
+  OwnProps,
+  MergedProps
+> = (stateProps, dispatchProps, ownProps) => {
+  if (!stateProps.requestingFromMember) {
+    return stateProps;
+  }
+
+  const requestingFromUid = stateProps.requestingFromMember.uid;
+  return {
+    ...stateProps,
+    requestInvite: (fullName: string, videoUrl: string, creatorMid: string) => {
+      dispatchProps.requestInviteFromMember(
+        requestingFromUid,
+        fullName,
+        videoUrl,
+        creatorMid
+      );
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { requestInviteFromMember },
+  mergeProps
+)(RequestInvite);

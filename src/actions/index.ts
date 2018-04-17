@@ -31,7 +31,8 @@ import {
   ApiEndpoint,
   callApi,
   TrustMemberApiEndpoint,
-  GetOperationsApiEndpoint
+  GetOperationsApiEndpoint,
+  RequestInviteApiEndpoint
 } from "../api";
 import { OperationsApiResponse } from "../api/ApiResponse";
 
@@ -334,6 +335,43 @@ export const trustMember: AsyncActionCreator = (uid: Uid) => {
       dispatch(action);
     },
     ApiEndpoint.TRUST_MEMBER,
+    uid
+  );
+};
+
+export const requestInviteFromMember: AsyncActionCreator = (
+  uid: Uid,
+  fullName: string,
+  videoUrl: string,
+  creatorMid: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const response = await callApi<RequestInviteApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.REQUEST_INVITE,
+          params: { uid },
+          body: {
+            fullName,
+            videoUrl,
+            creatorMid
+          }
+        },
+        authToken
+      );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [response]
+      };
+      dispatch(action);
+    },
+    ApiEndpoint.REQUEST_INVITE,
     uid
   );
 };

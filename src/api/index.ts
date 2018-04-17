@@ -27,7 +27,8 @@ const API_BASE = "https://raha-5395e.appspot.com/api/";
  */
 export const enum ApiEndpoint {
   TRUST_MEMBER = "TRUST_MEMBER",
-  GET_OPERATIONS = "GET_OPERATIONS"
+  GET_OPERATIONS = "GET_OPERATIONS",
+  REQUEST_INVITE = "REQUEST_INVITE"
 }
 
 /**
@@ -48,10 +49,18 @@ type GetOperationsApiCall = ApiCallDefinition<
   void,
   void
 >;
+type RequestInviteApiCall = ApiCallDefinition<
+  ApiEndpoint.REQUEST_INVITE,
+  { uid: Uid },
+  { fullName: string; videoUrl: string; creatorMid: string }
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
-export type ApiCall = TrustMemberApiCall | GetOperationsApiCall;
+export type ApiCall =
+  | TrustMemberApiCall
+  | GetOperationsApiCall
+  | RequestInviteApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -75,7 +84,15 @@ export type GetOperationsApiEndpoint = ApiEndpointDefinition<
   OperationsApiResponse
 >;
 
-type ApiDefinition = TrustMemberApiEndpoint | GetOperationsApiEndpoint;
+export type RequestInviteApiEndpoint = ApiEndpointDefinition<
+  RequestInviteApiCall,
+  OperationApiResponse
+>;
+
+type ApiDefinition =
+  | TrustMemberApiEndpoint
+  | GetOperationsApiEndpoint
+  | RequestInviteApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -109,6 +126,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   [ApiEndpoint.GET_OPERATIONS]: {
     uri: "operations",
     method: HttpVerb.GET
+  },
+  [ApiEndpoint.REQUEST_INVITE]: {
+    uri: "members/:uid/request_invite",
+    method: HttpVerb.POST
   }
 };
 

@@ -8,6 +8,7 @@ import { mountWithIntl } from "../../helpers/intl-enzyme-test-helper";
 import { OperationData } from "../../operations";
 import { Member } from "../../reducers/membersNew";
 import { RequestInvite } from "./";
+import { Uid } from "../../identifiers";
 
 // ref: pattern for testing connected components
 function setup() {
@@ -23,7 +24,12 @@ function setup() {
       "Member Me", // name
       "Inviting Friend"
     ),
-    postOperation: (op: OperationData) => () => {
+    requestInviteFromMember: (
+      uid: Uid,
+      fullName: string,
+      videoUrl: string,
+      creatorMid: string
+    ) => () => {
       /* no-op */
     },
     match: {
