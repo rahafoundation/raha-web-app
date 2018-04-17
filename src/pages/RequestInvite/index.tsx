@@ -100,7 +100,8 @@ export class RequestInvite extends React.Component<Props, State> {
     this.setState({ videoUrl: event.currentTarget.value });
   };
 
-  private readonly setloggedInFullName = (
+  // TODO Consider getting rid of this and converting to an uncontrolled component.
+  private readonly setLoggedInFullName = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     this.setState({ fullName: event.currentTarget.value });
@@ -182,7 +183,7 @@ export class RequestInvite extends React.Component<Props, State> {
         <h3>Upload your invite video</h3>
         <input
           value={this.state.fullName || ""}
-          onChange={this.setloggedInFullName}
+          onChange={this.setLoggedInFullName}
           placeholder="First and last name"
           className="InviteInput DisplayNameInput"
         />
@@ -307,6 +308,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const loggedInMember: Member | undefined = loggedInFirebaseUser
     ? state.membersNew.byUid[loggedInFirebaseUser.uid]
     : undefined;
+  // TODO: Remove null typing.
   const loggedInFullName: string | undefined | null = loggedInMember
     ? loggedInMember.fullName
     : loggedInFirebaseUser ? loggedInFirebaseUser.displayName : undefined;
