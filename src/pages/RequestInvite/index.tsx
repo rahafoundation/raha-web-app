@@ -215,14 +215,18 @@ const Step3: React.StatelessComponent<{ inviterName: string }> = ({
   />
 );
 
-interface FormFields {
+interface CheckboxFields {
   age: boolean;
   inactivityDonation: boolean;
   communityStandards: boolean;
   realIdentity: boolean;
+}
+interface TextFields {
   fullName: string;
   videoUrl: string;
 }
+
+type FormFields = CheckboxFields & TextFields;
 type FormElements = { [field in keyof FormFields]: HTMLInputElement };
 
 interface Step4Props {
@@ -237,7 +241,7 @@ const RequestInviteForm = styled.form`
   > .agreements {
     list-style-type: none;
     text-align: left;
-    > li {
+    > li > label {
       display: flex;
       margin-bottom: 10px;
     }
@@ -245,6 +249,11 @@ const RequestInviteForm = styled.form`
 `;
 
 class Step4 extends React.Component<Step4Props, Step4State> {
+  constructor(props: Step4Props) {
+    super(props);
+    this.state = {};
+  }
+
   private readonly handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const {
@@ -287,6 +296,22 @@ class Step4 extends React.Component<Step4Props, Step4State> {
     );
   }
 
+  private handleCheck(field: keyof CheckboxFields) {
+    return (e: React.FormEvent<HTMLInputElement>) => {
+      this.setState({
+        [field]: e.currentTarget.checked
+      });
+    };
+  }
+
+  private handleChange(field: keyof TextFields) {
+    return (e: React.FormEvent<HTMLInputElement>) => {
+      this.setState({
+        [field]: e.currentTarget.value
+      });
+    };
+  }
+
   public render() {
     if (!this.props.hasLoggedIn) {
       return (
@@ -301,60 +326,89 @@ class Step4 extends React.Component<Step4Props, Step4State> {
       <RequestInviteForm onSubmit={this.handleSubmit}>
         <ul className="agreements">
           <li>
-            <input type="checkbox" name="inactivityDonation" />
-            <IntlMessage
-              id="request_invite.agreements.inactivityDonation"
-              onlyRenderText={true}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="inactivityDonation"
+                onChange={this.handleCheck("inactivityDonation")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.inactivityDonation"
+                onlyRenderText={true}
+              />
+            </label>
           </li>
           <li>
-            <input type="checkbox" name="communityStandards" />
-            <IntlMessage
-              id="request_invite.agreements.communityStandards"
-              values={{
-                code_of_conduct: (
-                  <a href="/code-of-conduct">
-                    <IntlMessage
-                      id="request_invite.code_of_conduct"
-                      onlyRenderText={true}
-                    />
-                  </a>
-                ),
-                privacy_policy: (
-                  <a href="/privacy-policy">
-                    <IntlMessage
-                      id="request_invite.privacy_policy"
-                      onlyRenderText={true}
-                    />
-                  </a>
-                ),
-                terms_of_service: (
-                  <a href="/terms-of-service">
-                    <IntlMessage
-                      id="request_invite.terms_of_service"
-                      onlyRenderText={true}
-                    />
-                  </a>
-                )
-              }}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="communityStandards"
+                onChange={this.handleCheck("communityStandards")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.communityStandards"
+                values={{
+                  code_of_conduct: (
+                    <a href="/code-of-conduct">
+                      <IntlMessage
+                        id="request_invite.code_of_conduct"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  ),
+                  privacy_policy: (
+                    <a href="/privacy-policy">
+                      <IntlMessage
+                        id="request_invite.privacy_policy"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  ),
+                  terms_of_service: (
+                    <a href="/terms-of-service">
+                      <IntlMessage
+                        id="request_invite.terms_of_service"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  )
+                }}
+              />
+            </label>
           </li>
           <li>
-            <input type="checkbox" name="realIdentity" />
-            <IntlMessage
-              id="request_invite.agreements.realIdentity"
-              onlyRenderText={true}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="realIdentity"
+                onChange={this.handleCheck("realIdentity")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.realIdentity"
+                onlyRenderText={true}
+              />
+            </label>
           </li>
           <li>
-            <input type="checkbox" name="age" />
-            <IntlMessage
-              id="request_invite.agreements.age"
-              onlyRenderText={true}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="age"
+                onChange={this.handleCheck("age")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.age"
+                onlyRenderText={true}
+              />
+            </label>
           </li>
         </ul>
 
+        <input
+          type="text"
+          placeholder="Full name"
+          onChange={this.handleChange("fullName")}
+        />
         <VideoUploader
           setVideoUrl={videoUrl =>
             this.setState({ videoUrl: videoUrl ? videoUrl : undefined })
