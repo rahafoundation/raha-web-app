@@ -58,7 +58,7 @@ interface OwnProps {
 }
 
 interface StateProps {
-  loggedInFirebaseUser?: { uid: string };
+  loggedInFirebaseUser?: firebase.User;
   requestingFromMember?: Member;
   isOwnInvitePage: boolean;
   requestInviteStatus?: ApiCallStatus;
@@ -113,7 +113,7 @@ export class RequestInvite extends React.Component<Props> {
         )}
         <WelcomeSteps
           inviterName={requestingFromMember.fullName}
-          hasLoggedIn={!!loggedInFirebaseUser}
+          loggedInUser={loggedInFirebaseUser}
           videoUploadRef={videoUploadRef}
           requestInvite={requestInvite}
         />
@@ -230,7 +230,7 @@ type FormFields = CheckboxFields & TextFields;
 type FormElements = { [field in keyof FormFields]: HTMLInputElement };
 
 interface Step4Props {
-  readonly hasLoggedIn: boolean;
+  readonly loggedInUser?: firebase.User;
   readonly videoUploadRef: firebase.storage.Reference;
   readonly requestInvite: RequestInviteFn;
 }
@@ -313,7 +313,7 @@ class Step4 extends React.Component<Step4Props, Step4State> {
   }
 
   public render() {
-    if (!this.props.hasLoggedIn) {
+    if (!this.props.loggedInUser) {
       return (
         <>
           <FormattedMessage id="sign_up" />
@@ -406,8 +406,13 @@ class Step4 extends React.Component<Step4Props, Step4State> {
 
         <input
           type="text"
-          placeholder="Full name"
+          placeholder="Your full name"
           onChange={this.handleChange("fullName")}
+          {...(this.props.loggedInUser && this.props.loggedInUser.displayName
+            ? {
+                defaultValue: this.props.loggedInUser.displayName
+              }
+            : {})}
         />
         <VideoUploader
           setVideoUrl={videoUrl =>
@@ -434,7 +439,7 @@ class Step4 extends React.Component<Step4Props, Step4State> {
 
 interface WelcomeStepsProps {
   inviterName: string;
-  hasLoggedIn: boolean;
+  loggedInUser?: firebase.User;
   videoUploadRef: firebase.storage.Reference;
   requestInvite: RequestInviteFn;
 }
@@ -488,7 +493,7 @@ class WelcomeSteps extends React.Component<
       case 4:
         return (
           <Step4
-            hasLoggedIn={this.props.hasLoggedIn}
+            loggedInUser={this.props.loggedInUser}
             videoUploadRef={this.props.videoUploadRef}
             requestInvite={this.props.requestInvite}
           />
