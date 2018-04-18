@@ -9,12 +9,9 @@ import ApiResponse, {
 import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 import NetworkError from "../errors/ApiCallError/NetworkError";
 
-// TODO: make this configurable, probably by environment variable
-// It will be useful for several things:
-// a) working offline
-// b) testing API-dependent code paths
-// c) different prod/test/staging environments
-const API_BASE = "https://raha-5395e.appspot.com/api/";
+// tslint:disable-next-line:no-var-requires
+const CONFIG = require('../data/config.json');
+const API_BASE = CONFIG.apiBase;
 
 /* ==============================
  * Definitions of how to address
