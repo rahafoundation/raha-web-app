@@ -24,6 +24,7 @@ import { lightBlue500, blueGrey300 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { ApiEndpoint } from "../../api";
+import { getMembersByMid } from "../../selectors/members";
 
 const RequestInviteElem = styled.main`
   > header {
@@ -126,23 +127,27 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps: OwnProps
 ) => {
   const loggedInFirebaseUser = state.auth.firebaseUser;
-
   const requestingFromMid = ownProps.match.params.memberId;
-  const requestingFromMember = state.membersNew.byMid[requestingFromMid];
-
-  const isAuthLoaded = !!state.auth.firebaseUser;
-  const isLoading = !isAuthLoaded || !requestingFromMember;
+  const fetchedRequestingFromMember = getMembersByMid(state, [
+    requestingFromMid
+  ]);
+  const requestingFromMember =
+    fetchedRequestingFromMember.length > 0
+      ? fetchedRequestingFromMember[0]
+      : undefined;
 
   const isOwnInvitePage =
-    !isLoading &&
     !!loggedInFirebaseUser &&
+    !!requestingFromMember &&
     loggedInFirebaseUser.uid === requestingFromMember.uid;
 
-  const requestInviteStatus = getStatusOfApiCall(
-    state,
-    ApiEndpoint.REQUEST_INVITE,
-    requestingFromMember.uid
-  );
+  const requestInviteStatus = !!requestingFromMember
+    ? getStatusOfApiCall(
+        state,
+        ApiEndpoint.REQUEST_INVITE,
+        requestingFromMember.uid
+      )
+    : undefined;
 
   return {
     loggedInFirebaseUser,
