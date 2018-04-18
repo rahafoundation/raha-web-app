@@ -21,6 +21,9 @@ import IntlMessage from "../../components/IntlMessage";
 import { Redirect } from "react-router-dom";
 import { lightGreen } from "../../constants/palette";
 import { lightBlue500, blueGrey300 } from "material-ui/styles/colors";
+import { getStatusOfApiCall } from "../../selectors/apiCalls";
+import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
+import { ApiEndpoint } from "../../api";
 
 const RequestInviteElem = styled.main`
   > header {
@@ -80,19 +83,18 @@ interface OwnProps {
 interface StateProps {
   loggedInFullName?: string;
   loggedInFirebaseUser?: { uid: string };
-
   requestingFromMember?: Member;
-
-  isLoading: boolean;
   isOwnInvitePage: boolean;
+  requestInviteStatus?: ApiCallStatus;
 }
 
+type RequestInviteFn = (
+  fullName: string,
+  videoUrl: string,
+  creatorMid: string
+) => void;
 type MergedProps = StateProps & {
-  requestInvite?: (
-    fullName: string,
-    videoUrl: string,
-    creatorMid: string
-  ) => void;
+  requestInvite?: RequestInviteFn;
 };
 
 interface DispatchProps {
@@ -101,145 +103,23 @@ interface DispatchProps {
 
 type Props = OwnProps & MergedProps;
 
-export class RequestInvite extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      videoUrl: null,
-      fullName: props.loggedInFullName
-    };
-  }
-
-  public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.loggedInFullName !== this.props.loggedInFullName) {
-      this.setState({ fullName: nextProps.loggedInFullName });
-    }
-  }
-
-  private readonly setVideoURL = (event: React.FormEvent<HTMLInputElement>) => {
-    this.setState({ videoUrl: event.currentTarget.value });
-  };
-
-  // TODO Consider getting rid of this and converting to an uncontrolled component.
-  private readonly setLoggedInFullName = (
-    event: React.FormEvent<HTMLInputElement>
-  ) => {
-    this.setState({ fullName: event.currentTarget.value });
-  };
-
-  private readonly handleOnSubmit = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ): Promise<void> => {
-    event.stopPropagation();
-    event.preventDefault();
-
-    if (this.props.isOwnInvitePage) {
-      this.setState({ errorMessage: "Sorry, cannot invite yourself!" });
-      return;
-    }
-
-    if (!this.state.videoUrl || !this.state.videoUrl.startsWith("https")) {
-      this.setState({ errorMessage: "Please upload a valid video first!" });
-      return;
-    }
-
-    const fullName = this.state.fullName;
-
-    if (!fullName) {
-      this.setState({ errorMessage: "Please enter a valid full name!" });
-      return;
-    }
-
-    const requestingFromMember = this.props.requestingFromMember;
-    // TODO: is this how we want to handle lack of name?
-    const creatorMid = getMemberId(fullName);
-    // TODO: should null loggedInFullName be handled this way?
-
-    if (!requestingFromMember || !this.props.loggedInFirebaseUser) {
-      this.setState({
-        errorMessage: "An error occurred. Could not find the expected users."
-      });
-      return;
-    }
-
-    try {
-      if (this.props.requestInvite) {
-        await this.props.requestInvite(
-          fullName,
-          this.state.videoUrl,
-          creatorMid
-        );
-      } else {
-        this.setState({ errorMessage: "Failed to request invite." });
-      }
-    } catch (e) {
-      this.setState({ errorMessage: "Failed to request invite" });
-      return;
-    }
-    this.setState({ submitted: true, creatorMid });
-  };
-
-  private renderLogIn() {
-    // TODO while login is loading user should not see the rest of page
-    return (
-      <section>
-        <div>
-          <LogIn noRedirect={true} />
-          <FormattedMessage id="sign_up_above" />
-        </div>
-      </section>
-    );
-  }
-
-  private renderForm() {
-    const uploadRef =
-      storageRef &&
-      getPrivateVideoInviteRef(
-        storageRef,
-        (this.props.loggedInFirebaseUser as { uid: string }).uid
-      );
-    return (
-      <form>
-        <h3>Upload your invite video</h3>
-        <input
-          value={this.state.fullName || ""}
-          onChange={this.setLoggedInFullName}
-          placeholder="First and last name"
-          className="InviteInput DisplayNameInput"
-        />
-        <VideoUploader
-          setVideoUrl={videoUrl => this.setState({ videoUrl })}
-          uploadRef={uploadRef}
-        />
-        <div />
-        <br />
-        <button className="InviteButton Green" onClick={this.handleOnSubmit}>
-          {/* TODO: internationalize */}
-          Request Invite
-        </button>
-        {this.state.errorMessage && (
-          <span className="InviteError">{this.state.errorMessage}</span>
-        )}
-        {this.state.videoUrl && (
-          <>
-            <h2>
-              <FormattedMessage id="join_video" />
-            </h2>
-            <Video videoUrl={this.state.videoUrl} />
-          </>
-        )}
-      </form>
-    );
-  }
-
+export class RequestInvite extends React.Component<Props> {
   public render() {
-    const { requestingFromMember, loggedInFirebaseUser } = this.props;
-    if (!requestingFromMember || !loggedInFirebaseUser) {
+    const {
+      requestingFromMember,
+      loggedInFirebaseUser,
+      requestInvite,
+      requestInviteStatus
+    } = this.props;
+    if (!(requestingFromMember && loggedInFirebaseUser && requestInvite)) {
       return <Loading />;
     }
 
     // TODO check if user already invited
-    if (this.state.submitted) {
+    if (
+      requestInviteStatus &&
+      requestInviteStatus.status === ApiCallStatusType.SUCCESS
+    ) {
       const profileUrl = `${window.location.origin}`;
       return <Redirect to={profileUrl} />;
     }
@@ -259,6 +139,7 @@ export class RequestInvite extends React.Component<Props, State> {
           inviterName={requestingFromMember.fullName}
           hasLoggedIn={!!loggedInFirebaseUser}
           videoUploadRef={videoUploadRef}
+          requestInvite={requestInvite}
         />
       </RequestInviteElem>
     );
@@ -270,7 +151,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps: OwnProps
 ) => {
   const loggedInFirebaseUser = state.auth.firebaseUser;
-  const isAuthLoaded = !!state.auth.firebaseUser;
   const loggedInMember: Member | undefined = loggedInFirebaseUser
     ? state.membersNew.byUid[loggedInFirebaseUser.uid]
     : undefined;
@@ -282,6 +162,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const requestingFromMid = ownProps.match.params.memberId;
   const requestingFromMember = state.membersNew.byMid[requestingFromMid];
 
+  const isAuthLoaded = !!state.auth.firebaseUser;
   const isLoading = !isAuthLoaded || !requestingFromMember;
 
   const isOwnInvitePage =
@@ -289,14 +170,18 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     !!loggedInFirebaseUser &&
     loggedInFirebaseUser.uid === requestingFromMember.uid;
 
+  const requestInviteStatus = getStatusOfApiCall(
+    state,
+    ApiEndpoint.REQUEST_INVITE,
+    requestingFromMember.uid
+  );
+
   return {
     loggedInFirebaseUser,
     loggedInFullName: loggedInFullName || undefined,
-
     requestingFromMember,
-
-    isLoading,
-    isOwnInvitePage
+    isOwnInvitePage,
+    requestInviteStatus
   };
 };
 
@@ -324,14 +209,6 @@ const mergeProps: MergeProps<
   };
 };
 
-interface FormElements {
-  age: HTMLInputElement;
-  inactivityDonation: HTMLInputElement;
-  communityStandards: HTMLInputElement;
-  realIdentity: HTMLInputElement;
-  fullName: HTMLInputElement;
-  videoUrl: HTMLInputElement;
-}
 export default connect(
   mapStateToProps,
   { requestInviteFromMember },
@@ -366,14 +243,23 @@ const Step3: React.StatelessComponent<{ inviterName: string }> = ({
   />
 );
 
+interface FormFields {
+  age: boolean;
+  inactivityDonation: boolean;
+  communityStandards: boolean;
+  realIdentity: boolean;
+  fullName: string;
+  videoUrl: string;
+}
+type FormElements = { [field in keyof FormFields]: HTMLInputElement };
+
 interface Step4Props {
-  hasLoggedIn: boolean;
-  videoUploadRef: firebase.storage.Reference;
+  readonly hasLoggedIn: boolean;
+  readonly videoUploadRef: firebase.storage.Reference;
+  readonly requestInvite: RequestInviteFn;
 }
 
-interface Step4State {
-  videoUrl: string | null;
-}
+type Step4State = { readonly [field in keyof FormFields]?: FormFields[field] };
 
 const RequestInviteForm = styled.form`
   > .agreements {
@@ -387,18 +273,47 @@ const RequestInviteForm = styled.form`
 `;
 
 class Step4 extends React.Component<Step4Props, Step4State> {
-  constructor(props: Step4Props) {
-    super(props);
-    this.state = {
-      videoUrl: null
-    };
-  }
-
   private readonly handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const {
+      age,
+      communityStandards,
+      inactivityDonation,
+      realIdentity,
+      fullName,
+      videoUrl
+    } = this.state;
+
     const formElements: FormElements = e.currentTarget.elements as any;
-    alert(formElements.age.checked);
+    if (!(age && communityStandards && inactivityDonation && realIdentity)) {
+      // TODO: do this more elegantly than an alert
+      alert("Please agree to all the conditions first.");
+      return;
+    }
+
+    if (!fullName) {
+      alert("Please enter your full name.");
+      return;
+    }
+
+    if (!videoUrl) {
+      alert("Please upload an invite video.");
+      return;
+    }
+
+    this.props.requestInvite(fullName, videoUrl, getMemberId(fullName));
   };
+
+  private isFormValid() {
+    return (
+      this.state.age &&
+      this.state.communityStandards &&
+      this.state.inactivityDonation &&
+      this.state.realIdentity &&
+      this.state.fullName &&
+      this.state.videoUrl
+    );
+  }
 
   public render() {
     if (!this.props.hasLoggedIn) {
@@ -469,7 +384,9 @@ class Step4 extends React.Component<Step4Props, Step4State> {
         </ul>
 
         <VideoUploader
-          setVideoUrl={videoUrl => this.setState({ videoUrl })}
+          setVideoUrl={videoUrl =>
+            this.setState({ videoUrl: videoUrl ? videoUrl : undefined })
+          }
           uploadRef={this.props.videoUploadRef}
         />
         {this.state.videoUrl && (
@@ -481,7 +398,9 @@ class Step4 extends React.Component<Step4Props, Step4State> {
           </>
         )}
 
-        <Button submit={true}>Submit</Button>
+        <Button submit={true} disabled={!this.isFormValid()}>
+          Submit
+        </Button>
       </RequestInviteForm>
     );
   }
@@ -491,6 +410,7 @@ interface WelcomeStepsProps {
   inviterName: string;
   hasLoggedIn: boolean;
   videoUploadRef: firebase.storage.Reference;
+  requestInvite: RequestInviteFn;
 }
 
 interface WelcomeStepsState {
@@ -544,6 +464,7 @@ class WelcomeSteps extends React.Component<
           <Step4
             hasLoggedIn={this.props.hasLoggedIn}
             videoUploadRef={this.props.videoUploadRef}
+            requestInvite={this.props.requestInvite}
           />
         );
       default:
