@@ -20,7 +20,7 @@ import {
   Operation,
   OperationType,
   OperationsState
-} from "../reducers/operationsNew";
+} from "../reducers/operations";
 import { MembersState, MemberLookupTable } from "../reducers/membersNew";
 import { Uid, Mid } from "../identifiers";
 import { AppState } from "../store";
@@ -173,68 +173,6 @@ export const fetchMemberByMidIfNeeded: AsyncActionCreator = (mid: string) => (
   if (shouldFetchMemberByMid(getState, mid)) {
     fetchMemberByMid(dispatch, mid);
   }
-};
-
-// op_actions.js
-
-export const RECEIVE_OPS = "RECEIVE_OPS";
-export const POST_OP = "POST_OP";
-export const ACKP_POST_OP = "ACKP_POST_OP";
-
-export interface ReceiveOpsAction extends Action {
-  type: typeof RECEIVE_OPS;
-  opDocs: OpDoc[];
-}
-export interface PostOpAction extends Action {
-  type: typeof POST_OP;
-  value: LegacyOperation;
-}
-export interface AckpPostOpAction extends Action {
-  type: typeof ACKP_POST_OP;
-  value: OpMeta;
-}
-
-const postOp: ActionCreator<PostOpAction> = (
-  uid: string,
-  op: LegacyOperation
-) => ({
-  type: POST_OP,
-  value: {
-    uid,
-    op,
-    inDb: false
-  }
-});
-
-const ackPostOp: ActionCreator<AckpPostOpAction> = (uid: string) => ({
-  type: ACKP_POST_OP,
-  value: {
-    uid,
-    inDb: true
-  }
-});
-
-export const postOperation: AsyncActionCreator = (
-  op: OperationData
-) => async dispatch => {
-  const opDoc = db.collection("operations").doc();
-  dispatch(postOp(opDoc.id, op));
-  await opDoc.set(op);
-  dispatch(ackPostOp(opDoc.id));
-};
-
-const receiveOperations: ActionCreator<ReceiveOpsAction> = (
-  opDocs: firebase.firestore.DocumentSnapshot[]
-) => ({
-  type: RECEIVE_OPS,
-  opDocs
-});
-
-export const fetchOperations: AsyncActionCreator = (
-  query: firebase.firestore.Query
-) => async dispatch => {
-  const snap = await query.get();
-  dispatch(receiveOperations(snap.docs));
 };
 
 export const SET_FIREBASE_USER = "SET_FIREBASE_USER";
