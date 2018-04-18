@@ -175,6 +175,9 @@ const AppLayoutElem = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  > .spacer {
+    flex-grow: 1;
+  }
 `;
 
 interface OwnProps {}
@@ -215,6 +218,7 @@ export const AppLayoutView: React.StatelessComponent<Props> = props => {
     <AppLayoutElem id="appLayout">
       <Header {...headerProps} />
       <main>{props.children}</main>
+      <div className="spacer" />
       <Footer />
       <Modal />
     </AppLayoutElem>
