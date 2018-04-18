@@ -1,5 +1,5 @@
 import ApplicationError from "./ApplicationError";
-import { Operation } from "../reducers/operationsNew";
+import { Operation } from "../reducers/operations";
 
 export default class OperationInvalidError extends ApplicationError {
   public readonly operation: Operation;

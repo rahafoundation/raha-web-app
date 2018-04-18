@@ -1,4 +1,4 @@
-import { Operation } from "../reducers/operationsNew";
+import { Operation } from "../reducers/operations";
 import { ApiEndpoint } from "./";
 
 export type OperationApiResponse = Operation;

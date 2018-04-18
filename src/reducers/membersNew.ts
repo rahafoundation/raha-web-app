@@ -2,7 +2,7 @@ import { Reducer } from "redux";
 
 import { Uid, Mid } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
-import { Operation, OperationType } from "./operationsNew";
+import { Operation, OperationType } from "./operations";
 import OperationInvalidError from "../errors/OperationInvalidError";
 
 const GENESIS_REQUEST_INVITE_OPS = [
