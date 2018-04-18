@@ -1,25 +1,39 @@
-import { MemberDoc } from './members';
-import { AppState } from './store';
+import { MemberDoc } from "./members";
+import { AppState } from "./store";
 
 export function getMemberDoc(member: MemberDoc) {
-  return member && member.memberDoc && member.memberDoc.exists ? member.memberDoc : null;
+  return member && member.memberDoc && member.memberDoc.exists
+    ? member.memberDoc
+    : null;
 }
 
 export function getAuthMemberDocIsLoaded(state: AppState) {
-  if (!state.auth.isLoaded) { return false; }
+  if (!state.auth.firebaseUser) {
+    return false;
+  }
   const authFirebaseUser = state.auth.firebaseUser;
-  if (!authFirebaseUser) { return true; }
+  if (!authFirebaseUser) {
+    return true;
+  }
   const member = state.members.byUid[authFirebaseUser.uid];
   return member && !member.isFetching;
 }
 
 export function getAuthMemberDoc(state: AppState) {
   const authFirebaseUser = state.auth.firebaseUser;
-  return authFirebaseUser ? getMemberDoc(state.members.byUid[authFirebaseUser.uid]) : null;
+  return authFirebaseUser
+    ? getMemberDoc(state.members.byUid[authFirebaseUser.uid])
+    : null;
 }
 
-export function getPrivateVideoInviteRef(storageRef: firebase.storage.Reference, userId: string) {
-  return storageRef.child('private-video').child(userId).child('invite.mp4');
+export function getPrivateVideoInviteRef(
+  storageRef: firebase.storage.Reference,
+  userId: string
+) {
+  return storageRef
+    .child("private-video")
+    .child(userId)
+    .child("invite.mp4");
 }
 
 export function getMemberDocByUid(state: AppState, uid: string) {

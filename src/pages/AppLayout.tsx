@@ -32,7 +32,7 @@ const FooterElem = styled.footer`
 
 const Footer: React.StatelessComponent<{}> = () => {
   return <FooterElem>Raha Foundation, 2018</FooterElem>;
-}
+};
 
 const LogoElem = styled.span`
   display: flex;
@@ -179,7 +179,7 @@ const AppLayoutElem = styled.div`
 
 interface OwnProps {}
 interface StateProps {
-  authFirebaseUser: firebase.User | null;
+  authFirebaseUser?: firebase.User;
   authMemberDoc: MemberDoc;
   authMemberDocIsLoaded: boolean;
 }
@@ -225,8 +225,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state,
   ownProps
 ) => {
-  const authIsLoaded = state.auth.isLoaded;
   const authFirebaseUser = state.auth.firebaseUser;
+  const authIsLoaded = !!authFirebaseUser;
   const authMemberDoc = getAuthMemberDoc(state);
   const authMemberDocIsLoaded = getAuthMemberDocIsLoaded(state);
   return {

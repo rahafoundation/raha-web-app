@@ -13,8 +13,9 @@ export async function getAuthToken(
 }
 
 export function getLoggedInMember(state: AppState) {
-  const loggedInFirebaseUid =
-    state.auth.firebaseUser !== null ? state.auth.firebaseUser.uid : undefined;
+  const loggedInFirebaseUid = !!state.auth.firebaseUser
+    ? state.auth.firebaseUser.uid
+    : undefined;
   return loggedInFirebaseUid
     ? state.membersNew.byUid[loggedInFirebaseUid]
     : undefined;

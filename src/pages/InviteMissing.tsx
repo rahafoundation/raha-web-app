@@ -17,7 +17,7 @@ import { AppState } from "../store";
 import Loading from "../components/Loading";
 
 interface StateProps {
-  authFirebaseUser: firebase.User | null;
+  authFirebaseUser?: firebase.User;
   authIsLoaded: boolean;
   authMemberDocIsLoaded: boolean;
   authMemberDoc: MemberDoc;
@@ -30,7 +30,7 @@ const InviteMissing: React.StatelessComponent<Props> = ({
   authMemberDocIsLoaded,
   authMemberDoc
 }) => {
-  if (authIsLoaded && authFirebaseUser === null) {
+  if (!authIsLoaded) {
     return <Redirect to="/login" />;
   }
   if (!authMemberDocIsLoaded) {
@@ -43,7 +43,7 @@ const InviteMissing: React.StatelessComponent<Props> = ({
     <FM
       id="invite_missing"
       values={{
-        // TODO: is this how we want to handle potentially null user?
+        // TODO: is this how we want to handle potentially undefined user?
         display_name: authFirebaseUser ? authFirebaseUser.displayName : "",
         help_email: <a href="mailto:help@raha.io">help@raha.io</a>,
         login_account: <b>{authFirebaseUser ? authFirebaseUser.email : ""}</b>,
@@ -56,7 +56,7 @@ const InviteMissing: React.StatelessComponent<Props> = ({
 function mapStateToProps(state: AppState): StateProps {
   const authMemberDoc = getAuthMemberDoc(state);
   return {
-    authIsLoaded: state.auth.isLoaded,
+    authIsLoaded: !!state.auth.firebaseUser,
     authFirebaseUser: state.auth.firebaseUser,
     authMemberDocIsLoaded: getAuthMemberDocIsLoaded(state),
     authMemberDoc

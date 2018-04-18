@@ -12,7 +12,7 @@ import { AppState } from "../store";
 import Loading from "../components/Loading";
 
 interface StateProps {
-  authFirebaseUser: firebase.User | null;
+  authFirebaseUser?: firebase.User;
   authMemberDocIsLoaded: boolean;
   authMemberDoc: MemberDoc;
 }
