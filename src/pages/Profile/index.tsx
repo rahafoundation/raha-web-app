@@ -240,9 +240,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     loggedInMember,
     profileData: {
       profileMember,
-      trustedMembers: getMembersByUid(state, profileMember.trusts),
-      trustedByMembers: getMembersByUid(state, profileMember.trustedBy),
-      invitedMembers: getMembersByUid(state, profileMember.invited),
+      // NOTE: these type assertions only work because the client has the full
+      // application state, since we run through all operations on the client at
+      // the moment. When that changes, this, too, needs to change.
+      trustedMembers: getMembersByUid(state, profileMember.trusts) as Member[],
+      trustedByMembers: getMembersByUid(
+        state,
+        profileMember.trustedBy
+      ) as Member[],
+      invitedMembers: getMembersByUid(state, profileMember.invited) as Member[],
       invitedByMember
     },
     trustApiCallStatus
