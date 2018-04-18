@@ -39,30 +39,6 @@ const RequestInviteElem = styled.main`
       margin-bottom: 20px;
     }
   }
-
-  > section,
-  > form,
-  > .inviteVideo {
-    margin: 15px auto;
-  }
-
-  > section,
-  > form {
-    width: 740px;
-    max-width: 80vw;
-  }
-
-  > form > * {
-    margin-left: 30px;
-  }
-
-  > .completelyFree {
-    font-weight: bold;
-  }
-
-  > .requestInviteMessage {
-    font-weight: bold;
-  }
 `;
 
 interface State {
