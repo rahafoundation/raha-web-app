@@ -3,11 +3,6 @@
  * like styled-components
  */
 
-input, textarea {
-  width: 100%;
-  display: block
-}
-
 .Container {
   align-items: left;
   /* max-width: 40rem; */
