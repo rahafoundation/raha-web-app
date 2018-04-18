@@ -81,7 +81,6 @@ interface OwnProps {
 }
 
 interface StateProps {
-  loggedInFullName?: string;
   loggedInFirebaseUser?: { uid: string };
   requestingFromMember?: Member;
   isOwnInvitePage: boolean;
@@ -151,13 +150,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps: OwnProps
 ) => {
   const loggedInFirebaseUser = state.auth.firebaseUser;
-  const loggedInMember: Member | undefined = loggedInFirebaseUser
-    ? state.membersNew.byUid[loggedInFirebaseUser.uid]
-    : undefined;
-  // TODO: Remove null typing.
-  const loggedInFullName: string | null | undefined = loggedInMember
-    ? loggedInMember.fullName
-    : loggedInFirebaseUser ? loggedInFirebaseUser.displayName : undefined;
 
   const requestingFromMid = ownProps.match.params.memberId;
   const requestingFromMember = state.membersNew.byMid[requestingFromMid];
@@ -178,7 +170,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 
   return {
     loggedInFirebaseUser,
-    loggedInFullName: loggedInFullName || undefined,
     requestingFromMember,
     isOwnInvitePage,
     requestInviteStatus
