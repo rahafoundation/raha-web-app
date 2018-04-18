@@ -14,7 +14,7 @@ type RenderByTagNameProps = BaseProps & {
 
 type RenderTextProps = BaseProps & { onlyRenderText: boolean };
 type CustomRenderProps = BaseProps & {
-  render: (message: string[]) => React.ReactNode;
+  render: (...message: Array<string | JSX.Element>) => React.ReactNode;
 };
 
 type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
@@ -29,20 +29,30 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  * Usage examples:
  * ================
  * Display a message:
- *   <IntlMessage id="message.hi" />
+ *   <IntlMessage id="hi" />
  *
  * ... in a list element:
- *   <IntlMessage id="message.hi" tagName="h2" />
+ *   <IntlMessage id="hi" tagName="h2" />
  *
  * ... only text, without a wrapping html element:
- *   <IntlMessage id="message.hi" onlyRenderText={true} />
+ *   <IntlMessage id="hi" onlyRenderText={true} />
  *
  * ... with a variable value:
- *   <IntlMessage id="message.greeting", values={{greeting: "hi"}}  />
+ *   <IntlMessage id="greeting", values={{greeting: "hi"}}  />
  *
- * ... with a custom rendering function:
+ * ... with a custom rendering function, on a message with only one part:
  *   import Greeting from "./components/Greeting";
- *   <IntlMessage id="message.hi" render={(msg) => <Greeting>msg</Greeting>} />
+ *   <IntlMessage id="hi" render={(name) => <Greeting name={name} />
+ *
+ * ... with a custom rendering function, on a message with many parts:
+ *   <IntlMessage 
+ *     id="generatedPassage" 
+ *     values={{ ... }}
+ *     render={(...messages) =>
+ *       messages.map((msg, idx) => <p key="idx">{msg}</p>)}
+ *   />
+ * 
+ * (Messages can have several parts if you are injecting values into the message)
  */
 const IntlMessage: React.StatelessComponent<Props> = props => {
   const baseProps = {
@@ -51,19 +61,24 @@ const IntlMessage: React.StatelessComponent<Props> = props => {
   };
   return (
     <FormattedMessage {...baseProps}>
-      {(message: string[]) => {
+      {(...message) => {
         if ("onlyRenderText" in props && props.onlyRenderText) {
           return message;
         }
         if ("render" in props) {
-          return props.render(message);
+          return props.render(...message);
         }
-        const TagName =
+
+        const tagName =
           "tagName" in props && props.tagName !== undefined
             ? props.tagName
             : "span";
-        const className = "className" in props ? props.className : undefined;
-        return <TagName className={className}>{message}</TagName>;
+
+        const attributes =
+          "className" in props && props.className !== undefined
+            ? { className: props.className }
+            : {};
+        return React.createElement(tagName, attributes, ...message);
       }}
     </FormattedMessage>
   );
