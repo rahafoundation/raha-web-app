@@ -16,7 +16,7 @@ function setup() {
     isLoading: false,
     loggedInFirebaseUser: {
       uid: "me"
-    },
+    } as firebase.User,
     loggedInFullName: "Member Me",
     requestingFromMember: new Member(
       "me$1234", // target mid
