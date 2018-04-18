@@ -35,15 +35,27 @@ export enum ButtonSize {
   LARGE = "large"
 }
 
-interface Props {
+interface BaseProps {
   type?: ButtonType;
   size?: ButtonSize;
   children: React.ReactNode;
-  onClick: () => void;
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
+  submit?: boolean;
 }
+
+// either have onClick or submit, but not both.
+type ClickHandlerProps =
+  | {
+      onClick: () => void;
+      submit?: false;
+    }
+  | {
+      submit: true;
+    };
+
+type Props = BaseProps & ClickHandlerProps;
 
 const buttonStyles = {
   background: {
@@ -95,6 +107,7 @@ interface ThemeProps {
   size: ButtonSize;
 }
 const styled = styledUntyped as ThemedBaseStyledInterface<ThemeProps>;
+
 const ButtonElem = styled.button`
   cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
   padding: ${props =>
@@ -149,7 +162,7 @@ const ButtonElem = styled.button`
 /**
  * General purpose button that matches application styles.
  * Not intended for webpage linking, but instead for running
- * code on click.
+ * code on click, or submitting forms.
  *
  * ================
  * Usage examples:
@@ -165,19 +178,28 @@ const ButtonElem = styled.button`
  *
  * Disabled:
  *   <Button disabled={true} onClick={() => alert("hi")}>Say Hi</Button>
+ *
+ * As <input type="submit" />:
+ *   <Button submit={true}>Submit</Button>
  */
 const Button: React.StatelessComponent<Props> = props => {
-  const { className, style, onClick, children } = props;
+  const { className, style, children } = props;
   const type = props.type ? props.type : ButtonType.PRIMARY;
   const size = props.size ? props.size : ButtonSize.REGULAR;
   const disabled = props.disabled ? props.disabled : false;
+  const submit = !!props.submit;
 
   return (
     <ButtonElem
-      onClick={e => {
-        e.preventDefault();
-        onClick();
-      }}
+      {...("onClick" in props
+        ? {
+            onClick: e => {
+              e.preventDefault();
+              props.onClick();
+            }
+          }
+        : {})}
+      {...(submit ? { type: "submit" } : {})}
       className={className}
       style={style}
       theme={{ type, size }}
