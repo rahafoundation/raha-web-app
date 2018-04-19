@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import RequestInvite from "./pages/RequestInvite";
 import Splash from "./pages/Splash";
 import TermsOfService from "./pages/TermsOfService";
+import Leaderboard from "./pages/Leaderboard";
 import Network from "./pages/Network";
 
 // tslint:disable-next-line:no-any
@@ -46,6 +47,7 @@ function AppRouter() {
         <DefaultLayout path="/m/:memberMid" component={Profile} />
         <DefaultLayout path="/ops" component={Operations} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
+        <DefaultLayout path="/leaderboard" component={Leaderboard} />
         <DefaultLayout path="/network" component={Network} />
         <DefaultLayout component={PageNotFound} />
       </Switch>
