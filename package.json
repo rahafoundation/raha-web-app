@@ -2,12 +2,16 @@
   "name": "@raha.io/website",
   "version": "0.2.0",
   "scripts": {
-    "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
-    "use-test-config": "cp src/data/test.config.json src/data/config.json",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
+    "use-test-config": "cp src/data/test.config.json src/data/config.json",
+    "deploy-test":
+      "yarn use-test-config && yarn build && firebase deploy --project raha-test",
+    "deploy-prod":
+      "yarn use-prod-config && yarn build && firebase deploy --project raha-5395e"
   },
   "license": "Apache-2.0",
   "dependencies": {
