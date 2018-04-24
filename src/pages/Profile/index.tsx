@@ -10,7 +10,7 @@ import MemberRelations from "./MemberRelations";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import Loading from "../../components/Loading";
-import TrustLevel from "../../components/TrustLevel";
+import IdentityLevel from "../../components/IdentityLevel";
 import InviteVideo from "../../components/InviteVideo";
 import IntlMessage from "../../components/IntlMessage";
 import { ApiEndpoint } from "../../api";
@@ -180,9 +180,9 @@ const ProfileView: React.StatelessComponent<Props> = props => {
           )}
         </h1>
         {/* TODO: This component looks like it has extraneous deps */}
-        <TrustLevel
+        <IdentityLevel
           ownProfile={isOwnProfile(loggedInMember, profileMember)}
-          trustLevel={inviteConfirmed ? 3 : 0}
+          identityLevel={inviteConfirmed ? 3 : 0}
           networkJoinDate={0}
           trustedByLevel2={0}
           trustedByLevel3={0}
