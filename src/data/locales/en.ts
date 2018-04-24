@@ -30,10 +30,10 @@ export default {
   "request_invite.terms_of_service": "Terms of Service",
   "request_invite.terms":
     "By requesting an invite, I agree to abide by the {code_of_conduct}, {privacy_policy}, and {terms_of_service}.",
-  trust_suggestion_active_longer:
-    "Stay active on the network for more days to increase your trust level.",
-  trust_suggestion_recieve_trust:
+  identity_suggestion_active_longer:
+    "Stay active on the network for more days to increase your identity level.",
+  identity_suggestion_recieve_trust:
     "Increase your trust by receiving trust from {accounts} level {accountlevel}+ accounts.",
-  trust_suggestion_max: "You are max trust level.",
-  trust_level: "Trust Level"
+  identity_suggestion_max: "You are max identity level.",
+  identity_level: "Identity Level"
 };
