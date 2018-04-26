@@ -4,13 +4,14 @@ import InvalidApiRequestError from "../errors/ApiCallError/InvalidApiRequestErro
 import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
 import ApiResponse, {
   OperationsApiResponse,
-  OperationApiResponse
+  OperationApiResponse,
+  MessageApiResponse
 } from "./ApiResponse";
 import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 import NetworkError from "../errors/ApiCallError/NetworkError";
 
 // tslint:disable-next-line:no-var-requires
-const CONFIG = require('../data/config.json');
+const CONFIG = require("../data/config.json");
 const API_BASE = CONFIG.apiBase;
 
 /* ==============================
@@ -25,7 +26,8 @@ const API_BASE = CONFIG.apiBase;
 export const enum ApiEndpoint {
   TRUST_MEMBER = "TRUST_MEMBER",
   GET_OPERATIONS = "GET_OPERATIONS",
-  REQUEST_INVITE = "REQUEST_INVITE"
+  REQUEST_INVITE = "REQUEST_INVITE",
+  SEND_INVITE = "SEND_INVITE"
 }
 
 /**
@@ -51,13 +53,19 @@ type RequestInviteApiCall = ApiCallDefinition<
   { uid: Uid },
   { fullName: string; videoUrl: string; creatorMid: string }
 >;
+type SendInviteApiCall = ApiCallDefinition<
+  ApiEndpoint.SEND_INVITE,
+  void,
+  { inviteEmail: string }
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
 export type ApiCall =
   | TrustMemberApiCall
   | GetOperationsApiCall
-  | RequestInviteApiCall;
+  | RequestInviteApiCall
+  | SendInviteApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -75,21 +83,24 @@ export type TrustMemberApiEndpoint = ApiEndpointDefinition<
   TrustMemberApiCall,
   OperationApiResponse
 >;
-
 export type GetOperationsApiEndpoint = ApiEndpointDefinition<
   GetOperationsApiCall,
   OperationsApiResponse
 >;
-
 export type RequestInviteApiEndpoint = ApiEndpointDefinition<
   RequestInviteApiCall,
   OperationApiResponse
+>;
+export type SendInviteApiEndpoint = ApiEndpointDefinition<
+  SendInviteApiCall,
+  MessageApiResponse
 >;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
   | GetOperationsApiEndpoint
-  | RequestInviteApiEndpoint;
+  | RequestInviteApiEndpoint
+  | SendInviteApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -126,6 +137,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.REQUEST_INVITE]: {
     uri: "members/:uid/request_invite",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.SEND_INVITE]: {
+    uri: "me/send_invite",
     method: HttpVerb.POST
   }
 };
