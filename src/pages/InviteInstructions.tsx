@@ -45,20 +45,35 @@ interface DispatchProps {
 }
 type Props = OwnProps & StateProps & DispatchProps;
 
-function invite(sendInviteAction: typeof sendInvite) {
-  const inviteForm = document.forms.namedItem("sendEmailInviteForm");
+const getInviteEmailForm: () => HTMLFormElement | undefined = () => {
+  return document.forms.namedItem("sendEmailInviteForm");
+};
+
+const getInviteEmailFormValue: () => string | undefined = () => {
+  const inviteForm = getInviteEmailForm();
+  if (!inviteForm) {
+    return;
+  }
   const inviteEmailElem = inviteForm.elements.namedItem(
     "inviteEmail"
   ) as HTMLInputElement;
-  const inviteEmail = inviteEmailElem ? inviteEmailElem.value : undefined;
+  return inviteEmailElem ? inviteEmailElem.value : undefined;
+};
+
+const invite: (
+  sendInviteAction: typeof sendInvite
+) => void = sendInviteAction => {
+  const inviteForm = getInviteEmailForm();
+  if (!inviteForm) {
+    return;
+  }
+  const inviteEmail = getInviteEmailFormValue();
   if (inviteEmail && inviteForm.checkValidity()) {
-    sendInviteAction(inviteEmail, API_CALL_ID);
+    sendInviteAction(inviteEmail);
   } else {
     alert("Email invalid.");
   }
-}
-
-const API_CALL_ID = Math.random().toString(36);
+};
 
 const InviteInstructions: React.StatelessComponent<Props> = props => {
   const { inviteUrl, fullName, sendInviteApiCallStatus } = props;
@@ -119,11 +134,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state,
   ownProps
 ) => {
+  const inviteEmail = getInviteEmailFormValue();
+  if (!inviteEmail) {
+    return {};
+  }
   return {
     sendInviteApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpoint.SEND_INVITE,
-      API_CALL_ID
+      inviteEmail
     )
   };
 };

@@ -315,7 +315,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
   );
 };
 
-export const sendInvite: AsyncActionCreator = (inviteEmail: string, apiCallId: string) => {
+export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -335,6 +335,6 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string, apiCallId: s
       );
     },
     ApiEndpoint.SEND_INVITE,
-    apiCallId
+    inviteEmail
   );
 };
