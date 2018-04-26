@@ -1,6 +1,6 @@
 {
-  "short_name": "Raha Alpha",
-  "name": "Raha Alpha - A Human Centric Blockchain Project",
+  "short_name": "Raha.io Network",
+  "name": "Raha.io Network - Every Life Has Value",
   "icons": [
     {
         "src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
         "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": ".",
   "display": "standalone",
   "theme_color": "#2A945E",
   "background_color": "#2A945E"

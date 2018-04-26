@@ -12,10 +12,6 @@
     ],
     "rewrites": [
       {
-        "source": "/",
-        "destination": "/home.html"
-      },
-      {
         "source": "**",
         "destination": "/app.html"
       }

@@ -5,6 +5,9 @@
 # testing
 /coverage
 
+# intermediate build directory
+/public
+
 # production
 /build
 

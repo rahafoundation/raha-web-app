@@ -1,17 +1,18 @@
 {
   "name": "@raha.io/website",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
+    "start": "yarn pre-build && react-scripts-ts start",
+    "build": "yarn pre-build && react-scripts-ts build",
+    "test": "yarn pre-build && react-scripts-ts test --env=jsdom",
+    "pre-build": "cp -r static public && static-i18n -o public -l en locales",
+    "post-build": "mv build/index.html build/app.html && mv build/home.html build/index.html",
+    "all-build": "yarn build && yarn post-build",
     "eject": "react-scripts-ts eject",
     "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
     "use-test-config": "cp src/data/test.config.json src/data/config.json",
-    "deploy-test":
-      "yarn use-test-config && yarn build && firebase deploy --project raha-test",
-    "deploy-prod":
-      "yarn use-prod-config && yarn build && firebase deploy --project raha-5395e"
+    "deploy-test": "yarn use-test-config && yarn all-build && firebase deploy --project raha-test",
+    "deploy-prod": "yarn use-prod-config && yarn all-build && firebase deploy --project raha-5395e"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -54,6 +55,7 @@
     "jest-localstorage-mock": "^2.1.0",
     "prettier": "^1.11.1",
     "redux-devtools-extension": "^2.13.2",
+    "static-i18n": "^0.1.24",
     "tslint": "^5.9.1",
     "tslint-config-prettier": "^1.10.0",
     "typescript": "^2.8.1"
