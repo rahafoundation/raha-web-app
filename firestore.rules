@@ -12,7 +12,7 @@ service cloud.firestore {
       allow read;
     }
 
-    match /uidToVideoMultiHashMap/{id} {
+    match /uidToVideoHashMap/{id} {
       allow read;
     }
   }
