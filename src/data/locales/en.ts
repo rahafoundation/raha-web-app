@@ -4,20 +4,20 @@ export default {
   "profile.trustFailure": "Trusting failed, try again",
 
   "request_invite.step0":
-    "{inviter_name} invited you to Raha.io Network, an identity network supporting universal basic income.",
+    "{inviter_name} invited you to Raha. Let's get you started so you can begin receiving your Raha Basic Income.",
   "request_invite.step1":
-    "We believe every life has value, but financialization and automation is creating unsustainable and unethical inequality.",
+    "We believe every life has value, but inequality has become the defining problem of our generation.",
   "request_invite.step2":
-    "Members of the Raha identity network receive a basic income of Raha coin. In exchange, when you are inactive for a year or more then your coin are donated back to the network.",
+    "Members receive a Raha Basic Income, paid in Raha points. In exchange, when you are inactive for a year or more then your balance is donated back to the network.",
   "request_invite.step3":
-    "Raha is free to join with 0 transaction fees. Talk to {inviter_name} to create your video identity!",
+    "Raha is free to join with no transaction fees. Talk to {inviter_name} to verify your identity with a video!",
 
   "request_invite.agreements.inactivityDonation":
-    "I understand and agree that after 1 year of inactivity all of my Raha will be irrevocably and irretrievably donated to fund basic income, with 80% going directly to members and 20% to the member-owned Raha Foundation.",
+    "I understand and agree that after 1 year of inactivity all of my Raha will be irrevocably and irretrievably donated to fund basic income, with 80% going directly to members and 20% to the member-owned Raha Parliament.",
   "request_invite.agreements.communityStandards":
     "I agree to the community {code_of_conduct}, {terms_of_service}, and {privacy_policy}.",
   "request_invite.agreements.realIdentity":
-    "This is my real identity, my full name, and only time I have joined Raha. I understand that creating duplicate or fake accounts may result in me and people I have invited losing access to our accounts.",
+    "This is my real identity, my full name, and the only time I have joined Raha. I understand that creating duplicate or fake accounts may result in me and people I have invited losing access to our accounts.",
   "request_invite.agreements.age": "I am at least 13 years old.",
 
   "app_layout.log_in": "Log In",
