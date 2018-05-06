@@ -6,6 +6,8 @@
     "use-test-config": "cp src/data/test.config.json src/data/config.json",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
+    "lint": "tslint -p .",
+    "lint:fix": "tslint -p . --fix",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
