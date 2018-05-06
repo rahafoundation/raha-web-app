@@ -49,7 +49,7 @@ interface TextFields {
 }
 
 type FormFields = CheckboxFields & TextFields;
-type FormElements = { [field in keyof FormFields]: HTMLInputElement };
+// type FormElements = { [field in keyof FormFields]: HTMLInputElement };
 
 interface Step4Props {
   readonly loggedInUser?: firebase.User;
@@ -87,7 +87,6 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
       videoUrl
     } = this.state;
 
-    const formElements: FormElements = e.currentTarget.elements as any;
     if (!(age && communityStandards && inactivityDonation && realIdentity)) {
       // TODO: do this more elegantly than an alert
       alert("Please agree to all the conditions first.");

@@ -1,11 +1,7 @@
 import * as React from "react";
 import styledUntyped, { ThemedBaseStyledInterface } from "styled-components";
 
-import { getAuthMemberDoc } from "../connectors";
 import { interactive, gray } from "../constants/palette";
-import { MemberDoc } from "../members";
-import { getTrustOperation } from "../operations";
-import { AppState } from "../store";
 import { linkStyles } from "./Link";
 import { white } from "material-ui/styles/colors";
 

@@ -11,7 +11,7 @@ import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 import { green, interactive } from "../../constants/palette";
 
-import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
+import { Member } from "../../reducers/membersNew";
 
 import MemberThumbnail from "./MemberThumbnail";
 

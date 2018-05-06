@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { FormattedMessage, MessageValue } from "react-intl";
 
 interface BaseProps {

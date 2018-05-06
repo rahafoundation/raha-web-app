@@ -64,7 +64,7 @@ export default class VideoUploader extends React.Component<Props, State> {
           totalBytes: snapshot.totalBytes
         });
       },
-      e => this.setState({ errorMessage: "Could not upload" }),
+      () => this.setState({ errorMessage: "Could not upload" }),
       () => {
         this.setState({ uploading: false });
         this.props.setVideoUrl(uploadTask.snapshot.downloadURL);

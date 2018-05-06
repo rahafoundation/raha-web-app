@@ -225,10 +225,11 @@ export const AppLayoutView: React.StatelessComponent<Props> = props => {
   );
 };
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
-  state,
-  ownProps
-) => {
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  AppState
+> = state => {
   const authFirebaseUser = state.auth.firebaseUser;
   const authIsLoaded = !!authFirebaseUser;
   const authMemberDoc = getAuthMemberDoc(state);

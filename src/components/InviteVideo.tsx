@@ -1,8 +1,4 @@
-import * as classnames from "classnames";
 import * as React from "react";
-import { getPrivateVideoInviteRef } from "../connectors";
-import { storageRef } from "../firebaseInit";
-import Loading from "./Loading";
 import Video from "./Video";
 
 interface Props {

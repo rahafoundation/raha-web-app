@@ -4,7 +4,6 @@ import { IntlProvider } from "react-intl";
 
 import App from "./App";
 import messages from "./data/locales/en";
-import { mountWithIntl } from "./helpers/intl-enzyme-test-helper";
 
 it("renders without crashing", () => {
   renderIntoDocument(

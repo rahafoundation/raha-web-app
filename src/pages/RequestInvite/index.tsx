@@ -150,7 +150,7 @@ const mergeProps: MergeProps<
   DispatchProps,
   OwnProps,
   MergedProps
-> = (stateProps, dispatchProps, ownProps) => {
+> = (stateProps, dispatchProps) => {
   if (!stateProps.requestingFromMember) {
     return stateProps;
   }

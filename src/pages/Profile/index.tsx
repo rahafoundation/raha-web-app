@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 import { trustMember } from "../../actions";
 import { AppState } from "../../store";
-import { Uid, Mid } from "../../identifiers";
-import { Member, UidSet, GENESIS_MEMBER } from "../../reducers/membersNew";
+import { Mid } from "../../identifiers";
+import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 import MemberRelations from "./MemberRelations";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
@@ -260,7 +260,7 @@ const mergeProps: MergeProps<
   DispatchProps,
   OwnProps,
   MergedProps
-> = (stateProps, dispatchProps, ownProps) => {
+> = (stateProps, dispatchProps) => {
   if (!stateProps.profileData) {
     return stateProps;
   }

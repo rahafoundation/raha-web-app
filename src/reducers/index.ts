@@ -1,4 +1,4 @@
-import { Action, combineReducers, Reducer } from "redux";
+import { combineReducers } from "redux";
 import modal, { ModalState } from "./modal";
 
 // TODO: get rid of the two below reducers

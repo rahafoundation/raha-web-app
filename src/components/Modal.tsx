@@ -4,7 +4,6 @@ import * as React from "react";
 import * as ReactModal from "react-modal";
 import {
   connect,
-  Dispatch,
   MapDispatchToProps,
   MapStateToProps
 } from "react-redux";

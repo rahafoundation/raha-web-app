@@ -1,5 +1,5 @@
 import { ApiEndpoint } from "../api";
-import { ApiCallStatusType, ApiCallStatus } from "../reducers/apiCalls";
+import { ApiCallStatus } from "../reducers/apiCalls";
 import { AppState } from "../store";
 
 /**

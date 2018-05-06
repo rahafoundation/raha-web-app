@@ -1,7 +1,6 @@
 import { Reducer } from "redux";
 import { ApiEndpoint } from "../api";
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
-import ApiCallError from "../errors/ApiCallError";
 
 export enum ApiCallStatusType {
   STARTED = "STARTED",
