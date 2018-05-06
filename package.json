@@ -1,5 +1,5 @@
 {
-  "name": "@raha.io/website",
+  "name": "@raha/web-app",
   "version": "0.2.0",
   "scripts": {
     "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
