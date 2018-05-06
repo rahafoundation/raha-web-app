@@ -22,6 +22,8 @@
     // dev dependencies aren't implicit
     "no-implicit-dependencies": [true, "dev"],
     // too strict, not useful
-    "variable-name": false
+    "variable-name": false,
+    // useful to avoid bloat
+    "no-unused-variable": true
   }
 }
