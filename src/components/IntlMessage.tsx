@@ -45,13 +45,13 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  *   <IntlMessage id="hi" render={(name) => <Greeting name={name} />
  *
  * ... with a custom rendering function, on a message with many parts:
- *   <IntlMessage 
- *     id="generatedPassage" 
+ *   <IntlMessage
+ *     id="generatedPassage"
  *     values={{ ... }}
  *     render={(...messages) =>
  *       messages.map((msg, idx) => <p key="idx">{msg}</p>)}
  *   />
- * 
+ *
  * (Messages can have several parts if you are injecting values into the message)
  */
 const IntlMessage: React.StatelessComponent<Props> = props => {

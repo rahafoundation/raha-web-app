@@ -7,17 +7,16 @@
  * Code adopted from https://github.com/yahoo/react-intl/wiki/Testing-with-React-Intl.
  */
 
-import * as React from 'react';
-import { IntlProvider, intlShape } from 'react-intl';
-import { mount, shallow } from 'enzyme';
-import messages from '../data/locales/en';
+import * as React from "react";
+import { IntlProvider, intlShape } from "react-intl";
+import { mount, shallow } from "enzyme";
+import messages from "../data/locales/en";
 
 // TODO make sure this file not included in prod bundle
 
-
 // You can pass your messages to the IntlProvider. Optional: remove if unneeded.
 // Create the IntlProvider to retrieve context for wrapping around.
-const intlProvider = new IntlProvider({ locale: 'en', messages }, {});
+const intlProvider = new IntlProvider({ locale: "en", messages }, {});
 const { intl } = intlProvider.getChildContext();
 
 /**

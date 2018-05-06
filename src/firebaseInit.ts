@@ -1,8 +1,8 @@
-import * as firebase from 'firebase';
-import 'firebase/firestore';
-import * as fs from 'fs';
+import * as firebase from "firebase";
+import "firebase/firestore";
+import * as fs from "fs";
 // tslint:disable-next-line:no-var-requires
-const CONFIG = require('./data/config.json');
+const CONFIG = require("./data/config.json");
 
 firebase.initializeApp(CONFIG.firebase);
 

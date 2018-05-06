@@ -13,7 +13,8 @@ export interface ModalState {
 type ModalAction = HideModalAction | ShowModalAction;
 
 const modal: Reducer<ModalState> = (
-  state = { element: null }, untypedAction
+  state = { element: null },
+  untypedAction
 ) => {
   // TODO: this is a hack for now until Redux 4's typing comes out, or we use
   // a flux standard actions library to handle typings; this gives stronger

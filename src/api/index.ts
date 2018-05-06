@@ -10,7 +10,7 @@ import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 import NetworkError from "../errors/ApiCallError/NetworkError";
 
 // tslint:disable-next-line:no-var-requires
-const CONFIG = require('../data/config.json');
+const CONFIG = require("../data/config.json");
 const API_BASE = CONFIG.apiBase;
 
 /* ==============================
