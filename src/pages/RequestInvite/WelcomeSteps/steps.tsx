@@ -1,0 +1,260 @@
+import * as React from "react";
+import styled from "styled-components";
+
+import IntlMessage from "../../../components/IntlMessage";
+import { RequestInviteFn } from "..";
+import { getMemberId } from "../../../members";
+import LogIn from "../../../components/LogIn";
+import Button from "../../../components/Button";
+import Video from "../../../components/Video";
+import VideoUploader from "../../../components/VideoUploader";
+
+export const Step0: React.StatelessComponent<{ inviterName: string }> = ({
+  inviterName
+}) => {
+  return (
+    <IntlMessage
+      id="request_invite.step0"
+      values={{ inviter_name: inviterName }}
+    />
+  );
+};
+
+export const Step1: React.StatelessComponent<{}> = () => (
+  <IntlMessage id="request_invite.step1" />
+);
+
+export const Step2: React.StatelessComponent<{}> = () => (
+  <IntlMessage id="request_invite.step2" />
+);
+
+export const Step3: React.StatelessComponent<{ inviterName: string }> = ({
+  inviterName
+}) => (
+  <IntlMessage
+    id="request_invite.step3"
+    values={{ inviter_name: inviterName }}
+  />
+);
+
+interface CheckboxFields {
+  age: boolean;
+  inactivityDonation: boolean;
+  communityStandards: boolean;
+  realIdentity: boolean;
+}
+interface TextFields {
+  fullName: string;
+  videoUrl: string;
+}
+
+type FormFields = CheckboxFields & TextFields;
+type FormElements = { [field in keyof FormFields]: HTMLInputElement };
+
+interface Step4Props {
+  readonly loggedInUser?: firebase.User;
+  readonly videoUploadRef: firebase.storage.Reference;
+  readonly requestInvite: RequestInviteFn;
+}
+
+type Step4State = { readonly [field in keyof FormFields]?: FormFields[field] };
+
+const RequestInviteForm = styled.form`
+  > .agreements {
+    list-style-type: none;
+    text-align: left;
+    > li > label {
+      display: flex;
+      margin-bottom: 10px;
+    }
+  }
+`;
+
+export class Step4 extends React.Component<Step4Props, Step4State> {
+  constructor(props: Step4Props) {
+    super(props);
+    this.state = {};
+  }
+
+  private readonly handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const {
+      age,
+      communityStandards,
+      inactivityDonation,
+      realIdentity,
+      fullName,
+      videoUrl
+    } = this.state;
+
+    const formElements: FormElements = e.currentTarget.elements as any;
+    if (!(age && communityStandards && inactivityDonation && realIdentity)) {
+      // TODO: do this more elegantly than an alert
+      alert("Please agree to all the conditions first.");
+      return;
+    }
+
+    if (!fullName) {
+      alert("Please enter your full name.");
+      return;
+    }
+
+    if (!videoUrl) {
+      alert("Please upload an invite video.");
+      return;
+    }
+
+    this.props.requestInvite(fullName, videoUrl, getMemberId(fullName));
+  };
+
+  private isFormValid() {
+    return (
+      this.state.age &&
+      this.state.communityStandards &&
+      this.state.inactivityDonation &&
+      this.state.realIdentity &&
+      this.state.fullName &&
+      this.state.videoUrl
+    );
+  }
+
+  private handleCheck(field: keyof CheckboxFields) {
+    return (e: React.FormEvent<HTMLInputElement>) => {
+      this.setState({
+        [field]: e.currentTarget.checked
+      });
+    };
+  }
+
+  private handleChange(field: keyof TextFields) {
+    return (e: React.FormEvent<HTMLInputElement>) => {
+      this.setState({
+        [field]: e.currentTarget.value
+      });
+    };
+  }
+
+  public render() {
+    if (!this.props.loggedInUser) {
+      return (
+        <>
+          <IntlMessage id="sign_up" />
+          <LogIn noRedirect={true} />
+        </>
+      );
+    }
+
+    return (
+      <RequestInviteForm onSubmit={this.handleSubmit}>
+        <ul className="agreements">
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                name="inactivityDonation"
+                onChange={this.handleCheck("inactivityDonation")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.inactivityDonation"
+                onlyRenderText={true}
+              />
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                name="communityStandards"
+                onChange={this.handleCheck("communityStandards")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.communityStandards"
+                values={{
+                  code_of_conduct: (
+                    <a href="/code-of-conduct">
+                      <IntlMessage
+                        id="request_invite.code_of_conduct"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  ),
+                  privacy_policy: (
+                    <a href="/privacy-policy">
+                      <IntlMessage
+                        id="request_invite.privacy_policy"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  ),
+                  terms_of_service: (
+                    <a href="/terms-of-service">
+                      <IntlMessage
+                        id="request_invite.terms_of_service"
+                        onlyRenderText={true}
+                      />
+                    </a>
+                  )
+                }}
+              />
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                name="realIdentity"
+                onChange={this.handleCheck("realIdentity")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.realIdentity"
+                onlyRenderText={true}
+              />
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                name="age"
+                onChange={this.handleCheck("age")}
+              />
+              <IntlMessage
+                id="request_invite.agreements.age"
+                onlyRenderText={true}
+              />
+            </label>
+          </li>
+        </ul>
+
+        <input
+          type="text"
+          placeholder="Your full name"
+          onChange={this.handleChange("fullName")}
+          {...(this.props.loggedInUser && this.props.loggedInUser.displayName
+            ? {
+                defaultValue: this.props.loggedInUser.displayName
+              }
+            : {})}
+        />
+        <VideoUploader
+          setVideoUrl={videoUrl =>
+            this.setState({ videoUrl: videoUrl ? videoUrl : undefined })
+          }
+          uploadRef={this.props.videoUploadRef}
+        />
+        {this.state.videoUrl && (
+          <>
+            <h2>
+              <IntlMessage id="join_video" />
+            </h2>
+            <Video videoUrl={this.state.videoUrl} />
+          </>
+        )}
+
+        <Button submit={true} disabled={!this.isFormValid()}>
+          Submit
+        </Button>
+      </RequestInviteForm>
+    );
+  }
+}
