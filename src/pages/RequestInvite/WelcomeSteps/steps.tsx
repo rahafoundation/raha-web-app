@@ -8,6 +8,7 @@ import LogIn from "../../../components/LogIn";
 import Button from "../../../components/Button";
 import Video from "../../../components/Video";
 import VideoUploader from "../../../components/VideoUploader";
+import TextInput from "../../../components/TextInput";
 
 export const Step0: React.StatelessComponent<{ inviterName: string }> = ({
   inviterName
@@ -68,6 +69,9 @@ const RequestInviteForm = styled.form`
       margin-bottom: 10px;
     }
   }
+  > *:not(:last-child) {
+    margin-bottom: 20px;
+  }
 `;
 
 export class Step4 extends React.Component<Step4Props, Step4State> {
@@ -126,10 +130,8 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
   }
 
   private handleChange(field: keyof TextFields) {
-    return (e: React.FormEvent<HTMLInputElement>) => {
-      this.setState({
-        [field]: e.currentTarget.value
-      });
+    return (value: string) => {
+      this.setState({ [field]: value });
     };
   }
 
@@ -225,10 +227,9 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
           </li>
         </ul>
 
-        <input
-          type="text"
+        <TextInput
           placeholder="Your full name"
-          onChange={this.handleChange("fullName")}
+          onTextChange={this.handleChange("fullName")}
           {...(this.props.loggedInUser && this.props.loggedInUser.displayName
             ? {
                 defaultValue: this.props.loggedInUser.displayName
