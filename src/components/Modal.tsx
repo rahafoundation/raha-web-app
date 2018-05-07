@@ -2,11 +2,7 @@ import { faTimes } from "@fortawesome/fontawesome-free-solid";
 import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import * as ReactModal from "react-modal";
-import {
-  connect,
-  MapDispatchToProps,
-  MapStateToProps
-} from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 
 import { hideModal as hideModalAction } from "../actions";
@@ -41,7 +37,8 @@ const customModalContentStyle = {
   bottom: "auto",
   left: "50%",
   transform: "translate(-50%,-50%)",
-  outline: 0
+  outline: 0,
+  maxWidth: "80vw"
 };
 
 interface StateProps {

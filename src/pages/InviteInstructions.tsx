@@ -4,8 +4,6 @@ import styled from "styled-components";
 
 const InviteInstructionsElem = styled.section`
   padding: 10px;
-  max-width: 80vw;
-  min-width: 400px;
 `;
 
 interface Props {

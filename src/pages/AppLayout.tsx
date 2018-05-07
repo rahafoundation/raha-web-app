@@ -3,6 +3,7 @@ import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
   green300,
   green500,
+  green700,
   grey200,
   lightGreen300,
   lightGreen500
@@ -23,6 +24,8 @@ import Link from "../components/Link";
 import LogoIcon from "../components/LogoIcon";
 import Modal from "../components/Modal";
 
+const NARROW_WIDTH_SCREEN = "420px";
+
 const FooterElem = styled.footer`
   padding: 50px 30px;
   margin-top: 50px;
@@ -41,6 +44,11 @@ const LogoElem = styled.span`
   font-size: 2em;
   font-weight: bold;
   padding: 10px;
+  @media (max-width: ${NARROW_WIDTH_SCREEN}) {
+    .logoText {
+      display: none;
+    }
+  }
 `;
 
 const LogoImg = styled(LogoIcon)`
@@ -51,7 +59,7 @@ function Logo() {
   return (
     <LogoElem>
       <LogoImg />
-      Raha
+      <span className="logoText">Raha</span>
     </LogoElem>
   );
 }
@@ -67,6 +75,10 @@ const HeaderElem = styled.header`
   border-bottom: 1px solid white;
   box-shadow: 0px 2px 2px #efefef;
 
+  a {
+    text-decoration: none;
+  }
+
   > .userSection {
     display: flex;
     align-items: center;
@@ -76,6 +88,7 @@ const HeaderElem = styled.header`
     > .inviteButton {
       height: 100%;
       padding: 0 20px;
+      background: ${green700};
       cursor: pointer;
       transition: background 0.1s;
 
@@ -90,9 +103,17 @@ const HeaderElem = styled.header`
       }
 
       border: none;
-      background: none;
       color: white;
       font-size: 1rem;
+
+      @media (max-width: ${NARROW_WIDTH_SCREEN}) {
+        .icon {
+          margin-right: 0;
+        }
+        .inviteButtonText {
+          display: none;
+        }
+      }
     }
 
     > .loggedInUser,
@@ -100,6 +121,7 @@ const HeaderElem = styled.header`
       height: 100%;
       display: inline-flex;
       align-items: center;
+      max-width: 120px;
 
       color: white;
       padding: 0 10px;
@@ -139,7 +161,9 @@ const Header: React.StatelessComponent<HeaderProps> = props => {
 
   return (
     <HeaderElem>
-      <Logo />
+      <a href="/">
+        <Logo />
+      </a>
       {memberDetails && (
         <span className="userSection">
           {memberDetails.inviteUrl && (
@@ -151,7 +175,8 @@ const Header: React.StatelessComponent<HeaderProps> = props => {
                 showModal
               )}
             >
-              <FontAwesomeIcon className="icon" icon={faUserPlus} />Invite
+              <FontAwesomeIcon className="icon" icon={faUserPlus} />
+              <span className="inviteButtonText">Invite</span>
             </button>
           )}
           {memberDetails.profileUrl && (
