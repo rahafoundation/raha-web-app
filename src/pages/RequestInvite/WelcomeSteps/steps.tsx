@@ -68,6 +68,9 @@ const RequestInviteForm = styled.form`
       display: flex;
       margin-bottom: 10px;
     }
+    li {
+      margin-bottom: 10px;
+    }
   }
   > *:not(:last-child) {
     margin-bottom: 20px;
@@ -168,36 +171,34 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
                 name="communityStandards"
                 onChange={this.handleCheck("communityStandards")}
               />
-              <IntlMessage
-                id="request_invite.agreements.communityStandards"
-                values={{
-                  code_of_conduct: (
-                    <a href="/code-of-conduct">
-                      <IntlMessage
-                        id="request_invite.code_of_conduct"
-                        onlyRenderText={true}
-                      />
-                    </a>
-                  ),
-                  privacy_policy: (
-                    <a href="/privacy-policy">
-                      <IntlMessage
-                        id="request_invite.privacy_policy"
-                        onlyRenderText={true}
-                      />
-                    </a>
-                  ),
-                  terms_of_service: (
-                    <a href="/terms-of-service">
-                      <IntlMessage
-                        id="request_invite.terms_of_service"
-                        onlyRenderText={true}
-                      />
-                    </a>
-                  )
-                }}
-              />
+              <IntlMessage id="request_invite.agreements.communityStandards" />
             </label>
+            <ul>
+              <li>
+                <a href="/code-of-conduct">
+                  <IntlMessage
+                    id="request_invite.code_of_conduct"
+                    onlyRenderText={true}
+                  />
+                </a>
+              </li>
+              <li>
+                <a href="/privacy-policy">
+                  <IntlMessage
+                    id="request_invite.privacy_policy"
+                    onlyRenderText={true}
+                  />
+                </a>
+              </li>
+              <li>
+                <a href="/terms-of-service">
+                  <IntlMessage
+                    id="request_invite.terms_of_service"
+                    onlyRenderText={true}
+                  />
+                </a>
+              </li>
+            </ul>
           </li>
           <li>
             <label>

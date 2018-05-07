@@ -15,7 +15,7 @@ export default {
   "request_invite.agreements.inactivityDonation":
     "I understand and agree that after 1 year of inactivity all of my Raha will be irrevocably and irretrievably donated to fund basic income, with 80% going directly to members and 20% to the member-owned Raha Parliament.",
   "request_invite.agreements.communityStandards":
-    "I agree to the community {code_of_conduct}, {terms_of_service}, and {privacy_policy}.",
+    "I agree to abide by the following community standards:",
   "request_invite.agreements.realIdentity":
     "This is my real identity, my full name, and the only time I have joined Raha. I understand that creating duplicate or fake accounts may result in me and people I have invited losing access to our accounts.",
   "request_invite.agreements.age": "I am at least 13 years old.",
