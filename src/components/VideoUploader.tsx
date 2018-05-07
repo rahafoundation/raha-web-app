@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as firebase from "firebase";
-import { FormattedMessage } from "react-intl";
+import Button, { ButtonType } from "./Button";
+import styled from "styled-components";
+import IntlMessage from "./IntlMessage";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_VIDEO_SIZE = 60 * BYTES_PER_MIB;
@@ -22,7 +24,19 @@ interface HTMLInputEvent extends React.FormEvent<HTMLInputElement> {
   target: HTMLInputElement & EventTarget;
 }
 
+const VideoUploaderElem = styled.div`
+  > form {
+    > *:not(:last-child) {
+      margin-bottom: 20px;
+    }
+    > label {
+      display: block;
+    }
+  }
+`;
 export default class VideoUploader extends React.Component<Props, State> {
+  private uploadVideoInput?: HTMLInputElement | null;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -74,19 +88,30 @@ export default class VideoUploader extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div>
-        <div>
+      <VideoUploaderElem>
+        <form>
           <label>
-            <FormattedMessage id="upload_invite" />
+            <IntlMessage id="upload_invite" tagName="div" />
+            <input
+              ref={elem => (this.uploadVideoInput = elem)}
+              onChange={this.uploadInviteVideo}
+              id="inviteVideo"
+              capture={true}
+              accept="video/mp4"
+              type="file"
+              style={{ display: "none" }}
+            />
           </label>
-          <input
-            onChange={this.uploadInviteVideo}
-            id="inviteVideo"
-            capture={true}
-            accept="video/mp4"
-            type="file"
-          />
-        </div>
+
+          <Button
+            onClick={() =>
+              this.uploadVideoInput && this.uploadVideoInput.click()
+            }
+            type={ButtonType.PRIMARY}
+          >
+            Upload Your Video
+          </Button>
+        </form>
         {this.state.uploading && (
           <div>
             Uploaded{" "}
@@ -96,7 +121,7 @@ export default class VideoUploader extends React.Component<Props, State> {
           </div>
         )}
         <div className="InviteError">{this.state.errorMessage}</div>
-      </div>
+      </VideoUploaderElem>
     );
   }
 }
