@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import Button from "../../../components/Button";
+import Button, { ButtonType } from "../../../components/Button";
 
 import { Step0, Step1, Step2, Step3, Step4 } from "./steps";
 import { RequestInviteFn } from "..";
@@ -31,6 +31,9 @@ const WelcomeStepsElem = styled.main`
   }
   > footer {
     text-align: center;
+    > *:not(:last-child) {
+      margin-right: 10px;
+    }
   }
 `;
 
@@ -48,6 +51,10 @@ export default class WelcomeSteps extends React.Component<
 
   private handleNextClick = () => {
     this.setState({ currentStep: this.state.currentStep + 1 });
+  };
+
+  private handlePrevClick = () => {
+    this.setState({ currentStep: this.state.currentStep - 1 });
   };
 
   private renderCurrentStep = () => {
@@ -81,13 +88,18 @@ export default class WelcomeSteps extends React.Component<
     return (
       <WelcomeStepsElem>
         <section className="step">{this.renderCurrentStep()}</section>
-        {this.state.currentStep < 4 && (
-          <footer>
-            <Button className="nextBtn" onClick={this.handleNextClick}>
+        <footer>
+          {this.state.currentStep > 0 && (
+            <Button type={ButtonType.SECONDARY} onClick={this.handlePrevClick}>
+              Back
+            </Button>
+          )}
+          {this.state.currentStep < 4 && (
+            <Button type={ButtonType.PRIMARY} onClick={this.handleNextClick}>
               Next
             </Button>
-          </footer>
-        )}
+          )}
+        </footer>
       </WelcomeStepsElem>
     );
   }
