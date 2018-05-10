@@ -5,14 +5,14 @@ service cloud.firestore {
     }
 
     match /members/{id} {
-      // TODO do not allow create after switch to raha-api
-      allow create: if isSignedIn() && request.auth.uid == id;
       allow read;
     }
 
     match /operations/{id} {
-      // TODO do not allow create after switch to raha-api
-      allow create: if isSignedIn() && request.auth.uid == request.resource.data.creator_uid;
+      allow read;
+    }
+
+    match /uidToVideoHashMap/{id} {
       allow read;
     }
   }

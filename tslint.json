@@ -22,8 +22,6 @@
     // dev dependencies aren't implicit
     "no-implicit-dependencies": [true, "dev"],
     // too strict, not useful
-    "variable-name": false,
-    // useful to avoid bloat. Confusing since tslint also provides this rule
-    "no-unused-variable": true
+    "variable-name": false
   }
 }

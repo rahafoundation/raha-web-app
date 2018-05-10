@@ -20,7 +20,8 @@ import {
   callApi,
   TrustMemberApiEndpoint,
   GetOperationsApiEndpoint,
-  RequestInviteApiEndpoint
+  RequestInviteApiEndpoint,
+  SendInviteApiEndpoint
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -297,5 +298,33 @@ export const requestInviteFromMember: AsyncActionCreator = (
     },
     ApiEndpoint.REQUEST_INVITE,
     uid
+  );
+};
+
+export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const response = await callApi<SendInviteApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.SEND_INVITE,
+          params: undefined,
+          body: {
+            inviteEmail
+          }
+        },
+        authToken
+      );
+
+      // TODO: figure out what to do with response
+      // tslint:disable-next-line
+      console.log(response);
+    },
+    ApiEndpoint.SEND_INVITE,
+    inviteEmail
   );
 };

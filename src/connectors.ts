@@ -7,14 +7,23 @@ export function getMemberDoc(member: MemberDoc) {
     : null;
 }
 
+/**
+ * Returns true if:
+ * a) the Firebase user has been retrieved;
+ * b) the associated member metadata for that Firebase user from the API has
+ * been loaded
+ */
 export function getAuthMemberDocIsLoaded(state: AppState) {
-  if (!state.auth.firebaseUser) {
+  if (!state.auth.isLoaded) {
     return false;
   }
   const authFirebaseUser = state.auth.firebaseUser;
+  // Auth was loaded but no user exists—not logged in, so no member doc
+  // to load, meaning it has been loaded
   if (!authFirebaseUser) {
     return true;
   }
+  // otherwise do fetch the doc
   const member = state.members.byUid[authFirebaseUser.uid];
   return member && !member.isFetching;
 }

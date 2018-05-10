@@ -2,14 +2,18 @@
   "name": "@raha/web-app",
   "version": "0.2.0",
   "scripts": {
-    "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
-    "use-test-config": "cp src/data/test.config.json src/data/config.json",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "lint": "tslint -p .",
     "lint:fix": "tslint -p . --fix",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
+    "use-test-config": "cp src/data/test.config.json src/data/config.json",
+    "deploy-test":
+      "yarn use-test-config && yarn build && firebase deploy --project raha-test",
+    "deploy-prod":
+      "yarn use-prod-config && yarn build && firebase deploy --project raha-5395e"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -29,6 +33,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.14.0",
+    "react-vis-force": "^0.3.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "styled-components": "^3.2.3"

@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { green } from "../constants/palette";
 
 const TrustSuggestion = (
-  trustLevel: number,
+  identityLevel: number,
   networkJoinDate: number,
   trustedByLevel2: number,
   trustedByLevel3: number
@@ -15,21 +15,21 @@ const TrustSuggestion = (
   const MILLI_PER_DAY = 86400000;
   if (
     networkJoinDate >
-    new Date().getTime() - (trustLevel + 1) * 7 * MILLI_PER_DAY
+    new Date().getTime() - (identityLevel + 1) * 7 * MILLI_PER_DAY
   ) {
     return (
       <div>
-        <FormattedMessage id="trust_suggestion_active_longer" />
+        <FormattedMessage id="identity_suggestion_active_longer" />
       </div>
     );
   }
-  switch (trustLevel) {
+  switch (identityLevel) {
     case 0:
       if (trustedByLevel2 + trustedByLevel3 < 2) {
         return (
           <div>
             <FormattedMessage
-              id="trust_suggestion_recieve_trust"
+              id="identity_suggestion_recieve_trust"
               values={{
                 accounts: 2 - (trustedByLevel2 + trustedByLevel3),
                 accountlevel: 2
@@ -44,7 +44,7 @@ const TrustSuggestion = (
         return (
           <div>
             <FormattedMessage
-              id="trust_suggestion_recieve_trust"
+              id="identity_suggestion_recieve_trust"
               values={{ accounts: 3 - trustedByLevel3, accountlevel: 3 }}
             />
           </div>
@@ -56,7 +56,7 @@ const TrustSuggestion = (
         return (
           <div>
             <FormattedMessage
-              id="trust_suggestion_recieve_trust"
+              id="identity_suggestion_recieve_trust"
               values={{ accounts: 5 - trustedByLevel3, accountlevel: 3 }}
             />
           </div>
@@ -66,7 +66,7 @@ const TrustSuggestion = (
     case 3:
       return (
         <div>
-          <FormattedMessage id="trust_suggestion_max" />
+          <FormattedMessage id="identity_suggestion_max" />
         </div>
       );
     default:
@@ -76,7 +76,7 @@ const TrustSuggestion = (
 };
 
 const TrustElem = styled.div`
-  > .trustLevelReadout {
+  > .identityLevelReadout {
     display: inline-flex;
     align-items: center;
 
@@ -94,7 +94,7 @@ const TrustElem = styled.div`
 
 interface Props {
   ownProfile: boolean;
-  trustLevel: number;
+  identityLevel: number;
   networkJoinDate: number;
   trustedByLevel2: number;
   trustedByLevel3: number;
@@ -105,25 +105,25 @@ interface Props {
 // 1. Time on the network
 // 2. Number of Level 2 and 3 accounts that trust this account
 // 3. Level 3 verification video in last month || invited in first month
-const TrustLevel: React.StatelessComponent<Props> = ({
+const IdentityLevel: React.StatelessComponent<Props> = ({
   ownProfile,
-  trustLevel,
+  identityLevel,
   networkJoinDate,
   trustedByLevel2,
   trustedByLevel3
 }) => {
   return (
     <TrustElem>
-      <span className="trustLevelReadout">
+      <span className="identityLevelReadout">
         <FontAwesomeIcon className="icon" icon={faCheckCircle} />
         <span className="text">
-          <FormattedMessage id="trust_level" />&nbsp;
-          <span className="number">{trustLevel}</span>
+          <FormattedMessage id="identity_level" />&nbsp;
+          <span className="number">{identityLevel}</span>
         </span>
       </span>
       {ownProfile &&
         TrustSuggestion(
-          trustLevel,
+          identityLevel,
           networkJoinDate,
           trustedByLevel2,
           trustedByLevel3
@@ -132,4 +132,4 @@ const TrustLevel: React.StatelessComponent<Props> = ({
   );
 };
 
-export default TrustLevel;
+export default IdentityLevel;

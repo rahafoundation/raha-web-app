@@ -22,8 +22,16 @@ export default {
 
   "app_layout.log_in": "Log In",
   completely_free: "completely free",
-  invite_others_instructions:
-    "Hi there {full_name}! If you would like to invite someone else, make a video where each of you say your full name and (optionally) why you want to join Raha, have them upload it to Youtube, then direct them to visit {invite_link} to upload their own video and make their account. After they do this, you will have to go visit their profile, check the video is accurate, and hit Trust for them to become members. We are working to make this process more convenient, you have any thoughts reach us at {ideas_email} or file a {github_issue}.",
+  invite_instructions_header: "Invite your friends to join Raha!",
+  invite_instructions_send_email_label:
+    "Send them an email with your invite link",
+  invite_instructions_send_email_button: "Send invite",
+  invite_instructions_direct_link_label:
+    "Or, have them visit this link directly",
+  invite_instructions_email_sent_message: "Invite sent!",
+  invite_Instructions_email_failed_message: "Sending failed.",
+  invite_me_intro:
+    "We are excited to have join as well! Joining is {completely_free}, but like {full_name} was, you must be invited by an existing member in person via video using your full name and help maintain the identity network. Part of the value of Raha.io Network is that it's a unique identity platform. If you sign up a fake identity or have multiple accounts, or invite people with fake/duplicate accounts, your account will be frozen. If you know of any fake accounts, report them to increase your income level! Only accept an invite if you trust this member and share similar values, because they will be your default admin in the event you need to recover your account and default representantive to select your vote for the Raha.io Board. If it turns out they invited many fake or duplicate accounts, then your account is at risk of being flagged.",
   invite_pending:
     "Hi {full_name}! You have requested an invite from {invite_from_link}. After they trust you and the community approves, you will become a full member! Contact {help_email} with any questions.",
   invited: "Invited",
@@ -44,10 +52,10 @@ export default {
   "request_invite.terms_of_service": "Terms of Service",
   "request_invite.terms":
     "By requesting an invite, I agree to abide by the {code_of_conduct}, {privacy_policy}, and {terms_of_service}.",
-  trust_suggestion_active_longer:
-    "Stay active on the network for more days to increase your trust level.",
-  trust_suggestion_recieve_trust:
+  identity_suggestion_active_longer:
+    "Stay active on the network for more days to increase your identity level.",
+  identity_suggestion_recieve_trust:
     "Increase your trust by receiving trust from {accounts} level {accountlevel}+ accounts.",
-  trust_suggestion_max: "You are max trust level.",
-  trust_level: "Trust Level"
+  identity_suggestion_max: "You are max identity level.",
+  identity_level: "Identity Level"
 };
