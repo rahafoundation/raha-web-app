@@ -89,29 +89,25 @@ export default class VideoUploader extends React.Component<Props, State> {
   public render() {
     return (
       <VideoUploaderElem>
-        <form>
-          <label>
-            <IntlMessage id="upload_invite" tagName="div" />
-            <input
-              ref={elem => (this.uploadVideoInput = elem)}
-              onChange={this.uploadInviteVideo}
-              id="inviteVideo"
-              capture={true}
-              accept="video/mp4"
-              type="file"
-              style={{ display: "none" }}
-            />
-          </label>
+        <label>
+          <IntlMessage id="upload_invite" tagName="div" />
+          <input
+            ref={elem => (this.uploadVideoInput = elem)}
+            onChange={this.uploadInviteVideo}
+            id="inviteVideo"
+            capture={true}
+            accept="video/mp4"
+            type="file"
+            style={{ display: "none" }}
+          />
+        </label>
 
-          <Button
-            onClick={() =>
-              this.uploadVideoInput && this.uploadVideoInput.click()
-            }
-            type={ButtonType.PRIMARY}
-          >
-            Upload Your Video
-          </Button>
-        </form>
+        <Button
+          onClick={() => this.uploadVideoInput && this.uploadVideoInput.click()}
+          type={ButtonType.PRIMARY}
+        >
+          Upload Your Video
+        </Button>
         {this.state.uploading && (
           <div>
             Uploaded{" "}
