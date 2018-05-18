@@ -1,8 +1,10 @@
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
+import * as path from "path";
+import { push as pushRouteAction } from "react-router-redux";
 
-import { requestInviteFromMember } from "../../actions";
+import { requestInviteFromMember as requestInviteFromMemberAction } from "../../actions";
 import { getPrivateVideoInviteRef } from "../../connectors";
 import { Member } from "../../reducers/membersNew";
 import { storageRef } from "../../firebaseInit";
@@ -42,10 +44,12 @@ interface OwnProps {
 }
 
 interface StateProps {
+  isFirebaseUserLoaded: boolean;
   loggedInFirebaseUser?: firebase.User;
   requestingFromMember?: Member;
   isOwnInvitePage: boolean;
   requestInviteStatus?: ApiCallStatus;
+  currentStep: number;
 }
 
 export type RequestInviteFn = (
@@ -53,16 +57,16 @@ export type RequestInviteFn = (
   videoUrl: string,
   creatorMid: string
 ) => void;
-type MergedProps = StateProps & {
-  requestInvite?: (
-    fullName: string,
-    videoUrl: string,
-    creatorMid: string
-  ) => void;
-};
+
+type MergedProps = StateProps &
+  OwnProps & {
+    requestInvite?: RequestInviteFn;
+    pushRoute: (url: string) => void;
+  };
 
 interface DispatchProps {
-  requestInviteFromMember: typeof requestInviteFromMember;
+  requestInviteFromMember: any;
+  pushRoute: any;
 }
 
 export type Props = OwnProps & MergedProps;
@@ -70,16 +74,17 @@ export type Props = OwnProps & MergedProps;
 export class RequestInvite extends React.Component<Props> {
   public render() {
     const {
+      isFirebaseUserLoaded,
       requestingFromMember,
       loggedInFirebaseUser,
       requestInvite,
       requestInviteStatus
     } = this.props;
-    if (!(requestingFromMember && loggedInFirebaseUser && requestInvite)) {
+    if (!(isFirebaseUserLoaded && requestingFromMember && requestInvite)) {
       return <Loading />;
     }
 
-    // TODO check if user already invited
+    // TODO check if user already requested invite
     if (
       requestInviteStatus &&
       requestInviteStatus.status === ApiCallStatusType.SUCCESS
@@ -88,9 +93,15 @@ export class RequestInvite extends React.Component<Props> {
       return <Redirect to={profileUrl} />;
     }
 
-    const videoUploadRef =
-      storageRef &&
-      getPrivateVideoInviteRef(storageRef, loggedInFirebaseUser.uid);
+    const loggedInUserProp =
+      loggedInFirebaseUser && storageRef
+        ? {
+            firebaseUser: loggedInFirebaseUser,
+            videoUploadRef:
+              storageRef &&
+              getPrivateVideoInviteRef(storageRef, loggedInFirebaseUser.uid)
+          }
+        : undefined;
 
     return (
       <RequestInviteElem>
@@ -100,10 +111,13 @@ export class RequestInvite extends React.Component<Props> {
           </header>
         )}
         <WelcomeSteps
+          currentStep={this.props.currentStep}
           inviterName={requestingFromMember.fullName}
-          loggedInUser={loggedInFirebaseUser}
-          videoUploadRef={videoUploadRef}
+          loggedInUser={loggedInUserProp}
           requestInvite={requestInvite}
+          navigateToStep={(stepNum: number) => {
+            this.props.pushRoute(`#${stepNum}`);
+          }}
         />
       </RequestInviteElem>
     );
@@ -114,6 +128,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state: AppState,
   ownProps: OwnProps
 ) => {
+  const curRoute = state.router.location;
+  const urlStepNum =
+    curRoute && curRoute.hash.length > 0
+      ? parseInt(curRoute.hash.slice(1), 10)
+      : NaN;
+  const currentStep = isNaN(urlStepNum) ? 0 : urlStepNum;
+  const isFirebaseUserLoaded = state.auth.isLoaded;
   const loggedInFirebaseUser = state.auth.firebaseUser;
   const requestingFromMid = ownProps.match.params.memberId;
   const fetchedRequestingFromMember = getMembersByMid(state, [
@@ -138,6 +159,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     : undefined;
 
   return {
+    currentStep,
+    isFirebaseUserLoaded,
     loggedInFirebaseUser,
     requestingFromMember,
     isOwnInvitePage,
@@ -150,14 +173,19 @@ const mergeProps: MergeProps<
   DispatchProps,
   OwnProps,
   MergedProps
-> = (stateProps, dispatchProps) => {
+> = (stateProps, dispatchProps, ownProps) => {
+  const baseMergedProps = {
+    ...stateProps,
+    ...ownProps,
+    pushRoute: dispatchProps.pushRoute
+  };
   if (!stateProps.requestingFromMember) {
-    return stateProps;
+    return baseMergedProps;
   }
 
   const requestingFromUid = stateProps.requestingFromMember.uid;
   return {
-    ...stateProps,
+    ...baseMergedProps,
     requestInvite: (fullName: string, videoUrl: string, creatorMid: string) => {
       dispatchProps.requestInviteFromMember(
         requestingFromUid,
@@ -171,6 +199,9 @@ const mergeProps: MergeProps<
 
 export default connect(
   mapStateToProps,
-  { requestInviteFromMember },
+  {
+    requestInviteFromMember: requestInviteFromMemberAction,
+    pushRoute: pushRouteAction
+  },
   mergeProps
 )(RequestInvite);

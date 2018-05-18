@@ -53,9 +53,11 @@ type FormFields = CheckboxFields & TextFields;
 // type FormElements = { [field in keyof FormFields]: HTMLInputElement };
 
 interface Step4Props {
-  readonly loggedInUser?: firebase.User;
-  readonly videoUploadRef: firebase.storage.Reference;
   readonly requestInvite: RequestInviteFn;
+  readonly loggedInUser?: {
+    firebaseUser: firebase.User;
+    videoUploadRef: firebase.storage.Reference;
+  };
 }
 
 type Step4State = { readonly [field in keyof FormFields]?: FormFields[field] };
@@ -66,7 +68,9 @@ const RequestInviteForm = styled.form`
     text-align: left;
     > li > label {
       display: flex;
-      margin-bottom: 10px;
+      > *:not(:last-child) {
+        margin-right: 10px;
+      }
     }
     li {
       margin-bottom: 10px;
@@ -148,6 +152,8 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
       );
     }
 
+    const { videoUploadRef, firebaseUser } = this.props.loggedInUser;
+
     return (
       <RequestInviteForm onSubmit={this.handleSubmit}>
         <ul className="agreements">
@@ -158,10 +164,7 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
                 name="inactivityDonation"
                 onChange={this.handleCheck("inactivityDonation")}
               />
-              <IntlMessage
-                id="request_invite.agreements.inactivityDonation"
-                onlyRenderText={true}
-              />
+              <IntlMessage id="request_invite.agreements.inactivityDonation" />
             </label>
           </li>
           <li>
@@ -207,10 +210,7 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
                 name="realIdentity"
                 onChange={this.handleCheck("realIdentity")}
               />
-              <IntlMessage
-                id="request_invite.agreements.realIdentity"
-                onlyRenderText={true}
-              />
+              <IntlMessage id="request_invite.agreements.realIdentity" />
             </label>
           </li>
           <li>
@@ -220,10 +220,7 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
                 name="age"
                 onChange={this.handleCheck("age")}
               />
-              <IntlMessage
-                id="request_invite.agreements.age"
-                onlyRenderText={true}
-              />
+              <IntlMessage id="request_invite.agreements.age" />
             </label>
           </li>
         </ul>
@@ -231,9 +228,9 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
         <TextInput
           placeholder="Your full name"
           onTextChange={this.handleChange("fullName")}
-          {...(this.props.loggedInUser && this.props.loggedInUser.displayName
+          {...(firebaseUser.displayName
             ? {
-                defaultValue: this.props.loggedInUser.displayName
+                defaultValue: firebaseUser.displayName
               }
             : {})}
         />
@@ -241,7 +238,7 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
           setVideoUrl={videoUrl =>
             this.setState({ videoUrl: videoUrl ? videoUrl : undefined })
           }
-          uploadRef={this.props.videoUploadRef}
+          uploadRef={videoUploadRef}
         />
         {this.state.videoUrl && (
           <>

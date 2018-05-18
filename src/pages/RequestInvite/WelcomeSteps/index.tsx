@@ -7,14 +7,14 @@ import { Step0, Step1, Step2, Step3, Step4 } from "./steps";
 import { RequestInviteFn } from "..";
 
 interface WelcomeStepsProps {
-  inviterName: string;
-  loggedInUser?: firebase.User;
-  videoUploadRef: firebase.storage.Reference;
-  requestInvite: RequestInviteFn;
-}
-
-interface WelcomeStepsState {
-  currentStep: number;
+  readonly currentStep: number;
+  readonly inviterName: string;
+  readonly loggedInUser?: {
+    firebaseUser: firebase.User;
+    videoUploadRef: firebase.storage.Reference;
+  };
+  readonly requestInvite: RequestInviteFn;
+  readonly navigateToStep: (stepNum: number) => void;
 }
 
 const WelcomeStepsElem = styled.main`
@@ -37,28 +37,17 @@ const WelcomeStepsElem = styled.main`
   }
 `;
 
-export default class WelcomeSteps extends React.Component<
-  WelcomeStepsProps,
-  WelcomeStepsState
-> {
-  constructor(props: WelcomeStepsProps) {
-    super(props);
-
-    this.state = {
-      currentStep: 0
-    };
-  }
-
+export default class WelcomeSteps extends React.Component<WelcomeStepsProps> {
   private handleNextClick = () => {
-    this.setState({ currentStep: this.state.currentStep + 1 });
+    this.props.navigateToStep(this.props.currentStep + 1);
   };
 
   private handlePrevClick = () => {
-    this.setState({ currentStep: this.state.currentStep - 1 });
+    this.props.navigateToStep(this.props.currentStep - 1);
   };
 
   private renderCurrentStep = () => {
-    switch (this.state.currentStep) {
+    switch (this.props.currentStep) {
       case 0:
         return <Step0 inviterName={this.props.inviterName} />;
       case 1:
@@ -71,7 +60,6 @@ export default class WelcomeSteps extends React.Component<
         return (
           <Step4
             loggedInUser={this.props.loggedInUser}
-            videoUploadRef={this.props.videoUploadRef}
             requestInvite={this.props.requestInvite}
           />
         );
@@ -89,12 +77,12 @@ export default class WelcomeSteps extends React.Component<
       <WelcomeStepsElem>
         <section className="step">{this.renderCurrentStep()}</section>
         <footer>
-          {this.state.currentStep > 0 && (
+          {this.props.currentStep > 0 && (
             <Button type={ButtonType.SECONDARY} onClick={this.handlePrevClick}>
               Back
             </Button>
           )}
-          {this.state.currentStep < 4 && (
+          {this.props.currentStep < 4 && (
             <Button type={ButtonType.PRIMARY} onClick={this.handleNextClick}>
               Next
             </Button>

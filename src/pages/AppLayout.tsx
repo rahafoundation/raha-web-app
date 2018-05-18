@@ -203,6 +203,11 @@ const AppLayoutElem = styled.div`
   > .spacer {
     flex-grow: 1;
   }
+
+  input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+  }
 `;
 
 interface OwnProps {}
