@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { routerReducer, RouterState } from "react-router-redux";
+
 import modal, { ModalState } from "./modal";
 
 // TODO: get rid of the two below reducers
@@ -20,6 +22,7 @@ export interface AppState {
   operations: OperationsState;
   apiCalls: ApiCallsState;
   modal: ModalState;
+  router: RouterState;
 }
 const rootReducer = combineReducers({
   members, // TODO: nuke this
@@ -27,7 +30,8 @@ const rootReducer = combineReducers({
   auth,
   operations,
   apiCalls,
-  modal
+  modal,
+  router: routerReducer
 });
 
 export default rootReducer;
