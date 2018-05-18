@@ -309,7 +309,7 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<SendInviteApiEndpoint>(
+      await callApi<SendInviteApiEndpoint>(
         {
           endpoint: ApiEndpoint.SEND_INVITE,
           params: undefined,
@@ -319,10 +319,6 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
         },
         authToken
       );
-
-      // TODO: figure out what to do with response
-      // tslint:disable-next-line
-      console.log(response);
     },
     ApiEndpoint.SEND_INVITE,
     inviteEmail
