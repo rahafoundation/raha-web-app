@@ -70,6 +70,7 @@ const RequestInviteForm = styled.form`
       display: flex;
       > *:not(:last-child) {
         margin-right: 10px;
+        flex-shrink: 0;
       }
     }
     li {
