@@ -3,6 +3,7 @@ export default {
   "profile.trustedMember": "Trusted",
   "profile.trustFailure": "Trusting failed, try again",
 
+  "request_invite.failed": "Requesting invite failed; please try again.",
   "request_invite.step0":
     "{inviter_name} invited you to Raha. Let's get you started so you can begin receiving your Raha Basic Income.",
   "request_invite.step1":

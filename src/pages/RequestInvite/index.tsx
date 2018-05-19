@@ -13,27 +13,41 @@ import { AppState } from "../../store";
 import Loading from "../../components/Loading";
 import IntlMessage from "../../components/IntlMessage";
 import { Redirect } from "react-router-dom";
-import { blueGrey300 } from "material-ui/styles/colors";
+import { blueGrey300, red400 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { ApiEndpoint } from "../../api";
-import { getMembersByMid } from "../../selectors/members";
+import { getMembersByMid, getMembersByUid } from "../../selectors/members";
 
 import WelcomeSteps from "./WelcomeSteps";
+import { getLoggedInMemberProfileUrl } from "../../selectors/auth";
+import { getProfileUrlFromMid } from "../../helpers/profiles";
 
 const RequestInviteElem = styled.main`
-  > header {
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    > .ownInvitePage {
-      display: inline-block;
-      background: ${blueGrey300};
-      color: white;
-      max-width: 80vw;
-      text-align: center;
-      padding: 10px 20px;
-      margin-bottom: 20px;
-    }
+  > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  .requestInviteFailed {
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 auto;
+    background-color: ${red400};
+    color: white;
+  }
+
+  > header {
+    display: inline-block;
+    text-align: center;
+    background: ${blueGrey300};
+    color: white;
+    max-width: 80vw;
+    text-align: center;
+    padding: 10px 20px;
   }
 `;
 
@@ -107,9 +121,16 @@ export class RequestInvite extends React.Component<Props> {
       <RequestInviteElem>
         {this.props.isOwnInvitePage && (
           <header>
-            <IntlMessage id="own_invite_page" className="ownInvitePage" />
+            <IntlMessage id="own_invite_page" />
           </header>
         )}
+        {requestInviteStatus &&
+          requestInviteStatus.status === ApiCallStatusType.FAILURE && (
+            <IntlMessage
+              id="request_invite.failed"
+              className="requestInviteFailed"
+            />
+          )}
         <WelcomeSteps
           currentStep={this.props.currentStep}
           inviterName={requestingFromMember.fullName}
