@@ -94,7 +94,30 @@ const RequestInviteForm = styled.form`
 export class Step4 extends React.Component<Step4Props, Step4State> {
   constructor(props: Step4Props) {
     super(props);
-    this.state = {};
+
+    // initialize state to contain name if it's there
+    const displayName = props.loggedInUser
+      ? props.loggedInUser.firebaseUser.displayName
+      : undefined;
+    this.state = {
+      fullName: displayName ? displayName : ""
+    };
+  }
+
+  public componentDidUpdate(prevProps: Step4Props) {
+    // upidate to contain name if just logged in
+    if (this.props.loggedInUser === prevProps.loggedInUser) {
+      return;
+    }
+
+    const displayName = this.props.loggedInUser
+      ? this.props.loggedInUser.firebaseUser.displayName
+      : undefined;
+    if (!displayName) {
+      return;
+    }
+
+    this.setState({ fullName: displayName });
   }
 
   private readonly handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
