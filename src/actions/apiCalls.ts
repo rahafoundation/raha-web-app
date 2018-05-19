@@ -2,7 +2,6 @@ import { ApiEndpoint } from "../api";
 import ApiCallError from "../errors/ApiCallError";
 import { AsyncAction } from ".";
 
-Math.random();
 export const enum ApiCallsActionType {
   STARTED = "API_CALLS.STARTED",
   SUCCESS = "API_CALLS.SUCCESS",
