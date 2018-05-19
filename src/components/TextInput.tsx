@@ -15,6 +15,7 @@ const TextInputElem = styled.input`
 type SimpleEventHandler = (value: string) => void;
 type Props = {
   placeholder?: string;
+  defaultValue?: string;
   value?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -40,7 +41,8 @@ const TextInput: React.StatelessComponent<Props> = props => {
     style,
     className,
     onChange:
-      "onChange" in props ? props.onChange : handleChange(props.onTextChange)
+      "onChange" in props ? props.onChange : handleChange(props.onTextChange),
+    ...("defaultValue" in props ? { defaultValue: props.defaultValue } : {})
   };
   return <TextInputElem {...finalProps} />;
 };
