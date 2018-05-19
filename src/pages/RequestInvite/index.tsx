@@ -60,6 +60,7 @@ interface OwnProps {
 interface StateProps {
   isFirebaseUserLoaded: boolean;
   loggedInFirebaseUser?: firebase.User;
+  loggedInMemberProfileUrl?: string;
   requestingFromMember?: Member;
   isOwnInvitePage: boolean;
   requestInviteStatus?: ApiCallStatus;
@@ -92,7 +93,8 @@ export class RequestInvite extends React.Component<Props> {
       requestingFromMember,
       loggedInFirebaseUser,
       requestInvite,
-      requestInviteStatus
+      requestInviteStatus,
+      loggedInMemberProfileUrl
     } = this.props;
     if (!(isFirebaseUserLoaded && requestingFromMember && requestInvite)) {
       return <Loading />;
@@ -103,8 +105,13 @@ export class RequestInvite extends React.Component<Props> {
       requestInviteStatus &&
       requestInviteStatus.status === ApiCallStatusType.SUCCESS
     ) {
-      const profileUrl = `${window.location.origin}`;
-      return <Redirect to={profileUrl} />;
+      if (loggedInMemberProfileUrl) {
+        return <Redirect to={loggedInMemberProfileUrl} />;
+      }
+      // this shouldn't happen, but better redirect to some profile than nothing
+      return (
+        <Redirect to={getProfileUrlFromMid(this.props.match.params.memberId)} />
+      );
     }
 
     const loggedInUserProp =
@@ -157,6 +164,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const currentStep = isNaN(urlStepNum) ? 0 : urlStepNum;
   const isFirebaseUserLoaded = state.auth.isLoaded;
   const loggedInFirebaseUser = state.auth.firebaseUser;
+  const loggedInMemberProfileUrl = getLoggedInMemberProfileUrl(state);
+
   const requestingFromMid = ownProps.match.params.memberId;
   const fetchedRequestingFromMember = getMembersByMid(state, [
     requestingFromMid
@@ -183,6 +192,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     currentStep,
     isFirebaseUserLoaded,
     loggedInFirebaseUser,
+    loggedInMemberProfileUrl,
     requestingFromMember,
     isOwnInvitePage,
     requestInviteStatus

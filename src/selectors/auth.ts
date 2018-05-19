@@ -1,4 +1,5 @@
 import { AppState } from "../store";
+import { getProfileUrlFromMid } from "../helpers/profiles";
 
 export async function getAuthToken(
   state: AppState
@@ -19,4 +20,12 @@ export function getLoggedInMember(state: AppState) {
   return loggedInFirebaseUid
     ? state.membersNew.byUid[loggedInFirebaseUid]
     : undefined;
+}
+
+export function getLoggedInMemberProfileUrl(state: AppState) {
+  const member = getLoggedInMember(state);
+  if (!member) {
+    return;
+  }
+  return getProfileUrlFromMid(member.mid);
 }
