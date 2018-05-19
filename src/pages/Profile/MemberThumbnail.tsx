@@ -6,7 +6,7 @@ import Link from "../../components/Link";
 
 import { Member } from "../../reducers/membersNew";
 
-import { interactive, gray, lightGreen } from "../../constants/palette";
+import { interactive, lightGreen } from "../../constants/palette";
 
 interface Props {
   member: Member;

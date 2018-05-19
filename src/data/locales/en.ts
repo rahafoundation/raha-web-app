@@ -2,6 +2,25 @@ export default {
   "profile.trustButton": "Trust",
   "profile.trustedMember": "Trusted",
   "profile.trustFailure": "Trusting failed, try again",
+
+  "request_invite.failed": "Requesting invite failed; please try again.",
+  "request_invite.step0":
+    "{inviter_name} invited you to Raha. Let's get you started so you can begin receiving your Raha Basic Income.",
+  "request_invite.step1":
+    "We believe every life has value, but inequality has become the defining problem of our generation.",
+  "request_invite.step2":
+    "Members receive a Raha Basic Income, paid in Raha points. In exchange, when you are inactive for a year or more then your balance is donated back to the network.",
+  "request_invite.step3":
+    "Raha is free to join with no transaction fees. Talk to {inviter_name} to verify your identity with a video!",
+
+  "request_invite.agreements.inactivityDonation":
+    "I understand and agree that after 1 year of inactivity all of my Raha will be irrevocably and irretrievably donated to fund basic income, with 80% going directly to members and 20% to the member-owned Raha Parliament.",
+  "request_invite.agreements.communityStandards":
+    "I agree to abide by the following community standards:",
+  "request_invite.agreements.realIdentity":
+    "This is my real identity, my full name, and the only time I have joined Raha. I understand that creating duplicate or fake accounts may result in me and people I have invited losing access to our accounts.",
+  "request_invite.agreements.age": "I am at least 13 years old.",
+
   "app_layout.log_in": "Log In",
   completely_free: "completely free",
   invite_instructions_header: "Invite your friends to join Raha!",
@@ -13,7 +32,7 @@ export default {
   invite_instructions_email_sent_message: "Invite sent!",
   invite_Instructions_email_failed_message: "Sending failed.",
   invite_me_intro:
-    "We are excited to have join as well! Joining is {completely_free}, but like {full_name} was, you must be invited by an existing member in person via video using your full name and help maintain the identity network. Part of the value of Raha.io Network is that it's a unique identity platform. If you sign up a fake identity or have multiple accounts, or invite people with fake/duplicate accounts, your account will be frozen. If you know of any fake accounts, report them to increase your income level! Only accept an invite if you trust this member and share similar values, because they will be your default admin in the event you need to recover your account and default representantive to select your vote for the Raha.io Board. If it turns out they invited many fake or duplicate accounts, then your account is at risk of being flagged.",
+    "We are excited to have join as well! Joining is {completely_free}, but like {full_name} was, you must be invited by an existing member in person via video using your full name and help maintain the identity network. Part of the value of Raha is that it's a unique identity platform. If you sign up a fake identity or have multiple accounts, or invite people with fake/duplicate accounts, your account will be frozen. If you know of any fake accounts, report them to increase your income level! Only accept an invite if you trust this member and share similar values, because they will be your default admin in the event you need to recover your account and default representantive to select your vote for the Raha Board. If it turns out they invited many fake or duplicate accounts, then your account is at risk of being flagged.",
   invite_pending:
     "Hi {full_name}! You have requested an invite from {invite_from_link}. After they trust you and the community approves, you will become a full member! Contact {help_email} with any questions.",
   invited: "Invited",
@@ -27,10 +46,8 @@ export default {
   own_invite_page: "This is what your invite page looks like to others:",
   page_not_found: "{404} page not found, go {home}.",
   upload_invite: "Upload your public invite video! Max 60 MB.",
-  request_invite:
-    "Request Invite from {full_name} ({mid}). Here is their invite video:",
-  sign_up_above:
-    "Sign up above to continue. We do not ask for your contact's information or ability to post.",
+  sign_up:
+    "Sign up below to continue. We do not ask for your contact's information or ability to post.",
   "request_invite.code_of_conduct": "Code of Conduct",
   "request_invite.privacy_policy": "Privacy Policy",
   "request_invite.terms_of_service": "Terms of Service",

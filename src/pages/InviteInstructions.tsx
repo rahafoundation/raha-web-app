@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
@@ -15,6 +15,7 @@ import { green } from "../constants/palette";
 
 const InviteInstructionsElem = styled.section`
   padding: 10px;
+
   max-width: 80vw;
   min-width: 400px;
   display: flex;

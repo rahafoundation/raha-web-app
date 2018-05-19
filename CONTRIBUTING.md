@@ -1,5 +1,6 @@
 # Contributing to Raha Foundation
-Hello and thank you for your interest in contributing to Raha.io!  Community
+
+Hello and thank you for your interest in contributing to Raha! Community
 contributions in the form of code, money, expertise, publicity, and feedback
 are crucial to the success of Raha in creating an equitable and trusted digital
 currency.
@@ -8,11 +9,12 @@ The following document contains information on how to become a contributor to
 Raha and participate in our community.
 
 ## How to become a contributor
+
 All contributors must first sign a Raha Foundation Contributor License
 Agreement. This is for the protection of the Foundation and you.
 
 If you are an individual contributor, please submit the [Individual Contributor
-License Agreement](https://goo.gl/forms/RyS5HzSI3tKy9ZFp2). 
+License Agreement](https://goo.gl/forms/RyS5HzSI3tKy9ZFp2).
 
 If you are contributing as part of your job, please have your organization
 sumbit the [Entity Contributor License
@@ -20,11 +22,13 @@ Agreement](https://goo.gl/forms/ccnRhyqOn7OXtxy42).
 
 The following resources have more information on Contributor License Agreements
 including why they are necessary and how to interpret them:
+
 * http://wiki.civiccommons.org/Contributor_Agreements/
 * http://oss-watch.ac.uk/resources/cla
 * http://www.harmonyagreements.org/guide.html
 
 ## Submitting code to Raha
+
 All code changes to Raha must be submitted as pull requests on the relevant
 Raha Github repository. After being reviewed and approved by a Raha Foundation
 developer, the pull request will be merged into the master branch as a rebase

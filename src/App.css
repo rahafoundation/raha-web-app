@@ -3,11 +3,6 @@
  * like styled-components
  */
 
-input, textarea {
-  width: 100%;
-  display: block
-}
-
 .Container {
   align-items: left;
   /* max-width: 40rem; */
@@ -45,8 +40,8 @@ input, textarea {
 
 .InviteButton {
   color: #fff;
-  background-color: #2A945E;
-  border-color: #2A945E;
+  background-color: #2a945e;
+  border-color: #2a945e;
   display: inline-block;
   font-weight: bold;
   line-height: 1.25;
@@ -58,15 +53,15 @@ input, textarea {
   -ms-user-select: none;
   user-select: none;
   border: 1px solid transparent;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 }
 
 .InviteInput {
   max-width: 30rem;
-  margin: .75rem 0;
-  padding: .5rem 0;
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
   font-size: 1rem;
   line-height: 1.25;
   color: #464a4c;
@@ -74,13 +69,16 @@ input, textarea {
   background-image: none;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
-  border: 1px solid rgba(0,0,0,.15);
-  border-radius: .25rem;
-  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  -webkit-transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
 }
 
 /* TODO remove? */
@@ -89,7 +87,7 @@ input, textarea {
 }
 
 .InviteError {
-  margin: .75rem 0;
+  margin: 0.75rem 0;
   color: #d9534f;
 }
 

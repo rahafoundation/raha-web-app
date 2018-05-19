@@ -198,7 +198,6 @@ export async function callApi<Def extends ApiDefinition>(
   authToken?: string
 ): Promise<Def["response"]> {
   const { url, method } = resolveApiEndpoint(apiCall);
-  const body = apiCall.body;
   const requestOptions: RequestInit = {
     method,
     cache: "no-cache",

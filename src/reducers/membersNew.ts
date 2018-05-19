@@ -198,7 +198,7 @@ function applyOperation(
   prevState: MembersState,
   operation: Operation
 ): MembersState {
-  const { creator_mid, creator_uid, op_code, data } = operation;
+  const { creator_mid, creator_uid } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
@@ -207,7 +207,7 @@ function applyOperation(
 
     switch (operation.op_code) {
       case OperationType.REQUEST_INVITE: {
-        const { full_name, to_uid, to_mid } = operation.data;
+        const { full_name, to_uid } = operation.data;
 
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
@@ -229,7 +229,7 @@ function applyOperation(
         return addMembersToState(prevState, [inviter, inviteRequester]);
       }
       case OperationType.TRUST: {
-        const { to_uid, to_mid } = operation.data;
+        const { to_uid } = operation.data;
 
         assertUidPresentInState(prevState, creator_uid, operation);
         assertUidPresentInState(prevState, to_uid, operation);

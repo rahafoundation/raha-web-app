@@ -9,11 +9,19 @@ export interface MemberEntry {
 }
 
 const getNumberSuffix = (len: number, seedFn: () => number) => {
-    const exclusiveMax = Math.pow(10, len);
-    return (Math.floor(seedFn() * exclusiveMax) + exclusiveMax).toString().substring(1);
+  const exclusiveMax = Math.pow(10, len);
+  return (Math.floor(seedFn() * exclusiveMax) + exclusiveMax)
+    .toString()
+    .substring(1);
 };
 
 export const getMemberId = (displayName: string, seedFn?: () => number) => {
-    return displayName.trim().toLowerCase().replace(/\s+/g, '.') + '$' +
-        getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random);
+  return (
+    displayName
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ".") +
+    "$" +
+    getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random)
+  );
 };

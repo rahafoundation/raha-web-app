@@ -1,5 +1,8 @@
 import * as React from "react";
-import { BrowserRouter, Route, RouteProps, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
+import { ConnectedRouter } from "react-router-redux";
+import createHistory from "history/createBrowserHistory";
+
 import "./App.css";
 
 import AppLayout from "./pages/AppLayout";
@@ -33,9 +36,10 @@ const DefaultLayout = (props: any) => {
   );
 };
 
+export const routerHistory = createHistory();
 function AppRouter() {
   return (
-    <BrowserRouter>
+    <ConnectedRouter history={routerHistory}>
       <Switch>
         <DefaultLayout exact={true} path="/" component={Splash} />
         <DefaultLayout path="/invite_missing" component={InviteMissing} />
@@ -51,7 +55,7 @@ function AppRouter() {
         <DefaultLayout path="/network" component={Network} />
         <DefaultLayout component={PageNotFound} />
       </Switch>
-    </BrowserRouter>
+    </ConnectedRouter>
   );
 }
 

@@ -9,20 +9,8 @@ import { ThunkAction } from "redux-thunk";
 
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";
-// TODO: get rid of old operations
-import {
-  OpDoc,
-  Operation as LegacyOperation,
-  OperationData,
-  OpMeta
-} from "../operations";
-import {
-  Operation,
-  OperationType,
-  OperationsState
-} from "../reducers/operations";
-import { MembersState, MemberLookupTable } from "../reducers/membersNew";
-import { Uid, Mid } from "../identifiers";
+import { Operation } from "../reducers/operations";
+import { Uid } from "../identifiers";
 import { AppState } from "../store";
 
 import { getAuthToken } from "../selectors/auth";
@@ -35,11 +23,9 @@ import {
   RequestInviteApiEndpoint,
   SendInviteApiEndpoint
 } from "../api";
-import { OperationsApiResponse, MessageApiResponse } from "../api/ApiResponse";
 
 import { wrapApiCallAction } from "./apiCalls";
 
-import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
 import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 
 export const RECEIVE_MEMBER = "RECEIVE_MEMBER";
@@ -237,7 +223,7 @@ export const refreshOperations: ActionCreator<typeof _refreshOperations> = () =>
 
 export const applyOperation: AsyncActionCreator = (
   operation: Operation
-) => async (dispatch, getState) => {
+) => async dispatch => {
   const action: AddOperationsAction = {
     type: OperationsActionType.ADD_OPERATIONS,
     operations: [operation]
@@ -323,7 +309,7 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<SendInviteApiEndpoint>(
+      await callApi<SendInviteApiEndpoint>(
         {
           endpoint: ApiEndpoint.SEND_INVITE,
           params: undefined,

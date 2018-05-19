@@ -1,55 +1,55 @@
 import * as React from "react";
-import { FormattedMessage } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
+import * as path from "path";
+import { push as pushRouteAction } from "react-router-redux";
 
-import { requestInviteFromMember } from "../../actions";
+import { requestInviteFromMember as requestInviteFromMemberAction } from "../../actions";
 import { getPrivateVideoInviteRef } from "../../connectors";
-import { getMemberId, MemberDoc } from "../../members";
 import { Member } from "../../reducers/membersNew";
 import { storageRef } from "../../firebaseInit";
 import { AppState } from "../../store";
 
-import LogIn from "../../components/LogIn";
-import InviteVideo from "../../components/InviteVideo";
 import Loading from "../../components/Loading";
-import Video from "../../components/Video";
-import VideoUploader from "../../components/VideoUploader";
+import IntlMessage from "../../components/IntlMessage";
+import { Redirect } from "react-router-dom";
+import { blueGrey300, red400 } from "material-ui/styles/colors";
+import { getStatusOfApiCall } from "../../selectors/apiCalls";
+import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
+import { ApiEndpoint } from "../../api";
+import { getMembersByMid, getMembersByUid } from "../../selectors/members";
+
+import WelcomeSteps from "./WelcomeSteps";
+import { getLoggedInMemberProfileUrl } from "../../selectors/auth";
+import { getProfileUrlFromMid } from "../../helpers/profiles";
 
 const RequestInviteElem = styled.main`
-  > section,
-  > form,
-  > .inviteVideo {
-    margin: 15px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > *:not(:last-child) {
+    margin-bottom: 10px;
   }
 
-  > section,
-  > form {
-    width: 740px;
+  .requestInviteFailed {
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 auto;
+    background-color: ${red400};
+    color: white;
+  }
+
+  > header {
+    display: inline-block;
+    text-align: center;
+    background: ${blueGrey300};
+    color: white;
     max-width: 80vw;
-  }
-
-  > form > * {
-    margin-left: 30px;
-  }
-
-  > .completelyFree {
-    font-weight: bold;
-  }
-
-  > .requestInviteMessage {
-    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px;
   }
 `;
-
-interface State {
-  // TODO: Just use undefined.
-  videoUrl: string | null | undefined; // Will contain video auth token, for this client only do not store
-  errorMessage?: string;
-  fullName: string | null | undefined;
-  submitted?: boolean;
-  creatorMid?: string;
-}
 
 // TODO: could be more but this is a really confusing component
 // TODO: this seems to be duplicated in multiple places
@@ -58,242 +58,95 @@ interface OwnProps {
 }
 
 interface StateProps {
-  loggedInFullName: string | undefined | null;
-  loggedInFirebaseUser: { uid: string } | null;
-
-  requestingFromMember: Member | undefined;
-
-  isLoading: boolean;
+  isFirebaseUserLoaded: boolean;
+  loggedInFirebaseUser?: firebase.User;
+  loggedInMemberProfileUrl?: string;
+  requestingFromMember?: Member;
   isOwnInvitePage: boolean;
+  requestInviteStatus?: ApiCallStatus;
+  currentStep: number;
 }
 
-type MergedProps = StateProps & {
-  requestInvite?: (
-    fullName: string,
-    videoUrl: string,
-    creatorMid: string
-  ) => void;
-};
+export type RequestInviteFn = (
+  fullName: string,
+  videoUrl: string,
+  creatorMid: string
+) => void;
+
+type MergedProps = StateProps &
+  OwnProps & {
+    requestInvite?: RequestInviteFn;
+    pushRoute: (url: string) => void;
+  };
 
 interface DispatchProps {
-  requestInviteFromMember: typeof requestInviteFromMember;
+  requestInviteFromMember: any;
+  pushRoute: any;
 }
 
-type Props = OwnProps & MergedProps;
+export type Props = OwnProps & MergedProps;
 
-export class RequestInvite extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      videoUrl: null,
-      fullName: props.loggedInFullName
-    };
-  }
-
-  public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.loggedInFullName !== this.props.loggedInFullName) {
-      this.setState({ fullName: nextProps.loggedInFullName });
-    }
-  }
-
-  private readonly setVideoURL = (event: React.FormEvent<HTMLInputElement>) => {
-    this.setState({ videoUrl: event.currentTarget.value });
-  };
-
-  // TODO Consider getting rid of this and converting to an uncontrolled component.
-  private readonly setLoggedInFullName = (
-    event: React.FormEvent<HTMLInputElement>
-  ) => {
-    this.setState({ fullName: event.currentTarget.value });
-  };
-
-  private readonly handleOnSubmit = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ): Promise<void> => {
-    event.stopPropagation();
-    event.preventDefault();
-
-    if (this.props.isOwnInvitePage) {
-      this.setState({ errorMessage: "Sorry, cannot invite yourself!" });
-      return;
-    }
-
-    if (!this.state.videoUrl || !this.state.videoUrl.startsWith("https")) {
-      this.setState({ errorMessage: "Please upload a valid video first!" });
-      return;
-    }
-
-    const fullName = this.state.fullName;
-
-    if (!fullName) {
-      this.setState({ errorMessage: "Please enter a valid full name!" });
-      return;
-    }
-
-    const requestingFromMember = this.props.requestingFromMember;
-    // TODO: is this how we want to handle lack of name?
-    const creatorMid = getMemberId(fullName);
-    // TODO: should null loggedInFullName be handled this way?
-
-    if (!requestingFromMember || !this.props.loggedInFirebaseUser) {
-      this.setState({
-        errorMessage: "An error occurred. Could not find the expected users."
-      });
-      return;
-    }
-
-    try {
-      if (this.props.requestInvite) {
-        await this.props.requestInvite(
-          fullName,
-          this.state.videoUrl,
-          creatorMid
-        );
-      } else {
-        this.setState({ errorMessage: "Failed to request invite." });
-      }
-    } catch (e) {
-      this.setState({ errorMessage: "Failed to request invite" });
-      return;
-    }
-    this.setState({ submitted: true, creatorMid });
-  };
-
-  private renderLogIn() {
-    // TODO while login is loading user should not see the rest of page
-    return (
-      <section>
-        <div>
-          <LogIn noRedirect={true} />
-          <FormattedMessage id="sign_up_above" />
-        </div>
-      </section>
-    );
-  }
-
-  private renderForm() {
-    const uploadRef =
-      storageRef &&
-      getPrivateVideoInviteRef(
-        storageRef,
-        (this.props.loggedInFirebaseUser as { uid: string }).uid
-      );
-    return (
-      <form>
-        <h3>Upload your invite video</h3>
-        <input
-          value={this.state.fullName || ""}
-          onChange={this.setLoggedInFullName}
-          placeholder="First and last name"
-          className="InviteInput DisplayNameInput"
-        />
-        <VideoUploader
-          setVideoUrl={videoUrl => this.setState({ videoUrl })}
-          uploadRef={uploadRef}
-        />
-        <div>
-          <FormattedMessage
-            id="request_invite.terms"
-            values={{
-              code_of_conduct: (
-                <a href="/code-of-conduct">
-                  <FormattedMessage id="request_invite.code_of_conduct" />
-                </a>
-              ),
-              privacy_policy: (
-                <a href="/privacy-policy">
-                  <FormattedMessage id="request_invite.privacy_policy" />
-                </a>
-              ),
-              terms_of_service: (
-                <a href="/terms-of-service">
-                  <FormattedMessage id="request_invite.terms_of_service" />
-                </a>
-              )
-            }}
-          />
-        </div>
-        <br />
-        <button className="InviteButton Green" onClick={this.handleOnSubmit}>
-          {/* TODO: internationalize */}
-          Request Invite
-        </button>
-        {this.state.errorMessage && (
-          <span className="InviteError">{this.state.errorMessage}</span>
-        )}
-        {this.state.videoUrl && (
-          <>
-            <h2>
-              <FormattedMessage id="join_video" />
-            </h2>
-            <Video videoUrl={this.state.videoUrl} />
-          </>
-        )}
-      </form>
-    );
-  }
-
+export class RequestInvite extends React.Component<Props> {
   public render() {
-    if (this.props.isLoading) {
+    const {
+      isFirebaseUserLoaded,
+      requestingFromMember,
+      loggedInFirebaseUser,
+      requestInvite,
+      requestInviteStatus,
+      loggedInMemberProfileUrl
+    } = this.props;
+    if (!(isFirebaseUserLoaded && requestingFromMember && requestInvite)) {
       return <Loading />;
     }
 
-    const requestingFromMember = this.props.requestingFromMember as Member;
-    // TODO check if user already invited
-    if (this.state.submitted) {
-      // TODO we should instead redirect to profileUrl, which should display this message along with their invite video.
-      const profileUrl = `${window.location.origin}/m/${this.state.creatorMid}`;
+    // TODO check if user already requested invite
+    if (
+      requestInviteStatus &&
+      requestInviteStatus.status === ApiCallStatusType.SUCCESS
+    ) {
+      if (loggedInMemberProfileUrl) {
+        return <Redirect to={loggedInMemberProfileUrl} />;
+      }
+      // this shouldn't happen, but better redirect to some profile than nothing
       return (
-        <div>
-          Your video has been submitted for review! After approval by us and{" "}
-          {requestingFromMember.fullName}, your profile will appear at{" "}
-          <a href={profileUrl}>{profileUrl}</a>. We are available at{" "}
-          <a href="mailto:help@raha.io">help@raha.io</a> if you have any
-          questions.
-        </div>
+        <Redirect to={getProfileUrlFromMid(this.props.match.params.memberId)} />
       );
     }
+
+    const loggedInUserProp =
+      loggedInFirebaseUser && storageRef
+        ? {
+            firebaseUser: loggedInFirebaseUser,
+            videoUploadRef:
+              storageRef &&
+              getPrivateVideoInviteRef(storageRef, loggedInFirebaseUser.uid)
+          }
+        : undefined;
 
     return (
       <RequestInviteElem>
         {this.props.isOwnInvitePage && (
-          <section>
-            <FormattedMessage id="own_invite_page" />
-          </section>
+          <header>
+            <IntlMessage id="own_invite_page" />
+          </header>
         )}
-        <section className="requestInviteMessage">
-          <FormattedMessage
-            id="request_invite"
-            values={{
-              full_name: requestingFromMember.fullName,
-              mid: requestingFromMember.mid
-            }}
-          />
-        </section>
-        <InviteVideo
-          className="inviteVideo"
-          memberId={requestingFromMember.mid}
+        {requestInviteStatus &&
+          requestInviteStatus.status === ApiCallStatusType.FAILURE && (
+            <IntlMessage
+              id="request_invite.failed"
+              className="requestInviteFailed"
+            />
+          )}
+        <WelcomeSteps
+          currentStep={this.props.currentStep}
+          inviterName={requestingFromMember.fullName}
+          loggedInUser={loggedInUserProp}
+          requestInvite={requestInvite}
+          navigateToStep={(stepNum: number) => {
+            this.props.pushRoute(`#${stepNum}`);
+          }}
         />
-        <section>
-          <FormattedMessage
-            id="invite_me_intro"
-            values={{
-              full_name: requestingFromMember.fullName,
-              completely_free: (
-                <span className="completelyFree">
-                  <FormattedMessage id="completely_free" />
-                </span>
-              )
-            }}
-          />
-        </section>
-        {this.props.isLoading ? (
-          <Loading />
-        ) : this.props.loggedInFirebaseUser ? (
-          this.renderForm()
-        ) : (
-          this.renderLogIn()
-        )}
       </RequestInviteElem>
     );
   }
@@ -303,34 +156,46 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   state: AppState,
   ownProps: OwnProps
 ) => {
-  const isAuthLoaded = state.auth.isLoaded;
+  const curRoute = state.router.location;
+  const urlStepNum =
+    curRoute && curRoute.hash.length > 0
+      ? parseInt(curRoute.hash.slice(1), 10)
+      : NaN;
+  const currentStep = isNaN(urlStepNum) ? 0 : urlStepNum;
+  const isFirebaseUserLoaded = state.auth.isLoaded;
   const loggedInFirebaseUser = state.auth.firebaseUser;
-  const loggedInMember: Member | undefined = loggedInFirebaseUser
-    ? state.membersNew.byUid[loggedInFirebaseUser.uid]
-    : undefined;
-  // TODO: Remove null typing.
-  const loggedInFullName: string | undefined | null = loggedInMember
-    ? loggedInMember.fullName
-    : loggedInFirebaseUser ? loggedInFirebaseUser.displayName : undefined;
+  const loggedInMemberProfileUrl = getLoggedInMemberProfileUrl(state);
 
   const requestingFromMid = ownProps.match.params.memberId;
-  const requestingFromMember = state.membersNew.byMid[requestingFromMid];
-
-  const isLoading = !isAuthLoaded || !requestingFromMember;
+  const fetchedRequestingFromMember = getMembersByMid(state, [
+    requestingFromMid
+  ]);
+  const requestingFromMember =
+    fetchedRequestingFromMember.length > 0
+      ? fetchedRequestingFromMember[0]
+      : undefined;
 
   const isOwnInvitePage =
-    !isLoading &&
     !!loggedInFirebaseUser &&
+    !!requestingFromMember &&
     loggedInFirebaseUser.uid === requestingFromMember.uid;
 
+  const requestInviteStatus = !!requestingFromMember
+    ? getStatusOfApiCall(
+        state,
+        ApiEndpoint.REQUEST_INVITE,
+        requestingFromMember.uid
+      )
+    : undefined;
+
   return {
+    currentStep,
+    isFirebaseUserLoaded,
     loggedInFirebaseUser,
-    loggedInFullName,
-
+    loggedInMemberProfileUrl,
     requestingFromMember,
-
-    isLoading,
-    isOwnInvitePage
+    isOwnInvitePage,
+    requestInviteStatus
   };
 };
 
@@ -340,13 +205,18 @@ const mergeProps: MergeProps<
   OwnProps,
   MergedProps
 > = (stateProps, dispatchProps, ownProps) => {
+  const baseMergedProps = {
+    ...stateProps,
+    ...ownProps,
+    pushRoute: dispatchProps.pushRoute
+  };
   if (!stateProps.requestingFromMember) {
-    return stateProps;
+    return baseMergedProps;
   }
 
   const requestingFromUid = stateProps.requestingFromMember.uid;
   return {
-    ...stateProps,
+    ...baseMergedProps,
     requestInvite: (fullName: string, videoUrl: string, creatorMid: string) => {
       dispatchProps.requestInviteFromMember(
         requestingFromUid,
@@ -360,6 +230,9 @@ const mergeProps: MergeProps<
 
 export default connect(
   mapStateToProps,
-  { requestInviteFromMember },
+  {
+    requestInviteFromMember: requestInviteFromMemberAction,
+    pushRoute: pushRouteAction
+  },
   mergeProps
 )(RequestInvite);
