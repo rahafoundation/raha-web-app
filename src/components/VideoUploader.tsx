@@ -25,13 +25,11 @@ interface HTMLInputEvent extends React.FormEvent<HTMLInputElement> {
 }
 
 const VideoUploaderElem = styled.div`
-  > form {
-    > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-    > label {
-      display: block;
-    }
+  > *:not(:last-child) {
+    margin-bottom: 20px;
+  }
+  > label {
+    display: block;
   }
 `;
 export default class VideoUploader extends React.Component<Props, State> {
@@ -116,7 +114,9 @@ export default class VideoUploader extends React.Component<Props, State> {
             )}%
           </div>
         )}
-        <div className="InviteError">{this.state.errorMessage}</div>
+        {this.state.errorMessage && (
+          <div className="InviteError">{this.state.errorMessage}</div>
+        )}
       </VideoUploaderElem>
     );
   }

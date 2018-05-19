@@ -63,6 +63,15 @@ interface Step4Props {
 type Step4State = { readonly [field in keyof FormFields]?: FormFields[field] };
 
 const RequestInviteForm = styled.form`
+  .nameInput {
+    display: block;
+    color: #333;
+  }
+
+  .nameInputBox {
+    margin-left: 10px;
+  }
+
   > .agreements {
     list-style-type: none;
     text-align: left;
@@ -226,15 +235,19 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
           </li>
         </ul>
 
-        <TextInput
-          placeholder="Your full name"
-          onTextChange={this.handleChange("fullName")}
-          {...(firebaseUser.displayName
-            ? {
-                defaultValue: firebaseUser.displayName
-              }
-            : {})}
-        />
+        <label className="nameInput">
+          Full name:
+          <TextInput
+            placeholder="Your full name"
+            className="nameInputBox"
+            onTextChange={this.handleChange("fullName")}
+            {...(firebaseUser.displayName
+              ? {
+                  defaultValue: firebaseUser.displayName
+                }
+              : {})}
+          />
+        </label>
         <VideoUploader
           setVideoUrl={videoUrl =>
             this.setState({ videoUrl: videoUrl ? videoUrl : undefined })
