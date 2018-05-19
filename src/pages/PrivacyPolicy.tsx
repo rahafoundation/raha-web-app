@@ -2,7 +2,7 @@ import * as React from "react";
 
 const PrivacyPolicy = () => (
   <div>
-    <p>This Privacy Policy governs the manner in which the Raha Foundation collects, uses, maintains and discloses information collected from members (each, a "Member") of the https://raha.io website ("Site").</p>
+    <p>This Privacy Policy governs the manner in which the Raha Foundation collects, uses, maintains and discloses information collected from members (each, a "Member") of the https://raha.app website ("Site").</p>
 
     <h3>Personal identification information</h3>
     <p>We may collect personal identification information from Members in a variety of ways, including, but not limited to, when Members visit our site, register on the site, place an order, fill out a form, respond to a survey, and in connection with other activities, services, features or resources we make available on our Site. Members may be asked for, as appropriate, name, email address, phone number. We will collect personal identification information from Members only if they voluntarily submit such information to us. Members can always refuse to supply personally identification information, except that it may prevent them from engaging in certain Site related activities.</p>
@@ -54,7 +54,7 @@ const PrivacyPolicy = () => (
     <p>Protecting the privacy of the very young is especially important. For that reason, we never collect or maintain information at our Site from those we actually know are under 13, and no part of our website is structured to attract anyone under 13.</p>
 
     <h3>Changes to this privacy policy</h3>
-    <p>Raha.io Network has the discretion to update this privacy policy at any time. When we do, we will post a notification on the main page of our Site. We encourage Members to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
+    <p>Raha has the discretion to update this privacy policy at any time. When we do, we will post a notification on the main page of our Site. We encourage Members to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
 
     <h3>Your acceptance of these terms</h3>
     <p>By using this Site, you signify your acceptance of this policy. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.</p>
@@ -63,7 +63,7 @@ const PrivacyPolicy = () => (
     <p>If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at privacy@raha.io</p>
 
     <h3>Revisions and Amendments</h3>
-    <p>If you have further privacy concerns please do not hesitate to ask us by contacting help@raha.io. This Privacy Policy is effective as of April 11, 2018. This Privacy Policy is not intended to and does not create any contractual or other legal rights in or on behalf of any party. Raha Foundation reserves the right, at any time and without notice, to add to, modify, change or update this Privacy Policy, simply by posting such change, update or modification on https://raha.io. Any such change, update or modification will be effective immediately upon posting on the Foundation’s website.</p>
+    <p>If you have further privacy concerns please do not hesitate to ask us by contacting help@raha.io. This Privacy Policy is effective as of April 11, 2018. This Privacy Policy is not intended to and does not create any contractual or other legal rights in or on behalf of any party. Raha Foundation reserves the right, at any time and without notice, to add to, modify, change or update this Privacy Policy, simply by posting such change, update or modification on https://raha.app. Any such change, update or modification will be effective immediately upon posting on the Foundation’s website.</p>
   </div>
 );
 
