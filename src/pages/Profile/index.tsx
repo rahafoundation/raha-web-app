@@ -32,6 +32,8 @@ interface OwnProps {
 
 interface StateProps {
   loggedInMember?: Member;
+  isLoading: boolean;
+  memberUsername: string;
   profileData?: {
     profileMember: Member;
     trustedMembers: Member[];
@@ -128,9 +130,9 @@ const ProfileElem = styled.main`
  * Presentational component for displaying a profile.
  */
 const ProfileView: React.StatelessComponent<Props> = props => {
-  const { profileData, loggedInMember } = props;
+  const { profileData, loggedInMember, memberUsername, isLoading } = props;
   if (!profileData) {
-    return <Loading />;
+    return isLoading ? <Loading /> : <IntlMessage id="profile.memberNotFound" values={{ memberUsername }} />;
   }
   const {
     profileMember,
@@ -219,10 +221,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps
 ) => {
   const loggedInMember = getLoggedInMember(state);
-  const profileMember = state.membersNew.byMid[ownProps.match.params.memberMid];
+  const memberUsername = ownProps.match.params.memberMid;
+  const profileMember = state.membersNew.byMid[memberUsername];
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized
-    return { loggedInMember };
+    // tslint:disable-next-line:no-debugger
+    const isLoading = Object.keys(state.membersNew.byMid).length === 0;
+    return { isLoading, loggedInMember, memberUsername };
   }
 
   const trustApiCallStatus = getStatusOfApiCall(
@@ -238,6 +243,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 
   return {
     loggedInMember,
+    memberUsername,
+    isLoading: false,
     profileData: {
       profileMember,
       // NOTE: these type assertions only work because the client has the full
