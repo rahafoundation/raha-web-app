@@ -37,7 +37,7 @@ const InviteMissing: React.StatelessComponent<Props> = ({
     return <Loading />;
   }
   if (authMemberDoc && authMemberDoc.exists) {
-    return <Redirect to={`/m/${authMemberDoc.get("mid")}`} />;
+    return <Redirect to={`/m/${authMemberDoc.get("username")}`} />;
   }
   return (
     <FM

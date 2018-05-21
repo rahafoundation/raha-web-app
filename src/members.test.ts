@@ -1,17 +1,23 @@
-import { getMemberId } from "./members";
+import { getUsername } from "./members";
 
 const seedFn = () => 4;
 
 describe("members", () => {
-  describe("getMemberId", () => {
+  describe("getUsername", () => {
     it("should construct a member id", () => {
-      expect(getMemberId("John Doe", seedFn)).toBe("john.doe$0000");
+      expect(getUsername("John Doe", seedFn)).toBe("john.doe.0000");
     });
     it("should handle multiple whitespaces", () => {
-      expect(getMemberId("  John   Doe  ", seedFn)).toBe("john.doe$0000");
+      expect(getUsername("  John   Doe  ", seedFn)).toBe("john.doe.0000");
     });
     it("should not handle no whitespaces", () => {
-      expect(getMemberId("JohnDoe", seedFn)).toBe("johndoe$0000");
+      expect(getUsername("JohnDoe", seedFn)).toBe("johndoe.0000");
+    });
+    it("should handle accents", () => {
+      expect(getUsername("Crème Brûlée Coup de Grâce", seedFn)).toBe("creme.brulee.coup.de.grace.0000");
+    });
+    it("should handle some punctionation", () => {
+      expect(getUsername("%%^^()Joh$n Doe-Deer", seedFn)).toBe("john.doe-deer.0000");
     });
   });
 });

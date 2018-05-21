@@ -13,5 +13,5 @@ export function getMembersByMid(
   state: AppState,
   mids: Uid[]
 ): Array<Member | undefined> {
-  return mids.map(mid => state.membersNew.byMid[mid]);
+  return mids.map(username => state.membersNew.byUsername[username]);
 }

@@ -13,7 +13,7 @@ import {
 } from "../actions";
 
 export interface MembersState {
-  readonly byMid: { [key: string]: MemberEntry };
+  readonly byUsername: { [key: string]: MemberEntry };
   readonly byUid: { [key: string]: MemberEntry };
 }
 
@@ -23,7 +23,7 @@ type MembersAction =
   | RequestMemberByUidAction;
 
 const members: Reducer<MembersState> = (
-  state = { byMid: {}, byUid: {} },
+  state = { byUsername: {}, byUid: {} },
   untypedAction
 ) => {
   // TODO: this is a hack for now until Redux 4's typing comes out, or we use
@@ -33,29 +33,29 @@ const members: Reducer<MembersState> = (
   switch (action.type) {
     case RECEIVE_MEMBER: {
       const isFetching = false;
-      const { memberDoc, receivedAt, id, byMid } = action;
+      const { memberDoc, receivedAt, id, byUsername } = action;
       const member = { isFetching, memberDoc, receivedAt };
-      let mid: string | null = null;
+      let username: string | null = null;
       let uid: string | null = null;
       if (memberDoc) {
         uid = memberDoc.id;
-        mid = memberDoc.get("mid");
+        username = memberDoc.get("username");
       } else {
-        if (byMid) {
-          mid = id;
+        if (byUsername) {
+          username = id;
         } else {
           uid = id;
         }
       }
-      const newMid = mid && {
-        [mid]: member
+      const newMid = username && {
+        [username]: member
       };
       const newUid = uid && {
         [uid]: member
       };
       return {
-        byMid: {
-          ...state.byMid,
+        byUsername: {
+          ...state.byUsername,
           ...newMid
         },
         byUid: {
@@ -66,13 +66,13 @@ const members: Reducer<MembersState> = (
     }
     case REQUEST_MEMBER_BY_MID: {
       const isFetching = true;
-      const mid = action.mid;
+      const username = action.username;
       const newMid = {
-        [mid]: { ...state.byMid[mid], ...{ isFetching, mid } }
+        [username]: { ...state.byUsername[username], ...{ isFetching, username } }
       };
       return {
-        byMid: {
-          ...state.byMid,
+        byUsername: {
+          ...state.byUsername,
           ...newMid
         },
         byUid: state.byUid
@@ -85,7 +85,7 @@ const members: Reducer<MembersState> = (
         [uid]: { ...state.byUid[uid], ...{ isFetching, uid } }
       };
       return {
-        byMid: state.byMid,
+        byUsername: state.byUsername,
         byUid: {
           ...state.byUid,
           ...newUid

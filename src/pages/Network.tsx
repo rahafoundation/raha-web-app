@@ -31,7 +31,7 @@ const Network: React.StatelessComponent<Props> = ({ members }) => {
     graphNodes.push(
       <ForceGraphNode
         key={member.uid}
-        node={{ id: member.uid, label: member.mid }}
+        node={{ id: member.uid, label: member.username }}
         fill="gray"
       />
     );
@@ -89,7 +89,7 @@ const Network: React.StatelessComponent<Props> = ({ members }) => {
 };
 
 function mapStateToProps(state: AppState): StateProps {
-  return { members: Object.values(state.membersNew.byMid) };
+  return { members: Object.values(state.membersNew.byUsername) };
 }
 
 export default connect(mapStateToProps)(Network);

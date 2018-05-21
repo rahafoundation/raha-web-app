@@ -1,3 +1,3 @@
-export function getProfileUrlFromMid(mid: string) {
-  return `/m/${mid}`;
+export function getProfileUrlFromMid(username: string) {
+  return `/m/${username}`;
 }

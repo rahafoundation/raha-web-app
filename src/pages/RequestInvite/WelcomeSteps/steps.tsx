@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import IntlMessage from "../../../components/IntlMessage";
 import { RequestInviteFn } from "..";
-import { getMemberId } from "../../../members";
+import { getUsername } from "../../../members";
 import LogIn from "../../../components/LogIn";
 import Button from "../../../components/Button";
 import Video from "../../../components/Video";
@@ -147,7 +147,7 @@ export class Step4 extends React.Component<Step4Props, Step4State> {
       return;
     }
 
-    this.props.requestInvite(fullName, videoUrl, getMemberId(fullName));
+    this.props.requestInvite(fullName, videoUrl, getUsername(fullName));
   };
 
   private isFormValid() {

@@ -231,7 +231,7 @@ export const AppLayoutView: React.StatelessComponent<Props> = props => {
   let memberDetails: MemberDetails | undefined; // TODO do not overload memberDetails with multiple types
   if (authMemberDoc) {
     // TODO if invite missing
-    const profileUrl = `/m/${authMemberDoc.get("mid")}`;
+    const profileUrl = `/m/${authMemberDoc.get("username")}`;
     memberDetails = {
       fullName: authMemberDoc.get("full_name"),
       inviteUrl: `${window.location.origin}${profileUrl}/invite`,
