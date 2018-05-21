@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { trustMember } from "../../actions";
 import { AppState } from "../../store";
-import { Mid } from "../../identifiers";
+import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 import MemberRelations from "./MemberRelations";
 
@@ -27,7 +27,7 @@ import { green } from "../../constants/palette";
  * ================
  */
 interface OwnProps {
-  match: { params: { memberMid: Mid } };
+  match: { params: { memberUsername: Username } };
 }
 
 interface StateProps {
@@ -193,9 +193,9 @@ const ProfileView: React.StatelessComponent<Props> = props => {
 
       <main>
         {inviteConfirmed ? (
-          // TODO: should be using mid
+          // TODO: should be using uid, not username
           // TODO: should be using internationalized message
-          <InviteVideo memberId={profileMember.mid} />
+          <InviteVideo memberId={profileMember.username} />
         ) : (
           <div>Pending trust confirmation before showing public video</div>
         )}
@@ -221,7 +221,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps
 ) => {
   const loggedInMember = getLoggedInMember(state);
-  const memberUsername = ownProps.match.params.memberMid;
+  const memberUsername = ownProps.match.params.memberUsername;
   const profileMember = state.membersNew.byMid[memberUsername];
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized

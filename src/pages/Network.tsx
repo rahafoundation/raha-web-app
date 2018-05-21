@@ -31,7 +31,7 @@ const Network: React.StatelessComponent<Props> = ({ members }) => {
     graphNodes.push(
       <ForceGraphNode
         key={member.uid}
-        node={{ id: member.uid, label: member.mid }}
+        node={{ id: member.uid, label: member.username }}
         fill="gray"
       />
     );

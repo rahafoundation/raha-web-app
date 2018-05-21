@@ -39,7 +39,7 @@ const members: Reducer<MembersState> = (
       let uid: string | null = null;
       if (memberDoc) {
         uid = memberDoc.id;
-        mid = memberDoc.get("mid");
+        mid = memberDoc.get("username");
       } else {
         if (byMid) {
           mid = id;
@@ -66,9 +66,9 @@ const members: Reducer<MembersState> = (
     }
     case REQUEST_MEMBER_BY_MID: {
       const isFetching = true;
-      const mid = action.mid;
+      const username = action.username;
       const newMid = {
-        [mid]: { ...state.byMid[mid], ...{ isFetching, mid } }
+        [username]: { ...state.byMid[username], ...{ isFetching, username } }
       };
       return {
         byMid: {

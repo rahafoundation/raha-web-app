@@ -10,7 +10,6 @@ export enum OpCode {
 }
 
 interface ToId {
-  to_mid: string;
   to_uid: string;
 }
 
@@ -35,7 +34,6 @@ export interface OperationData {
   block_at: Date | null;
   block_seq: number | null;
   created_at: Date; // firebase.firestore.FieldValue;
-  creator_mid: string;
   creator_uid: string;
   data: OpData;
   op_code: OpCode;
@@ -44,7 +42,6 @@ export interface OperationData {
 
 const getOperation = (
   opCode: OpCode,
-  creatorMid: string,
   creatorUid: string,
   data: OpData
 ): OperationData => {
@@ -53,7 +50,6 @@ const getOperation = (
     block_seq: null,
     created_at: new Date(),
     creator_uid: creatorUid,
-    creator_mid: creatorMid,
     data,
     op_code: opCode,
     op_seq: null
@@ -61,13 +57,10 @@ const getOperation = (
 };
 
 export const getTrustOperation = (
-  creatorMid: string,
   creatorUid: string,
-  toMid: string,
   toUid: string
 ): OperationData => {
-  return getOperation(OpCode.TRUST, creatorMid, creatorUid, {
-    to_uid: toUid,
-    to_mid: toMid
+  return getOperation(OpCode.TRUST, creatorUid, {
+    to_uid: toUid
   });
 };

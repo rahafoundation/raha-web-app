@@ -1,9 +1,10 @@
 import { Reducer } from "redux";
 
-import { Uid, Mid } from "../identifiers";
+import { Uid, Username } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
 import { Operation, OperationType } from "./operations";
 import OperationInvalidError from "../errors/OperationInvalidError";
+import { User } from "firebase";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
@@ -33,7 +34,7 @@ function uidsInUidSet(uidSet: UidSet): Uid[] {
  */
 export class Member {
   public uid: Uid;
-  public mid: Mid;
+  public username: Username;
   public fullName: string;
   public invitedBy: Uid | typeof GENESIS_MEMBER;
 
@@ -43,7 +44,7 @@ export class Member {
 
   constructor(
     uid: Uid,
-    mid: Mid,
+    username: Username,
     fullName: string,
     invitedBy: Uid | typeof GENESIS_MEMBER,
     trusts?: UidSet,
@@ -51,7 +52,7 @@ export class Member {
     invited?: UidSet
   ) {
     this.uid = uid;
-    this.mid = mid;
+    this.username = username;
     this.fullName = fullName;
     this.invitedBy = invitedBy;
 
@@ -86,7 +87,7 @@ export class Member {
   public inviteMember(uid: Uid) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
       this.invitedBy,
       this.trustsSet,
@@ -101,7 +102,7 @@ export class Member {
   public trustMember(uid: Uid) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
       this.invitedBy,
       { ...this.trustsSet, [uid]: true },
@@ -116,7 +117,7 @@ export class Member {
   public beTrustedByMember(uid: Uid) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
       this.invitedBy,
       this.trustsSet,
@@ -180,7 +181,7 @@ function addMemberToState(
   member: Member
 ): MembersState {
   return {
-    byMid: { ...prevState.byMid, [member.mid]: member },
+    byMid: { ...prevState.byMid, [member.username]: member },
     byUid: { ...prevState.byUid, [member.uid]: member }
   };
 }
@@ -198,7 +199,7 @@ function applyOperation(
   prevState: MembersState,
   operation: Operation
 ): MembersState {
-  const { creator_mid, creator_uid } = operation;
+  const { creator_uid } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
@@ -207,13 +208,13 @@ function applyOperation(
 
     switch (operation.op_code) {
       case OperationType.REQUEST_INVITE: {
-        const { full_name, to_uid } = operation.data;
+        const { full_name, to_uid, username } = operation.data;
 
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member(creator_uid, creator_mid, full_name, GENESIS_MEMBER)
+            new Member(creator_uid, username, full_name, GENESIS_MEMBER)
           );
         }
 
@@ -221,7 +222,7 @@ function applyOperation(
         const inviter = prevState.byUid[to_uid].inviteMember(creator_uid);
         const inviteRequester = new Member(
           creator_uid,
-          creator_mid,
+          username,
           full_name,
           to_uid,
           { [to_uid]: true }

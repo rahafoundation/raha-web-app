@@ -45,7 +45,7 @@ const LogIn: React.StatelessComponent<Props> = ({
       return <Loading />;
     }
     if (authMemberDoc && authMemberDoc.exists) {
-      return <Redirect to={`/m/${authMemberDoc.get("mid")}`} />;
+      return <Redirect to={`/m/${authMemberDoc.get("username")}`} />;
     }
     if (authFirebaseUser) {
       return <Redirect to={`/invite_missing`} />;

@@ -27,5 +27,5 @@ export function getLoggedInMemberProfileUrl(state: AppState) {
   if (!member) {
     return;
   }
-  return getProfileUrlFromMid(member.mid);
+  return getProfileUrlFromMid(member.username);
 }

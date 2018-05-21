@@ -47,18 +47,18 @@ export interface ReceiveMemberAction extends Action {
 }
 export interface RequestMemberByMidAction extends Action {
   type: typeof REQUEST_MEMBER_BY_MID;
-  mid: string;
+  username: string;
 }
 export interface RequestMemberByUidAction extends Action {
   type: typeof REQUEST_MEMBER_BY_UID;
   uid: string;
 }
 
-const requestMemberByMid: ActionCreator<RequestMemberByMidAction> = (
-  mid: string
+const requestMemberByUsername: ActionCreator<RequestMemberByMidAction> = (
+  username: string
 ) => ({
   type: REQUEST_MEMBER_BY_MID,
-  mid
+  username
 });
 
 const requestMemberByUid: ActionCreator<RequestMemberByUidAction> = (
@@ -100,7 +100,7 @@ export const hideModal: ActionCreator<HideModalAction> = () => ({
 });
 
 async function fetchMemberByMid(dispatch: Dispatch<AppState>, mid: string) {
-  dispatch(requestMemberByMid(mid));
+  dispatch(requestMemberByUsername(mid));
   const memberQuery = await db
     .collection("members")
     .where("mid", "==", mid)
