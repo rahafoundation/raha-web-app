@@ -222,11 +222,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const loggedInMember = getLoggedInMember(state);
   const memberUsername = ownProps.match.params.memberUsername;
-  const profileMember = state.membersNew.byMid[memberUsername];
+  const profileMember = state.membersNew.byUsername[memberUsername];
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized
     // tslint:disable-next-line:no-debugger
-    const isLoading = Object.keys(state.membersNew.byMid).length === 0;
+    const isLoading = Object.keys(state.membersNew.byUsername).length === 0;
     return { isLoading, loggedInMember, memberUsername };
   }
 

@@ -42,7 +42,7 @@ export interface ReceiveMemberAction extends Action {
   type: typeof RECEIVE_MEMBER;
   memberDoc: MemberDoc | null; // TODO: is this supposed to be potentially null?
   id: string;
-  byMid: boolean;
+  byUsername: boolean;
   receivedAt: number;
 }
 export interface RequestMemberByMidAction extends Action {
@@ -71,11 +71,11 @@ const requestMemberByUid: ActionCreator<RequestMemberByUidAction> = (
 const receiveMember: ActionCreator<ReceiveMemberAction> = (
   memberDoc: MemberDoc | null,
   id: string,
-  byMid: boolean
+  byUsername: boolean
 ) => ({
   type: RECEIVE_MEMBER,
   id,
-  byMid,
+  byUsername,
   memberDoc,
   receivedAt: Date.now()
 });
@@ -99,17 +99,17 @@ export const hideModal: ActionCreator<HideModalAction> = () => ({
   type: HIDE_MODAL
 });
 
-async function fetchMemberByMid(dispatch: Dispatch<AppState>, mid: string) {
-  dispatch(requestMemberByUsername(mid));
+async function fetchMemberByMid(dispatch: Dispatch<AppState>, username: string) {
+  dispatch(requestMemberByUsername(username));
   const memberQuery = await db
     .collection("members")
-    .where("mid", "==", mid)
+    .where("username", "==", username)
     .get();
   if (memberQuery.docs.length > 1) {
-    alert(`Found multiple matching member ${mid}, please email bugs@raha.io`);
+    alert(`Found multiple matching member ${username}, please email bugs@raha.io`);
   }
   const memberDoc = memberQuery.docs.length === 1 ? memberQuery.docs[0] : null;
-  dispatch(receiveMember(memberDoc, mid, true));
+  dispatch(receiveMember(memberDoc, username, true));
 }
 
 async function fetchMemberByUid(dispatch: Dispatch<AppState>, uid: string) {
@@ -139,8 +139,8 @@ function shouldFetchMemberByUid(getState: () => AppState, uid: string) {
   return shouldFetchMember(member);
 }
 
-function shouldFetchMemberByMid(getState: () => AppState, mid: string) {
-  const member = getState().members.byMid[mid];
+function shouldFetchMemberByMid(getState: () => AppState, username: string) {
+  const member = getState().members.byUsername[username];
   return shouldFetchMember(member);
 }
 
@@ -153,12 +153,12 @@ export const fetchMemberByUidIfNeeded: AsyncActionCreator = (uid: string) => (
   }
 };
 
-export const fetchMemberByMidIfNeeded: AsyncActionCreator = (mid: string) => (
+export const fetchMemberByMidIfNeeded: AsyncActionCreator = (username: string) => (
   dispatch,
   getState
 ) => {
-  if (shouldFetchMemberByMid(getState, mid)) {
-    fetchMemberByMid(dispatch, mid);
+  if (shouldFetchMemberByMid(getState, username)) {
+    fetchMemberByMid(dispatch, username);
   }
 };
 

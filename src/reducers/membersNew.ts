@@ -134,7 +134,7 @@ export interface MemberLookupTable {
 
 export interface MembersState {
   byUid: MemberLookupTable;
-  byMid: MemberLookupTable;
+  byUsername: MemberLookupTable;
 }
 
 /**
@@ -181,7 +181,7 @@ function addMemberToState(
   member: Member
 ): MembersState {
   return {
-    byMid: { ...prevState.byMid, [member.username]: member },
+    byUsername: { ...prevState.byUsername, [member.username]: member },
     byUid: { ...prevState.byUid, [member.uid]: member }
   };
 }
@@ -252,7 +252,7 @@ function applyOperation(
   }
 }
 
-const initialState: MembersState = { byUid: {}, byMid: {} };
+const initialState: MembersState = { byUid: {}, byUsername: {} };
 export const reducer: Reducer<MembersState> = (
   state = initialState,
   untypedAction

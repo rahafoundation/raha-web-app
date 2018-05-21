@@ -49,6 +49,6 @@ export function getMemberDocByUid(state: AppState, uid: string) {
   return getMemberDoc(state.members.byUid[uid]);
 }
 
-export function getMemberDocByMid(state: AppState, mid: string) {
-  return getMemberDoc(state.members.byMid[mid]);
+export function getMemberDocByMid(state: AppState, username: string) {
+  return getMemberDoc(state.members.byUsername[username]);
 }

@@ -45,7 +45,7 @@ const Leaderboard: React.StatelessComponent<Props> = ({ members }) => {
 };
 
 function mapStateToProps(state: AppState): StateProps {
-  return { members: Object.values(state.membersNew.byMid) };
+  return { members: Object.values(state.membersNew.byUsername) };
 }
 
 export default connect(mapStateToProps)(Leaderboard);
