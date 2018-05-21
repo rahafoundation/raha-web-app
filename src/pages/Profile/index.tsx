@@ -132,7 +132,11 @@ const ProfileElem = styled.main`
 const ProfileView: React.StatelessComponent<Props> = props => {
   const { profileData, loggedInMember, memberUsername, isLoading } = props;
   if (!profileData) {
-    return isLoading ? <Loading /> : <IntlMessage id="profile.memberNotFound" values={{ memberUsername }} />;
+    return isLoading ? (
+      <Loading />
+    ) : (
+      <IntlMessage id="profile.memberNotFound" values={{ memberUsername }} />
+    );
   }
   const {
     profileMember,
@@ -195,7 +199,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
         {inviteConfirmed ? (
           // TODO: should be using uid, not username
           // TODO: should be using internationalized message
-          <InviteVideo memberId={profileMember.username} />
+          <InviteVideo memberUid={profileMember.uid} />
         ) : (
           <div>Pending trust confirmation before showing public video</div>
         )}
