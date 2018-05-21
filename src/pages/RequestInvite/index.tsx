@@ -217,12 +217,12 @@ const mergeProps: MergeProps<
   const requestingFromUid = stateProps.requestingFromMember.uid;
   return {
     ...baseMergedProps,
-    requestInvite: (fullName: string, videoUrl: string, creatorMid: string) => {
+    requestInvite: (fullName: string, videoUrl: string, creatorUsername: string) => {
       dispatchProps.requestInviteFromMember(
         requestingFromUid,
         fullName,
         videoUrl,
-        creatorMid
+        creatorUsername
       );
     }
   };
