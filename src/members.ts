@@ -15,13 +15,20 @@ const getNumberSuffix = (len: number, seedFn: () => number) => {
     .substring(1);
 };
 
-export const getMemberId = (displayName: string, seedFn?: () => number) => {
-  return (
-    displayName
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, ".") +
-    "$" +
-    getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random)
-  );
+// See https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/
+const removeAccents = (str: string) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+// See https://stackoverflow.com/questions/4328500/how-can-i-strip-all-punctuation-from-a-string-in-javascript-using-regex/
+const removePunctuation = (str: string) =>
+  str.replace(/[,\/#!$%\^&\*;:{}=\_`~()]/g, "");
+
+// TODO move server side
+export const getUsername = (displayName: string, seedFn?: () => number) => {
+  const userSlug = removePunctuation(removeAccents(displayName))
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ".");
+  const userPin = getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random);
+  return userSlug + "." + userPin;
 };
