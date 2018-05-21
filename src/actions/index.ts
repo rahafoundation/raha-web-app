@@ -99,14 +99,19 @@ export const hideModal: ActionCreator<HideModalAction> = () => ({
   type: HIDE_MODAL
 });
 
-async function fetchMemberByMid(dispatch: Dispatch<AppState>, username: string) {
+async function fetchMemberByMid(
+  dispatch: Dispatch<AppState>,
+  username: string
+) {
   dispatch(requestMemberByUsername(username));
   const memberQuery = await db
     .collection("members")
     .where("username", "==", username)
     .get();
   if (memberQuery.docs.length > 1) {
-    alert(`Found multiple matching member ${username}, please email bugs@raha.io`);
+    alert(
+      `Found multiple matching member ${username}, please email bugs@raha.io`
+    );
   }
   const memberDoc = memberQuery.docs.length === 1 ? memberQuery.docs[0] : null;
   dispatch(receiveMember(memberDoc, username, true));
@@ -153,10 +158,9 @@ export const fetchMemberByUidIfNeeded: AsyncActionCreator = (uid: string) => (
   }
 };
 
-export const fetchMemberByMidIfNeeded: AsyncActionCreator = (username: string) => (
-  dispatch,
-  getState
-) => {
+export const fetchMemberByMidIfNeeded: AsyncActionCreator = (
+  username: string
+) => (dispatch, getState) => {
   if (shouldFetchMemberByMid(getState, username)) {
     fetchMemberByMid(dispatch, username);
   }
@@ -268,7 +272,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
   uid: Uid,
   fullName: string,
   videoUrl: string,
-  creatorMid: string
+  creatorUsername: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -284,7 +288,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
           body: {
             fullName,
             videoUrl,
-            creatorMid
+            username: creatorUsername
           }
         },
         authToken
