@@ -197,7 +197,6 @@ const ProfileView: React.StatelessComponent<Props> = props => {
 
       <main>
         {inviteConfirmed ? (
-          // TODO: should be using uid, not username
           // TODO: should be using internationalized message
           <InviteVideo memberUid={profileMember.uid} />
         ) : (
