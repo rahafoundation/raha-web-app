@@ -55,7 +55,7 @@ const RequestInviteElem = styled.main`
 // TODO: could be more but this is a really confusing component
 // TODO: this seems to be duplicated in multiple places
 interface OwnProps {
-  match: { params: { memberId: string } };
+  match: { params: { memberUsername: string } };
 }
 
 interface StateProps {
@@ -111,7 +111,9 @@ export class RequestInvite extends React.Component<Props> {
       }
       // this shouldn't happen, but better redirect to some profile than nothing
       return (
-        <Redirect to={getProfileUrlFromMid(this.props.match.params.memberId)} />
+        <Redirect
+          to={getProfileUrlFromMid(this.props.match.params.memberUsername)}
+        />
       );
     }
 
@@ -167,9 +169,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const loggedInFirebaseUser = state.auth.firebaseUser;
   const loggedInMemberProfileUrl = getLoggedInMemberProfileUrl(state);
 
-  const requestingFromMid = ownProps.match.params.memberId;
+  const requestingFromUsername = ownProps.match.params.memberUsername;
   const fetchedRequestingFromMember = getMembersByMid(state, [
-    requestingFromMid
+    requestingFromUsername
   ]);
   const requestingFromMember =
     fetchedRequestingFromMember.length > 0

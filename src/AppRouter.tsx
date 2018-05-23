@@ -19,6 +19,7 @@ import Splash from "./pages/Splash";
 import TermsOfService from "./pages/TermsOfService";
 import Leaderboard from "./pages/Leaderboard";
 import Network from "./pages/Network";
+import Money from "./pages/Money";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {
@@ -47,7 +48,11 @@ function AppRouter() {
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
         <DefaultLayout path="/privacy-policy" component={PrivacyPolicy} />
-        <DefaultLayout path="/m/:memberId/invite" component={RequestInvite} />
+        <DefaultLayout
+          path="/m/:memberUsername/invite"
+          component={RequestInvite}
+        />
+        <DefaultLayout path="/m/:memberUsername/moneybeta" component={Money} />
         <DefaultLayout path="/m/:memberUsername" component={Profile} />
         <DefaultLayout path="/ops" component={Operations} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />

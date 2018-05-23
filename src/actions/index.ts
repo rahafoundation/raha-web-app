@@ -21,7 +21,7 @@ import {
   TrustMemberApiEndpoint,
   GetOperationsApiEndpoint,
   RequestInviteApiEndpoint,
-  SendInviteApiEndpoint
+  SendInviteApiEndpoint,
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";

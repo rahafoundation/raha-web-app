@@ -10,6 +10,7 @@
     "eject": "react-scripts-ts eject",
     "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
     "use-test-config": "cp src/data/test.config.json src/data/config.json",
+    "use-local-config": "cp src/data/local.config.json src/data/config.json",
     "deploy-test":
       "yarn use-test-config && yarn build && firebase deploy --project raha-test",
     "deploy-prod":
@@ -23,6 +24,7 @@
     "@fortawesome/react-fontawesome": "^0.0.17",
     "@types/history": "^4.6.2",
     "@types/react-router-redux": "^5.0.14",
+    "big.js": "5.0.3",
     "classnames": "^2.2.5",
     "firebase": "^4.9.0",
     "history": "^4.7.2",
@@ -43,6 +45,7 @@
     "styled-components": "^3.2.3"
   },
   "devDependencies": {
+    "@types/big.js": "^4.0.4",
     "@types/classnames": "^2.2.3",
     "@types/enzyme": "^3.1.9",
     "@types/enzyme-adapter-react-16": "^1.0.2",

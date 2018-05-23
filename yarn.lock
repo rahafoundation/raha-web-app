@@ -158,6 +158,10 @@
   dependencies:
     humps "^2.0.1"
 
+"@types/big.js@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-4.0.4.tgz#96b94065ca3171d2ce721e487e8d274ad2e925bd"
+
 "@types/cheerio@*":
   version "0.22.7"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.7.tgz#4a92eafedfb2b9f4437d3a4410006d81114c66ce"
@@ -1259,6 +1263,10 @@ bcrypt-pbkdf@^1.0.0:
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.1.tgz#63bc5dcb61331b92bc05fd528953c33462a06f8d"
   dependencies:
     tweetnacl "^0.14.3"
+
+big.js@5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.0.3.tgz#9679fb0a3599a7d3df397f855e89c4dba016960e"
 
 big.js@^3.1.3:
   version "3.2.0"

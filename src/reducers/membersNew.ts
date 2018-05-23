@@ -1,10 +1,11 @@
+import Big from "big.js";
+import { User } from "firebase";
 import { Reducer } from "redux";
 
 import { Uid, Username } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
 import { Operation, OperationType } from "./operations";
 import OperationInvalidError from "../errors/OperationInvalidError";
-import { User } from "firebase";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
@@ -36,7 +37,10 @@ export class Member {
   public uid: Uid;
   public username: Username;
   public fullName: string;
+  public createdAt: Date;
   public invitedBy: Uid | typeof GENESIS_MEMBER;
+  public balance: Big;
+  public lastMinted: Date;
 
   public trustedBySet: UidSet;
   public invitedSet: UidSet;
@@ -46,7 +50,10 @@ export class Member {
     uid: Uid,
     username: Username,
     fullName: string,
+    createdAt: Date,
     invitedBy: Uid | typeof GENESIS_MEMBER,
+    balance: Big,
+    lastMinted: Date,
     trusts?: UidSet,
     trustedBy?: UidSet,
     invited?: UidSet
@@ -54,7 +61,10 @@ export class Member {
     this.uid = uid;
     this.username = username;
     this.fullName = fullName;
+    this.createdAt = createdAt;
     this.invitedBy = invitedBy;
+    this.balance = balance;
+    this.lastMinted = lastMinted;
 
     this.trustsSet = trusts || {};
     this.trustedBySet = trustedBy || {};
@@ -73,6 +83,25 @@ export class Member {
     return uidsInUidSet(this.invitedSet);
   }
 
+  /* =======================
+   * ACCOUNT BALANCE METHODS
+   * =======================
+   */
+  public mint(amount: Big, mintDate: Date) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.plus(amount),
+      mintDate,
+      this.trustsSet,
+      this.trustedBySet,
+      this.invitedSet
+    );
+  }
+
   /* =====================
    * RELATIONSHIP METHODS
    * =====================
@@ -89,7 +118,10 @@ export class Member {
       this.uid,
       this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       this.trustsSet,
       { ...this.trustedBySet, [uid]: true },
       { ...this.invitedSet, [uid]: true }
@@ -104,7 +136,10 @@ export class Member {
       this.uid,
       this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       { ...this.trustsSet, [uid]: true },
       this.trustedBySet,
       this.invitedSet
@@ -119,7 +154,10 @@ export class Member {
       this.uid,
       this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       this.trustsSet,
       { ...this.trustedBySet, [uid]: true },
       this.invitedSet
@@ -160,6 +198,11 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   if (operation.op_code === OperationType.TRUST) {
     return !!operation.data.to_uid;
   }
+
+  if (operation.op_code === OperationType.MINT) {
+    // TODO
+    return true;
+  }
   return false;
 }
 
@@ -199,13 +242,12 @@ function applyOperation(
   prevState: MembersState,
   operation: Operation
 ): MembersState {
-  const { creator_uid } = operation;
+  const { creator_uid, created_at } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
       return prevState;
     }
-
     switch (operation.op_code) {
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
@@ -214,7 +256,15 @@ function applyOperation(
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member(creator_uid, username, full_name, GENESIS_MEMBER)
+            new Member(
+              creator_uid,
+              username,
+              full_name,
+              new Date(created_at),
+              GENESIS_MEMBER,
+              new Big(0),
+              new Date(created_at)
+            )
           );
         }
 
@@ -224,7 +274,10 @@ function applyOperation(
           creator_uid,
           username,
           full_name,
+          new Date(created_at),
           to_uid,
+          new Big(0),
+          new Date(created_at),
           { [to_uid]: true }
         );
         return addMembersToState(prevState, [inviter, inviteRequester]);
@@ -237,6 +290,16 @@ function applyOperation(
         const truster = prevState.byUid[creator_uid].trustMember(to_uid);
         const trusted = prevState.byUid[to_uid].beTrustedByMember(creator_uid);
         return addMembersToState(prevState, [truster, trusted]);
+      }
+      case OperationType.MINT: {
+        const { amount } = operation.data;
+
+        assertUidPresentInState(prevState, creator_uid, operation);
+        const minter = prevState.byUid[creator_uid].mint(
+          new Big(amount),
+          new Date(operation.created_at)
+        );
+        return addMembersToState(prevState, [minter]);
       }
       default:
         return prevState;
