@@ -21,7 +21,8 @@ import {
   TrustMemberApiEndpoint,
   GetOperationsApiEndpoint,
   RequestInviteApiEndpoint,
-  SendInviteApiEndpoint
+  SendInviteApiEndpoint,
+  MintApiEndpoint
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -326,5 +327,29 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
     },
     ApiEndpoint.SEND_INVITE,
     inviteEmail
+  );
+};
+
+export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      await callApi<MintApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.MINT,
+          params: undefined,
+          body: {
+            amount
+          }
+        },
+        authToken
+      );
+    },
+    ApiEndpoint.MINT,
+    uid
   );
 };

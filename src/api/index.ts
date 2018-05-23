@@ -27,7 +27,8 @@ export const enum ApiEndpoint {
   TRUST_MEMBER = "TRUST_MEMBER",
   GET_OPERATIONS = "GET_OPERATIONS",
   REQUEST_INVITE = "REQUEST_INVITE",
-  SEND_INVITE = "SEND_INVITE"
+  SEND_INVITE = "SEND_INVITE",
+  MINT = "MINT"
 }
 
 /**
@@ -58,6 +59,11 @@ type SendInviteApiCall = ApiCallDefinition<
   void,
   { inviteEmail: string }
 >;
+type MintApiCall = ApiCallDefinition<
+  ApiEndpoint.MINT,
+  void,
+  { amount: string }
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
@@ -65,7 +71,8 @@ export type ApiCall =
   | TrustMemberApiCall
   | GetOperationsApiCall
   | RequestInviteApiCall
-  | SendInviteApiCall;
+  | SendInviteApiCall
+  | MintApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -95,12 +102,17 @@ export type SendInviteApiEndpoint = ApiEndpointDefinition<
   SendInviteApiCall,
   MessageApiResponse
 >;
+export type MintApiEndpoint = ApiEndpointDefinition<
+  MintApiCall,
+  OperationApiResponse
+>;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
   | GetOperationsApiEndpoint
   | RequestInviteApiEndpoint
-  | SendInviteApiEndpoint;
+  | SendInviteApiEndpoint
+  | MintApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -141,6 +153,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.SEND_INVITE]: {
     uri: "me/send_invite",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.MINT]: {
+    uri: "me/mint",
     method: HttpVerb.POST
   }
 };
