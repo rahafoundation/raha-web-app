@@ -17,6 +17,7 @@ import { ApiEndpoint } from "../api";
 import { getStatusOfApiCall } from "../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../reducers/apiCalls";
 import { getMembersByUid } from "../selectors/members";
+import { getMemberMintableAmount } from "../selectors/member";
 import { getLoggedInMember } from "../selectors/auth";
 
 import { green } from "../constants/palette";
@@ -38,6 +39,7 @@ interface StateProps {
     profileMember: Member;
   };
   mintApiCallStatus?: ApiCallStatus;
+  memberBalance?: string;
   mintableAmount?: string;
 }
 interface DispatchProps {
@@ -111,7 +113,7 @@ const MoneyElem = styled.main`
 `;
 
 /**
- * Presentational component for displaying a profile.
+ * Presentational component for displaying profile money interface.
  */
 const ProfileView: React.StatelessComponent<Props> = props => {
   const {
@@ -119,6 +121,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
     loggedInMember,
     memberUsername,
     isLoading,
+    memberBalance,
     mintableAmount
   } = props;
   if (!profileData) {
@@ -146,7 +149,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
             <h2>
               <IntlMessage
                 id="money.balance"
-                values={{ balance: loggedInMember.balance.toString() }}
+                values={{ balance: memberBalance }}
               />
             </h2>
           </section>
@@ -174,42 +177,50 @@ const ProfileView: React.StatelessComponent<Props> = props => {
                   }}
                 />
               </p>
-              <p>
-                <FormattedMessage
-                  id="money.basicIncomeClickPrompt"
-                  values={{
-                    mintableAmount: <b>{mintableAmount}</b>
-                  }}
-                />
-              </p>
-              {isInviteConfirmed ? (
-                <Button
-                  size={ButtonSize.LARGE}
-                  type={ButtonType.PRIMARY}
-                  onClick={props.mint}
-                  disabled={
-                    mintApiCallStatus === ApiCallStatusType.STARTED ||
-                    mintableAmount === "0"
-                  }
-                >
-                  {mintApiCallStatus === ApiCallStatusType.STARTED ? (
-                    <Loading />
-                  ) : (
-                    <IntlMessage
-                      onlyRenderText={true}
-                      id="money.mintButton"
+              {mintableAmount !== "0" ? (
+                <>
+                  <p>
+                    <FormattedMessage
+                      id="money.basicIncomeClickPrompt"
                       values={{
-                        mintableAmount
+                        mintableAmount: <b>{mintableAmount}</b>
                       }}
                     />
+                  </p>
+                  {isInviteConfirmed ? (
+                    <Button
+                      size={ButtonSize.LARGE}
+                      type={ButtonType.PRIMARY}
+                      onClick={props.mint}
+                      disabled={
+                        mintApiCallStatus === ApiCallStatusType.STARTED ||
+                        mintableAmount === "0"
+                      }
+                    >
+                      {mintApiCallStatus === ApiCallStatusType.STARTED ? (
+                        <Loading />
+                      ) : (
+                        <IntlMessage
+                          onlyRenderText={true}
+                          id="money.mintButton"
+                          values={{
+                            mintableAmount
+                          }}
+                        />
+                      )}
+                    </Button>
+                  ) : (
+                    <p>
+                      <IntlMessage
+                        id="money.basicIncomeInviteConfirmationRequired"
+                        className="inviteNotConfirmed"
+                      />
+                    </p>
                   )}
-                </Button>
+                </>
               ) : (
                 <p>
-                  <IntlMessage
-                    id="money.basicIncomeInviteConfirmationRequired"
-                    className="inviteNotConfirmed"
-                  />
+                  <FormattedMessage id="money.basicIncomeAlreadyClaimed" />
                 </p>
               )}
             </section>
@@ -243,20 +254,16 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     profileMember.uid
   );
 
-  const invitedByMember =
-    profileMember && profileMember.invitedBy === GENESIS_MEMBER
-      ? GENESIS_MEMBER
-      : state.membersNew.byUid[profileMember.invitedBy];
+  const memberBalance = loggedInMember
+    ? loggedInMember.balance.toString()
+    : undefined;
 
-  const RAHA_UBI_WEEKLY_RATE = 10;
-  const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
-  const mintableAmount = new Big(
-    new Date().getTime() - profileMember.lastMinted.getTime()
-  )
-    .div(MILLISECONDS_PER_WEEK)
-    .times(RAHA_UBI_WEEKLY_RATE)
-    .round(2, 0)
-    .toString();
+  const mintableAmount = loggedInMember
+    ? getMemberMintableAmount(state, loggedInMember.uid)
+    : undefined;
+
+  // tslint:disable
+  console.log(memberBalance);
 
   return {
     loggedInMember,
@@ -266,6 +273,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
       profileMember
     },
     mintApiCallStatus,
+    memberBalance,
     mintableAmount
   };
 };
