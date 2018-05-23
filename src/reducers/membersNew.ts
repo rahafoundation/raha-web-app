@@ -87,7 +87,7 @@ export class Member {
    * ACCOUNT BALANCE METHODS
    * =======================
    */
-  public mint(amount: Big, mintDate: Date) {
+  public mintRaha(amount: Big, mintDate: Date) {
     return new Member(
       this.uid,
       this.username,
@@ -96,6 +96,36 @@ export class Member {
       this.invitedBy,
       this.balance.plus(amount),
       mintDate,
+      this.trustsSet,
+      this.trustedBySet,
+      this.invitedSet
+    );
+  }
+
+  public giveRaha(amount: Big) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.minus(amount),
+      this.lastMinted,
+      this.trustsSet,
+      this.trustedBySet,
+      this.invitedSet
+    );
+  }
+
+  public receiveRaha(amount: Big) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.plus(amount),
+      this.lastMinted,
       this.trustsSet,
       this.trustedBySet,
       this.invitedSet
@@ -203,6 +233,11 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
     // TODO
     return true;
   }
+
+  if (operation.op_code === OperationType.GIVE) {
+    // TODO
+    return true;
+  }
   return false;
 }
 
@@ -295,11 +330,32 @@ function applyOperation(
         const { amount } = operation.data;
 
         assertUidPresentInState(prevState, creator_uid, operation);
-        const minter = prevState.byUid[creator_uid].mint(
+        const minter = prevState.byUid[creator_uid].mintRaha(
           new Big(amount),
           new Date(operation.created_at)
         );
         return addMembersToState(prevState, [minter]);
+      }
+      case OperationType.GIVE: {
+        const { to_uid, amount, donation_to, donation_amount } = operation.data;
+
+        assertUidPresentInState(prevState, creator_uid, operation);
+        assertUidPresentInState(prevState, to_uid, operation);
+        assertUidPresentInState(prevState, donation_to, operation);
+
+        const giver = prevState.byUid[creator_uid].giveRaha(
+          new Big(amount).plus(donation_amount)
+        );
+        const receiver = prevState.byUid[to_uid].receiveRaha(new Big(amount));
+        const donationRecipient = prevState.byUid[donation_to].receiveRaha(
+          new Big(donation_amount)
+        );
+
+        return addMembersToState(prevState, [
+          giver,
+          receiver,
+          donationRecipient
+        ]);
       }
       default:
         return prevState;

@@ -28,7 +28,8 @@ export const enum ApiEndpoint {
   GET_OPERATIONS = "GET_OPERATIONS",
   REQUEST_INVITE = "REQUEST_INVITE",
   SEND_INVITE = "SEND_INVITE",
-  MINT = "MINT"
+  MINT = "MINT",
+  GIVE = "GIVE"
 }
 
 /**
@@ -64,6 +65,11 @@ type MintApiCall = ApiCallDefinition<
   void,
   { amount: string }
 >;
+type GiveApiCall = ApiCallDefinition<
+  ApiEndpoint.GIVE,
+  { uid: Uid },
+  { amount: string; memo: string }
+>;
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
@@ -72,7 +78,8 @@ export type ApiCall =
   | GetOperationsApiCall
   | RequestInviteApiCall
   | SendInviteApiCall
-  | MintApiCall;
+  | MintApiCall
+  | GiveApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -106,13 +113,18 @@ export type MintApiEndpoint = ApiEndpointDefinition<
   MintApiCall,
   OperationApiResponse
 >;
+export type GiveApiEndpoint = ApiEndpointDefinition<
+  GiveApiCall,
+  OperationApiResponse
+>;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
   | GetOperationsApiEndpoint
   | RequestInviteApiEndpoint
   | SendInviteApiEndpoint
-  | MintApiEndpoint;
+  | MintApiEndpoint
+  | GiveApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -157,6 +169,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.MINT]: {
     uri: "me/mint",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.GIVE]: {
+    uri: "members/:uid/give",
     method: HttpVerb.POST
   }
 };
