@@ -4,7 +4,7 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 import { green50, red400 } from "material-ui/styles/colors";
 
-import { trustMember, mint } from "../actions";
+import { mint } from "../actions/money";
 import { AppState } from "../store";
 import { Username } from "../identifiers";
 import { Member, GENESIS_MEMBER } from "../reducers/membersNew";

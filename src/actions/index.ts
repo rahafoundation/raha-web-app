@@ -22,7 +22,6 @@ import {
   GetOperationsApiEndpoint,
   RequestInviteApiEndpoint,
   SendInviteApiEndpoint,
-  MintApiEndpoint
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -327,35 +326,5 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
     },
     ApiEndpoint.SEND_INVITE,
     inviteEmail
-  );
-};
-
-export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-
-      const response = await callApi<MintApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.MINT,
-          params: undefined,
-          body: {
-            amount
-          }
-        },
-        authToken
-      );
-
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
-      };
-      dispatch(action);
-    },
-    ApiEndpoint.MINT,
-    uid
   );
 };
