@@ -1,3 +1,5 @@
+import * as firebase from "firebase";
+
 const NUMBER_SUFFIX_LENGTH = 4;
 
 export type MemberDoc = firebase.firestore.DocumentData;

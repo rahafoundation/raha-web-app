@@ -183,9 +183,9 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
             className="relationIcon"
             icon={MEMBER_LIST_ICONS[titleId]}
           />
-          <FormattedMessage id={titleId}>
-            {(text: string) => <span className="messageTitle">{text}</span>}
-          </FormattedMessage>&nbsp;
+          <span className="messageTitle">
+            <FormattedMessage id={titleId} />
+          </span>&nbsp;
         </header>
         <main>
           {memberThumbnails.length === 0 && <span>No other members yet</span>}

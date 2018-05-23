@@ -1,3 +1,4 @@
+import * as firebase from "firebase";
 import { Reducer } from "redux";
 
 import { SET_FIREBASE_USER, SetFirebaseUserAction } from "../actions";
