@@ -2,6 +2,7 @@ import Big from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
+import { green50, red400 } from "material-ui/styles/colors";
 
 import { trustMember, mint } from "../actions";
 import { AppState } from "../store";
@@ -19,6 +20,7 @@ import { getMembersByUid } from "../selectors/members";
 import { getLoggedInMember } from "../selectors/auth";
 
 import { green } from "../constants/palette";
+import { FormattedMessage } from "react-intl";
 
 /* ================
  * Component types
@@ -77,17 +79,34 @@ function isInviteConfirmed(profileMember: Member): boolean {
 
 const MoneyElem = styled.main`
   padding: 0 20px;
-  > header {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 
-    > .memberTitle {
-      display: flex;
-      align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-      > * {
-        margin-left: 20px;
-      }
+  > main {
+    max-width: 768px;
+
+      > section {
+        padding: 20px;
+        margin: 20px;
+        background-color: ${green50};
+        border-radius: 2px;
+        box-shadow:
+          0px 1px 5px 0px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 3px 1px -2px rgba(0, 0, 0, 0.12);
     }
+    }
+
+    .inviteNotConfirmed {
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 auto;
+    background-color: ${red400};
+    color: white;
+  }
   }
 `;
 
@@ -117,32 +136,85 @@ const ProfileView: React.StatelessComponent<Props> = props => {
 
   return (
     <MoneyElem>
-      <header>
-        {isOwnProfile(loggedInMember, profileMember) &&
+      <main>
+        <h1>
+          <IntlMessage id="money.title" />
+        </h1>
+        {isLoading && <Loading />}
+        {loggedInMember && (
+          <section>
+            <h2>
+              <IntlMessage
+                id="money.balance"
+                values={{ balance: loggedInMember.balance.toString() }}
+              />
+            </h2>
+          </section>
+        )}
+        {loggedInMember &&
+          isOwnProfile(loggedInMember, profileMember) &&
           props.mint && (
-            <div>
-              <span>Balance: {profileMember.balance.toString()}</span>
-              <br />
-              <span>mintableAmount: {mintableAmount}</span>
-              <br />
-              <Button
-                size={ButtonSize.LARGE}
-                type={ButtonType.PRIMARY}
-                onClick={props.mint}
-                disabled={
-                  mintApiCallStatus === ApiCallStatusType.STARTED ||
-                  mintableAmount === "0"
-                }
-              >
-                {mintApiCallStatus === ApiCallStatusType.STARTED ? (
-                  <Loading />
-                ) : (
-                  <IntlMessage onlyRenderText={true} id="profile.mintButton" />
-                )}
-              </Button>
-            </div>
+            <section>
+              <h2>
+                <IntlMessage id="money.basicIncomeTitle" />
+              </h2>
+              <p>
+                <IntlMessage id="money.basicIncomeDetail" />
+              </p>
+              <p>
+                <FormattedMessage
+                  id="money.basicIncomeLastMinted"
+                  values={{
+                    lastMintedDate: (
+                      <b>{loggedInMember.lastMinted.toDateString()}</b>
+                    ),
+                    lastMintedTime: (
+                      <b>{loggedInMember.lastMinted.toTimeString()}</b>
+                    )
+                  }}
+                />
+              </p>
+              <p>
+                <FormattedMessage
+                  id="money.basicIncomeClickPrompt"
+                  values={{
+                    mintableAmount: <b>{mintableAmount}</b>
+                  }}
+                />
+              </p>
+              {isInviteConfirmed ? (
+                <Button
+                  size={ButtonSize.LARGE}
+                  type={ButtonType.PRIMARY}
+                  onClick={props.mint}
+                  disabled={
+                    mintApiCallStatus === ApiCallStatusType.STARTED ||
+                    mintableAmount === "0"
+                  }
+                >
+                  {mintApiCallStatus === ApiCallStatusType.STARTED ? (
+                    <Loading />
+                  ) : (
+                    <IntlMessage
+                      onlyRenderText={true}
+                      id="money.mintButton"
+                      values={{
+                        mintableAmount
+                      }}
+                    />
+                  )}
+                </Button>
+              ) : (
+                <p>
+                  <IntlMessage
+                    id="money.basicIncomeInviteConfirmationRequired"
+                    className="inviteNotConfirmed"
+                  />
+                </p>
+              )}
+            </section>
           )}
-      </header>
+      </main>
     </MoneyElem>
   );
 };
