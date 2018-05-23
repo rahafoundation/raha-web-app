@@ -338,7 +338,7 @@ export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
         throw new UnauthenticatedError();
       }
 
-      await callApi<MintApiEndpoint>(
+      const response = await callApi<MintApiEndpoint>(
         {
           endpoint: ApiEndpoint.MINT,
           params: undefined,
@@ -348,6 +348,12 @@ export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
         },
         authToken
       );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [response]
+      };
+      dispatch(action);
     },
     ApiEndpoint.MINT,
     uid
