@@ -1,5 +1,6 @@
 export default {
   "profile.trustButton": "Trust",
+  "profile.mintButton": "Mint",
   "profile.trustedMember": "Trusted",
   "profile.trustFailure": "Trusting failed, try again",
   "profile.memberNotFound": "Member with username {memberUsername} not found",
