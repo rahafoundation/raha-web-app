@@ -1,3 +1,5 @@
+import * as firebase from "firebase";
+
 export enum OpCode {
   ADMIN = "ADMIN",
   FLAG = "FLAG",

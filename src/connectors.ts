@@ -1,3 +1,5 @@
+import * as firebase from "firebase";
+
 import { MemberDoc } from "./members";
 import { AppState } from "./store";
 

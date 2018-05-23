@@ -1,3 +1,4 @@
+import * as firebase from "firebase";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
@@ -217,7 +218,11 @@ const mergeProps: MergeProps<
   const requestingFromUid = stateProps.requestingFromMember.uid;
   return {
     ...baseMergedProps,
-    requestInvite: (fullName: string, videoUrl: string, creatorUsername: string) => {
+    requestInvite: (
+      fullName: string,
+      videoUrl: string,
+      creatorUsername: string
+    ) => {
       dispatchProps.requestInviteFromMember(
         requestingFromUid,
         fullName,

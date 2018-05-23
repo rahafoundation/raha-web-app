@@ -1,3 +1,4 @@
+import * as firebase from "firebase";
 import { faUserPlus } from "@fortawesome/fontawesome-free-solid";
 import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {

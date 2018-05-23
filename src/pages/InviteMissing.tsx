@@ -5,6 +5,7 @@
  * how they can request and invite to become Raha members.
  */
 
+import * as firebase from "firebase";
 import * as React from "react";
 import { FormattedMessage as FM } from "react-intl";
 import { connect } from "react-redux";

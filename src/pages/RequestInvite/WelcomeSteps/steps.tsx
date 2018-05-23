@@ -1,3 +1,4 @@
+import * as firebase from "firebase";
 import * as React from "react";
 import styled from "styled-components";
 
