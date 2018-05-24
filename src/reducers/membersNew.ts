@@ -346,14 +346,14 @@ function applyOperation(
         const giver = prevState.byUid[creator_uid].giveRaha(
           new Big(amount).plus(donation_amount)
         );
-        const receiver = prevState.byUid[to_uid].receiveRaha(new Big(amount));
+        const recipient = prevState.byUid[to_uid].receiveRaha(new Big(amount));
         const donationRecipient = prevState.byUid[donation_to].receiveRaha(
           new Big(donation_amount)
         );
 
         return addMembersToState(prevState, [
           giver,
-          receiver,
+          recipient,
           donationRecipient
         ]);
       }
