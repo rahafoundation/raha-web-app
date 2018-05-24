@@ -2,7 +2,6 @@ import Big from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
-import IntlMessage from "../../components/IntlMessage";
 import { green50, red400 } from "material-ui/styles/colors";
 
 import { mint } from "../../actions/money";
@@ -11,11 +10,12 @@ import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
+import IntlMessage from "../../components/IntlMessage";
 import Loading from "../../components/Loading";
 import { ApiEndpoint } from "../../api";
 
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
-import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
+import { ApiCallStatus } from "../../reducers/apiCalls";
 import { getMembersByUid } from "../../selectors/members";
 import { getMemberMintableAmount } from "../../selectors/member";
 import { getLoggedInMember } from "../../selectors/auth";
