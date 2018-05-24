@@ -23,17 +23,17 @@ export default {
 
   "money.title": "Raha Money (Beta)",
   "money.balance.message": "Your balance: {balance} Raha",
-  "money.basicIncomeTitle": "Your basic income",
-  "money.basicIncomeDetail":
+  "money.basicIncome.title": "Your basic income",
+  "money.basicIncome.detail":
     'Every member of the Raha network gets to "mint" their own basic income. The amount of Raha you can mint accrues at a rate of 10 Raha per week.',
-  "money.basicIncomeLastMinted":
+  "money.basicIncome.lastMinted":
     "You last minted your Raha on {lastMintedDate} at {lastMintedTime}.",
-  "money.basicIncomeClickPrompt":
+  "money.basicIncome.clickPrompt":
     "Click the button below to mint {mintableAmount} Raha!",
-  "money.basicIncomeAlreadyClaimed":
+  "money.basicIncome.alreadyClaimed":
     "You've minted all of your basic income for now. Come back later to mint more!",
-  "money.mintButton": "Mint {mintableAmount} Raha",
-  "money.basicIncomeInviteConfirmationRequired":
+  "money.basicIncome.mintButton": "Mint {mintableAmount} Raha",
+  "money.basicIncome.inviteConfirmationRequired":
     "Your invite request must be confirmed before you can mint your basic income.",
 
   "app_layout.log_in": "Log In",

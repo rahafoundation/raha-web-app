@@ -1,10 +1,9 @@
 import Big from "big.js";
 import * as React from "react";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 import { green50, red400 } from "material-ui/styles/colors";
 
-import { mint } from "../../actions/money";
 import { AppState } from "../../store";
 import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
@@ -12,12 +11,8 @@ import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import IntlMessage from "../../components/IntlMessage";
 import Loading from "../../components/Loading";
-import { ApiEndpoint } from "../../api";
 
-import { getStatusOfApiCall } from "../../selectors/apiCalls";
-import { ApiCallStatus } from "../../reducers/apiCalls";
 import { getMembersByUid } from "../../selectors/members";
-import { getMemberMintableAmount } from "../../selectors/member";
 import { getLoggedInMember } from "../../selectors/auth";
 
 import { green } from "../../constants/palette";
@@ -40,18 +35,10 @@ interface StateProps {
   profileData?: {
     profileMember: Member;
   };
-  mintApiCallStatus?: ApiCallStatus;
   memberBalance?: string;
-  mintableAmount?: string;
 }
-interface DispatchProps {
-  mint: typeof mint;
-}
-type MergedProps = StateProps & {
-  mint?: () => void;
-};
 
-type Props = OwnProps & MergedProps;
+type Props = OwnProps & StateProps;
 
 /* =============
  * Data helpers
@@ -123,8 +110,7 @@ const MoneyView: React.StatelessComponent<Props> = props => {
     loggedInMember,
     memberUsername,
     isLoading,
-    memberBalance,
-    mintableAmount
+    memberBalance
   } = props;
   if (!profileData) {
     return isLoading ? (
@@ -135,9 +121,9 @@ const MoneyView: React.StatelessComponent<Props> = props => {
   }
   const { profileMember } = profileData;
   const inviteConfirmed = isInviteConfirmed(profileMember);
-  const mintApiCallStatus = props.mintApiCallStatus
-    ? props.mintApiCallStatus.status
-    : undefined;
+
+  //tslint:disable
+  console.log(loggedInMember);
 
   return (
     <MoneyElem>
@@ -148,15 +134,10 @@ const MoneyView: React.StatelessComponent<Props> = props => {
         {isLoading && <Loading />}
         {memberBalance && <Balance memberBalance={memberBalance} />}
         {loggedInMember &&
-          isOwnProfile(loggedInMember, profileMember) &&
-          props.mint &&
-          mintableAmount && (
+          isOwnProfile(loggedInMember, profileMember) && (
             <BasicIncome
               loggedInMember={loggedInMember}
-              mintableAmount={mintableAmount}
               inviteConfirmed={inviteConfirmed}
-              mintApiCallStatus={mintApiCallStatus}
-              mint={props.mint}
             />
           )}
       </main>
@@ -182,22 +163,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     return { isLoading, loggedInMember, memberUsername };
   }
 
-  const mintApiCallStatus = getStatusOfApiCall(
-    state,
-    ApiEndpoint.MINT,
-    profileMember.uid
-  );
-
   const memberBalance = loggedInMember
     ? loggedInMember.balance.toString()
     : undefined;
-
-  const mintableAmount = loggedInMember
-    ? getMemberMintableAmount(state, loggedInMember.uid)
-    : undefined;
-
-  // tslint:disable
-  console.log(memberBalance);
 
   return {
     loggedInMember,
@@ -206,29 +174,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
     profileData: {
       profileMember
     },
-    mintApiCallStatus,
-    memberBalance,
-    mintableAmount
+    memberBalance
   };
 };
 
-const mergeProps: MergeProps<
-  StateProps,
-  DispatchProps,
-  OwnProps,
-  MergedProps
-> = (stateProps, dispatchProps) => {
-  if (!stateProps.profileData) {
-    return stateProps;
-  }
-
-  const profileUid = stateProps.profileData.profileMember.uid;
-  return {
-    ...stateProps,
-    mint: () => {
-      dispatchProps.mint(profileUid, stateProps.mintableAmount);
-    }
-  };
-};
-
-export default connect(mapStateToProps, { mint }, mergeProps)(MoneyView);
+export default connect(mapStateToProps)(MoneyView);
