@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormattedMessage, injectIntl, InjectedIntl } from "react-intl";
+import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
@@ -114,7 +114,7 @@ class GiveView extends React.Component<Props, State> {
       <section>
         <h2>Give Raha</h2>
         <p>
-          <FormattedMessage
+          <IntlMessage
             id="money.give.detail"
             values={{
               fullName: <b>{profileMember.fullName}</b>,
