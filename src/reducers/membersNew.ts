@@ -230,13 +230,23 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   }
 
   if (operation.op_code === OperationType.MINT) {
-    // TODO
-    return true;
+    try {
+      const validBig = new Big(operation.data.amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   if (operation.op_code === OperationType.GIVE) {
-    // TODO
-    return true;
+    try {
+      const validBig =
+        new Big(operation.data.amount) &&
+        new Big(operation.data.donation_amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
   return false;
 }
@@ -341,21 +351,16 @@ function applyOperation(
 
         assertUidPresentInState(prevState, creator_uid, operation);
         assertUidPresentInState(prevState, to_uid, operation);
-        assertUidPresentInState(prevState, donation_to, operation);
+        // TODO: Update donationRecipient state.
+        // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
+        // Thus RAHA doesn't get added to the members state in the current paradigm.
 
         const giver = prevState.byUid[creator_uid].giveRaha(
           new Big(amount).plus(donation_amount)
         );
         const recipient = prevState.byUid[to_uid].receiveRaha(new Big(amount));
-        const donationRecipient = prevState.byUid[donation_to].receiveRaha(
-          new Big(donation_amount)
-        );
 
-        return addMembersToState(prevState, [
-          giver,
-          recipient,
-          donationRecipient
-        ]);
+        return addMembersToState(prevState, [giver, recipient]);
       }
       default:
         return prevState;

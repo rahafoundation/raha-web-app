@@ -35,6 +35,14 @@ export default {
   "money.basicIncome.mintButton": "Mint {mintableAmount} Raha",
   "money.basicIncome.inviteConfirmationRequired":
     "Your invite request must be confirmed before you can mint your basic income.",
+  "money.give.detail":
+    "{fullName} is currently donating {donationPercent} of all Raha they receive back to the Raha basic income pool. This donation will be used to fund future basic income distributions for everyone in the Raha network.",
+  "money.give.amountLabel": "Amount to give:",
+  "money.give.amountPlaceholder": "Amount to give",
+  "money.give.memoLabel": "Say why:",
+  "money.give.memoPlaceholder": "for being so amazing!",
+  "money.give.memoHelper": "{charactersRemaining} characters remaining",
+  "money.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
 
   "app_layout.log_in": "Log In",
   completely_free: "completely free",

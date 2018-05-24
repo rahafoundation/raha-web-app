@@ -40,7 +40,7 @@ export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
 export const give: AsyncActionCreator = (
   uid: Uid,
   amount: string,
-  memo: string
+  memo?: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {

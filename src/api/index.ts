@@ -68,7 +68,7 @@ type MintApiCall = ApiCallDefinition<
 type GiveApiCall = ApiCallDefinition<
   ApiEndpoint.GIVE,
   { uid: Uid },
-  { amount: string; memo: string }
+  { amount: string; memo?: string }
 >;
 /**
  * All API calls you can make, and the arguments you need to call them.

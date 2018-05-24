@@ -19,6 +19,7 @@ import { green } from "../../constants/palette";
 
 import Balance from "./Balance";
 import BasicIncome from "./BasicIncome";
+import Give from "./Give";
 
 /* ================
  * Component types
@@ -121,9 +122,7 @@ const MoneyView: React.StatelessComponent<Props> = props => {
   }
   const { profileMember } = profileData;
   const inviteConfirmed = isInviteConfirmed(profileMember);
-
-  //tslint:disable
-  console.log(loggedInMember);
+  const isLoggedInMembersProfile = isOwnProfile(loggedInMember, profileMember);
 
   return (
     <MoneyElem>
@@ -134,10 +133,17 @@ const MoneyView: React.StatelessComponent<Props> = props => {
         {isLoading && <Loading />}
         {memberBalance && <Balance memberBalance={memberBalance} />}
         {loggedInMember &&
-          isOwnProfile(loggedInMember, profileMember) && (
+          isLoggedInMembersProfile && (
             <BasicIncome
               loggedInMember={loggedInMember}
               inviteConfirmed={inviteConfirmed}
+            />
+          )}
+        {loggedInMember &&
+          !isLoggedInMembersProfile && (
+            <Give
+              loggedInMember={loggedInMember}
+              profileMember={profileMember}
             />
           )}
       </main>
