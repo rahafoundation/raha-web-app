@@ -20,6 +20,7 @@ interface Props {
 }
 
 const ProxyVotesElem = styled.main`
+  max-width: 90vw;
   display: flex;
   align-items: center;
   flex-direction: column;

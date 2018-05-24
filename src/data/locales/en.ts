@@ -81,5 +81,5 @@ export default {
   identity_suggestion_max: "You are max identity level.",
   identity_level: "Identity Level",
   "votes.votes": "Votes",
-  "votes.heading": "Number of proxy votes in Raha by request invite. This is the number of proxy votes currently controlled by the member assuming 0 vote changes by any descendants, currently has no effect. The goal of this experiment would be to create a system where everyone's vote has equal value, but early adopters and enthusiastic network supporters have an advantage in early stages."
+  "votes.heading": "Number of proxy votes in Raha by request invite. This is the number of proxy votes currently controlled by the member assuming 0 vote changes by any descendants, currently has no effect. The goal of this experiment would be to create a system where everyone's vote has equal value, but early adopters and enthusiastic network supporters have an advantage in early stages. Long-term, proxy voting could encourage people to give their vote to friends or thought-leaders with similar values who are carefully researching the issues instead of listening to headlines and advertisements."
 };
