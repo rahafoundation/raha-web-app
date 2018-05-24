@@ -230,13 +230,23 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   }
 
   if (operation.op_code === OperationType.MINT) {
-    // TODO
-    return true;
+    try {
+      const validBig = new Big(operation.data.amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   if (operation.op_code === OperationType.GIVE) {
-    // TODO
-    return true;
+    try {
+      const validBig =
+        new Big(operation.data.amount) &&
+        new Big(operation.data.donation_amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
   return false;
 }
