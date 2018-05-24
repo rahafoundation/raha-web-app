@@ -79,5 +79,7 @@ export default {
   identity_suggestion_recieve_trust:
     "Increase your trust by receiving trust from {accounts} level {accountlevel}+ accounts.",
   identity_suggestion_max: "You are max identity level.",
-  identity_level: "Identity Level"
+  identity_level: "Identity Level",
+  "votes.votes": "Votes",
+  "votes.heading": "Number of proxy votes in Raha by request invite. This is the number of proxy votes currently controlled by the member assuming 0 vote changes by any descendants, currently has no effect. The goal of this experiment would be to create a system where everyone's vote has equal value, but early adopters and enthusiastic network supporters have an advantage in early stages."
 };

@@ -21,10 +21,8 @@ const LeaderboardElem = styled.main`
 const Leaderboard: React.StatelessComponent<Props> = ({ members }) => {
   members
     .sort(
-      (a, b) =>
-        Object.values(a.invitedSet).length - Object.values(b.invitedSet).length
+      (a, b) => Object.values(b.invitedSet).length - Object.values(a.invitedSet).length
     )
-    .reverse();
   return (
     <LeaderboardElem>
       <section>

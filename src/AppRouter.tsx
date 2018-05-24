@@ -14,6 +14,7 @@ import LogOut from "./pages/LogOut";
 import Operations from "./pages/Operations";
 import PageNotFound from "./pages/PageNotFound";
 import Profile from "./pages/Profile";
+import ProxyVotes from "./pages/ProxyVotes";
 import RequestInvite from "./pages/RequestInvite";
 import Splash from "./pages/Splash";
 import TermsOfService from "./pages/TermsOfService";
@@ -57,6 +58,7 @@ function AppRouter() {
         <DefaultLayout path="/ops" component={Operations} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
         <DefaultLayout path="/leaderboard" component={Leaderboard} />
+        <DefaultLayout path="/votes" component={ProxyVotes} />
         <DefaultLayout path="/network" component={Network} />
         <DefaultLayout component={PageNotFound} />
       </Switch>
