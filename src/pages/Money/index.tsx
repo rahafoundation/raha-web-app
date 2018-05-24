@@ -2,26 +2,28 @@ import Big from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
+import IntlMessage from "../../components/IntlMessage";
 import { green50, red400 } from "material-ui/styles/colors";
 
-import { mint } from "../actions/money";
-import { AppState } from "../store";
-import { Username } from "../identifiers";
-import { Member, GENESIS_MEMBER } from "../reducers/membersNew";
+import { mint } from "../../actions/money";
+import { AppState } from "../../store";
+import { Username } from "../../identifiers";
+import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
-import Button, { ButtonType, ButtonSize } from "../components/Button";
-import Loading from "../components/Loading";
-import IntlMessage from "../components/IntlMessage";
-import { ApiEndpoint } from "../api";
+import Button, { ButtonType, ButtonSize } from "../../components/Button";
+import Loading from "../../components/Loading";
+import { ApiEndpoint } from "../../api";
 
-import { getStatusOfApiCall } from "../selectors/apiCalls";
-import { ApiCallStatusType, ApiCallStatus } from "../reducers/apiCalls";
-import { getMembersByUid } from "../selectors/members";
-import { getMemberMintableAmount } from "../selectors/member";
-import { getLoggedInMember } from "../selectors/auth";
+import { getStatusOfApiCall } from "../../selectors/apiCalls";
+import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
+import { getMembersByUid } from "../../selectors/members";
+import { getMemberMintableAmount } from "../../selectors/member";
+import { getLoggedInMember } from "../../selectors/auth";
 
-import { green } from "../constants/palette";
-import { FormattedMessage } from "react-intl";
+import { green } from "../../constants/palette";
+
+import Balance from "./Balance";
+import BasicIncome from "./BasicIncome";
 
 /* ================
  * Component types
@@ -90,32 +92,32 @@ const MoneyElem = styled.main`
   > main {
     max-width: 768px;
 
-      > section {
-        padding: 20px;
-        margin: 20px;
-        background-color: ${green50};
-        border-radius: 2px;
-        box-shadow:
-          0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-          0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+    > section {
+      padding: 20px;
+      margin: 20px;
+      background-color: ${green50};
+      border-radius: 2px;
+      box-shadow:
+        0px 1px 5px 0px rgba(0, 0, 0, 0.2),
+        0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+        0px 3px 1px -2px rgba(0, 0, 0, 0.12);
     }
-    }
+  }
 
-    .inviteNotConfirmed {
+  .inviteNotConfirmed {
     text-align: center;
     padding: 10px 20px;
     margin: 0 auto;
     background-color: ${red400};
     color: white;
   }
-  }
+}
 `;
 
 /**
  * Presentational component for displaying profile money interface.
  */
-const ProfileView: React.StatelessComponent<Props> = props => {
+const MoneyView: React.StatelessComponent<Props> = props => {
   const {
     profileData,
     loggedInMember,
@@ -144,86 +146,18 @@ const ProfileView: React.StatelessComponent<Props> = props => {
           <IntlMessage id="money.title" />
         </h1>
         {isLoading && <Loading />}
-        {loggedInMember && (
-          <section>
-            <h2>
-              <IntlMessage
-                id="money.balance"
-                values={{ balance: memberBalance }}
-              />
-            </h2>
-          </section>
-        )}
+        {memberBalance && <Balance memberBalance={memberBalance} />}
         {loggedInMember &&
           isOwnProfile(loggedInMember, profileMember) &&
-          props.mint && (
-            <section>
-              <h2>
-                <IntlMessage id="money.basicIncomeTitle" />
-              </h2>
-              <p>
-                <IntlMessage id="money.basicIncomeDetail" />
-              </p>
-              <p>
-                <FormattedMessage
-                  id="money.basicIncomeLastMinted"
-                  values={{
-                    lastMintedDate: (
-                      <b>{loggedInMember.lastMinted.toDateString()}</b>
-                    ),
-                    lastMintedTime: (
-                      <b>{loggedInMember.lastMinted.toTimeString()}</b>
-                    )
-                  }}
-                />
-              </p>
-              {mintableAmount !== "0" ? (
-                <>
-                  <p>
-                    <FormattedMessage
-                      id="money.basicIncomeClickPrompt"
-                      values={{
-                        mintableAmount: <b>{mintableAmount}</b>
-                      }}
-                    />
-                  </p>
-                  {isInviteConfirmed ? (
-                    <Button
-                      size={ButtonSize.LARGE}
-                      type={ButtonType.PRIMARY}
-                      onClick={props.mint}
-                      disabled={
-                        mintApiCallStatus === ApiCallStatusType.STARTED ||
-                        mintableAmount === "0"
-                      }
-                    >
-                      {mintApiCallStatus === ApiCallStatusType.STARTED ? (
-                        <Loading />
-                      ) : (
-                        <IntlMessage
-                          onlyRenderText={true}
-                          id="money.mintButton"
-                          values={{
-                            mintableAmount
-                          }}
-                        />
-                      )}
-                    </Button>
-                  ) : (
-                    <p>
-                      <IntlMessage
-                        id="money.basicIncomeInviteConfirmationRequired"
-                        className="inviteNotConfirmed"
-                      />
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p>
-                  <FormattedMessage id="money.basicIncomeAlreadyClaimed" />
-                </p>
-              )}
-            </section>
+          props.mint &&
+          mintableAmount && (
+            <BasicIncome
+              loggedInMember={loggedInMember}
+              mintableAmount={mintableAmount}
+              inviteConfirmed={inviteConfirmed}
+              mintApiCallStatus={mintApiCallStatus}
+              mint={props.mint}
+            />
           )}
       </main>
     </MoneyElem>
@@ -297,4 +231,4 @@ const mergeProps: MergeProps<
   };
 };
 
-export default connect(mapStateToProps, { mint }, mergeProps)(ProfileView);
+export default connect(mapStateToProps, { mint }, mergeProps)(MoneyView);

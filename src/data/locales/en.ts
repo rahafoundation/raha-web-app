@@ -22,14 +22,14 @@ export default {
   "request_invite.agreements.age": "I am at least 13 years old.",
 
   "money.title": "Raha Money (Beta)",
-  "money.balance": "Your balance: {balance} Raha",
+  "money.balance.message": "Your balance: {balance} Raha",
   "money.basicIncomeTitle": "Your basic income",
   "money.basicIncomeDetail":
     'Every member of the Raha network gets to "mint" their own basic income. The amount of Raha you can mint accrues at a rate of 10 Raha per week.',
   "money.basicIncomeLastMinted":
     "You last minted your Raha on {lastMintedDate} at {lastMintedTime}.",
   "money.basicIncomeClickPrompt":
-    'Click the "Mint" button now to get {mintableAmount} Raha!',
+    "Click the button below to mint {mintableAmount} Raha!",
   "money.basicIncomeAlreadyClaimed":
     "You've minted all of your basic income for now. Come back later to mint more!",
   "money.mintButton": "Mint {mintableAmount} Raha",
