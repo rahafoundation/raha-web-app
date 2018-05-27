@@ -2,7 +2,7 @@ import Big from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
-import { green50, red400 } from "material-ui/styles/colors";
+import { green100, red400 } from "material-ui/styles/colors";
 
 import { AppState } from "../../store";
 import { Username } from "../../identifiers";
@@ -20,6 +20,7 @@ import { green } from "../../constants/palette";
 import Balance from "./Balance";
 import BasicIncome from "./BasicIncome";
 import Give from "./Give";
+import Feed from "./Feed";
 
 /* ================
  * Component types
@@ -83,7 +84,7 @@ const MoneyElem = styled.main`
     > section {
       padding: 20px;
       margin: 20px;
-      background-color: ${green50};
+      background-color: ${green100};
       border-radius: 2px;
       box-shadow:
         0px 1px 5px 0px rgba(0, 0, 0, 0.2),
@@ -146,6 +147,7 @@ const MoneyView: React.StatelessComponent<Props> = props => {
               profileMember={profileMember}
             />
           )}
+        {loggedInMember && <Feed loggedInMember={loggedInMember} />}
       </main>
     </MoneyElem>
   );
