@@ -11,7 +11,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import InviteMissing from "./pages/InviteMissing";
 import LogIn from "./components/LogIn";
 import LogOut from "./pages/LogOut";
-import Operations from "./pages/Operations";
+import GlobalFeed from "./pages/GlobalFeed";
 import PageNotFound from "./pages/PageNotFound";
 import Profile from "./pages/Profile";
 import ProxyVotes from "./pages/ProxyVotes";
@@ -55,7 +55,7 @@ function AppRouter() {
         />
         <DefaultLayout path="/m/:memberUsername/moneybeta" component={Money} />
         <DefaultLayout path="/m/:memberUsername" component={Profile} />
-        <DefaultLayout path="/ops" component={Operations} />
+        <DefaultLayout path="/feed" component={GlobalFeed} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
         <DefaultLayout path="/leaderboard" component={Leaderboard} />
         <DefaultLayout path="/votes" component={ProxyVotes} />
