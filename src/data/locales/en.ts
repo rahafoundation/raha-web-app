@@ -49,6 +49,8 @@ export default {
   "operationList.mint": "{fromName} minted{amount} Raha",
   "operationList.give": "{toName} received{amount} Raha from {fromName}",
 
+  "globalFeed.header": "Raha Network Activity Feed",
+
   "app_layout.log_in": "Log In",
   completely_free: "completely free",
   invite_instructions_header: "Invite your friends to join Raha!",
