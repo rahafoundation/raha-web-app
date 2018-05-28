@@ -44,10 +44,10 @@ export default {
   "money.give.memoHelper": "{charactersRemaining} characters remaining",
   "money.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
 
-  "operationList.requestInvite": "{fullName} requested an invite from you",
-  "operationList.trust": "You trusted {fullName}",
-  "operationList.mint": "You minted {amount} Raha",
-  "operationList.give": "{fullName} received {amount} Raha from you",
+  "operationList.requestInvite": "{fromName} requested an invite from {toName}",
+  "operationList.trust": "{fromName} trusted {toName}",
+  "operationList.mint": "{fromName} minted{amount} Raha",
+  "operationList.give": "{toName} received{amount} Raha from {fromName}",
 
   "app_layout.log_in": "Log In",
   completely_free: "completely free",
