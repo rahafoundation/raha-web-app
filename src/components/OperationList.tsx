@@ -25,19 +25,14 @@ const OperationList = styled.ul`
     height: 48px;
     padding: 0px 16px;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    line-height: 1.48rem;
 
-    .operationText {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.48rem;
-      justify-content: center;
-
-      .secondaryText {
-        margin-left: 16px;
-        color: #888;
-      }
+    .secondaryText {
+      margin-left: 16px;
+      color: #888;
     }
   }
 `;
@@ -68,22 +63,27 @@ function getDisplayAmount(
   return "";
 }
 
+/**
+ * Eventually put operation list element template stuff here.
+ */
+const OperationListElement: React.StatelessComponent<any> = props => (
+  <li>{props.children}</li>
+);
+
 interface RequestInviteProps {
   fromName: string;
   toName: string;
 }
 const RequestInvite: React.StatelessComponent<RequestInviteProps> = props => (
-  <li>
-    <span className="operationText">
-      <IntlMessage
-        id="operationList.requestInvite"
-        values={{
-          fromName: <b>{props.fromName}</b>,
-          toName: <b>{props.toName}</b>
-        }}
-      />
-    </span>
-  </li>
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.requestInvite"
+      values={{
+        fromName: <b>{props.fromName}</b>,
+        toName: <b>{props.toName}</b>
+      }}
+    />
+  </OperationListElement>
 );
 
 interface TrustProps {
@@ -91,17 +91,15 @@ interface TrustProps {
   toName: string;
 }
 const Trust: React.StatelessComponent<TrustProps> = props => (
-  <li>
-    <span className="operationText">
-      <IntlMessage
-        id="operationList.trust"
-        values={{
-          fromName: <b>{props.fromName}</b>,
-          toName: <b>{props.toName}</b>
-        }}
-      />
-    </span>
-  </li>
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.trust"
+      values={{
+        fromName: <b>{props.fromName}</b>,
+        toName: <b>{props.toName}</b>
+      }}
+    />
+  </OperationListElement>
 );
 
 interface MintProps {
@@ -109,17 +107,15 @@ interface MintProps {
   amount: string;
 }
 const Mint: React.StatelessComponent<MintProps> = props => (
-  <li>
-    <span className="operationText">
-      <IntlMessage
-        id="operationList.mint"
-        values={{
-          fromName: <b>{props.fromName}</b>,
-          amount: <b>{props.amount}</b>
-        }}
-      />
-    </span>
-  </li>
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.mint"
+      values={{
+        fromName: <b>{props.fromName}</b>,
+        amount: <b>{props.amount}</b>
+      }}
+    />
+  </OperationListElement>
 );
 
 interface GiveProps {
@@ -129,19 +125,17 @@ interface GiveProps {
   memo?: string;
 }
 const Give: React.StatelessComponent<GiveProps> = props => (
-  <li>
-    <span className="operationText">
-      <IntlMessage
-        id="operationList.give"
-        values={{
-          amount: <b>{props.amount}</b>,
-          fromName: <b>{props.fromName}</b>,
-          toName: <b>{props.toName}</b>
-        }}
-      />
-      {props.memo ? <span className="secondaryText">{props.memo}</span> : null}
-    </span>
-  </li>
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.give"
+      values={{
+        amount: <b>{props.amount}</b>,
+        fromName: <b>{props.fromName}</b>,
+        toName: <b>{props.toName}</b>
+      }}
+    />
+    {props.memo ? <span className="secondaryText">{props.memo}</span> : null}
+  </OperationListElement>
 );
 
 interface OwnProps {
