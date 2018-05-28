@@ -43,6 +43,7 @@ export default {
   "money.give.memoPlaceholder": "for being so amazing!",
   "money.give.memoHelper": "{charactersRemaining} characters remaining",
   "money.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
+  "money.feed.header": "Activity Feed",
 
   "operationList.requestInvite": "{fromName} requested an invite from {toName}",
   "operationList.trust": "{fromName} trusted {toName}",

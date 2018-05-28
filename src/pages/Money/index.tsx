@@ -147,7 +147,7 @@ const MoneyView: React.StatelessComponent<Props> = props => {
               profileMember={profileMember}
             />
           )}
-        {loggedInMember && <Feed loggedInMember={loggedInMember} />}
+        {<Feed profileMember={profileMember} loggedInMember={loggedInMember} />}
       </main>
     </MoneyElem>
   );

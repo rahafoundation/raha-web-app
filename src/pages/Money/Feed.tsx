@@ -7,9 +7,11 @@ import { Operation, OperationType } from "../../reducers/operations";
 import { getMemberOperations } from "../../selectors/operations";
 
 import OperationList from "../../components/OperationList";
+import IntlMessage from "../../components/IntlMessage";
 
 interface OwnProps {
-  loggedInMember: Member;
+  profileMember: Member;
+  loggedInMember: Member | undefined;
 }
 
 interface StateProps {
@@ -22,7 +24,9 @@ const FeedView: React.StatelessComponent<Props> = props => {
   const { operations } = props;
   return (
     <section>
-      <h1>Your activity</h1>
+      <h1>
+        <IntlMessage id="money.feed.header" />
+      </h1>
       <OperationList operations={operations.reverse()} />
     </section>
   );
@@ -37,7 +41,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps
 ) => {
   return {
-    operations: getMemberOperations(state, ownProps.loggedInMember.uid).filter(
+    operations: getMemberOperations(state, ownProps.profileMember.uid).filter(
       op =>
         op.op_code === OperationType.MINT || op.op_code === OperationType.GIVE
     )
