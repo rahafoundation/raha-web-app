@@ -70,7 +70,7 @@ function isInviteConfirmed(profileMember: Member): boolean {
  * ==================
  */
 
-const MoneyElem = styled.main`
+const WalletElem = styled.main`
   padding: 0 20px;
   margin-bottom: 20px;
 
@@ -104,9 +104,9 @@ const MoneyElem = styled.main`
 `;
 
 /**
- * Presentational component for displaying profile money interface.
+ * Presentational component for displaying profile wallet interface.
  */
-const MoneyView: React.StatelessComponent<Props> = props => {
+const WalletView: React.StatelessComponent<Props> = props => {
   const {
     profileData,
     loggedInMember,
@@ -126,10 +126,10 @@ const MoneyView: React.StatelessComponent<Props> = props => {
   const isLoggedInMembersProfile = isOwnProfile(loggedInMember, profileMember);
 
   return (
-    <MoneyElem>
+    <WalletElem>
       <main>
         <h1>
-          <IntlMessage id="money.title" />
+          <IntlMessage id="wallet.title" />
         </h1>
         {isLoading && <Loading />}
         {memberBalance && <Balance memberBalance={memberBalance} />}
@@ -149,7 +149,7 @@ const MoneyView: React.StatelessComponent<Props> = props => {
           )}
         {<Feed profileMember={profileMember} loggedInMember={loggedInMember} />}
       </main>
-    </MoneyElem>
+    </WalletElem>
   );
 };
 
@@ -186,4 +186,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps)(MoneyView);
+export default connect(mapStateToProps)(WalletView);

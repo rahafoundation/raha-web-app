@@ -9,7 +9,7 @@ import NumberInput from "../../components/NumberInput";
 import TextInput from "../../components/TextInput";
 
 import { AppState } from "../../store";
-import { give } from "../../actions/money";
+import { give } from "../../actions/wallet";
 import { Member } from "../../reducers/membersNew";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
@@ -115,7 +115,7 @@ class GiveView extends React.Component<Props, State> {
         <h2>Give Raha</h2>
         <p>
           <IntlMessage
-            id="money.give.detail"
+            id="wallet.give.detail"
             values={{
               fullName: <b>{profileMember.fullName}</b>,
               donationPercent: <b>3%</b>
@@ -124,10 +124,10 @@ class GiveView extends React.Component<Props, State> {
         </p>
         <GiveForm onSubmit={this.handleSubmit}>
           <label className="input">
-            <IntlMessage id="money.give.amountLabel" />
+            <IntlMessage id="wallet.give.amountLabel" />
             <NumberInput
               placeholder={intl.formatMessage({
-                id: "money.give.amountPlaceholder"
+                id: "wallet.give.amountPlaceholder"
               })}
               className="inputBox"
               onTextChange={this.handleChange("amount")}
@@ -137,17 +137,17 @@ class GiveView extends React.Component<Props, State> {
             />
           </label>
           <label className="input">
-            <IntlMessage id="money.give.memoLabel" />
+            <IntlMessage id="wallet.give.memoLabel" />
             <TextInput
               placeholder={intl.formatMessage({
-                id: "money.give.memoPlaceholder"
+                id: "wallet.give.memoPlaceholder"
               })}
               className="inputBox"
               onTextChange={this.handleChange("memo")}
             />
             <span className="inputHelper">
               <IntlMessage
-                id="money.give.memoHelper"
+                id="wallet.give.memoHelper"
                 values={{
                   charactersRemaining:
                     MAX_MEMO_LENGTH - (memo ? memo.length : 0)
@@ -167,7 +167,7 @@ class GiveView extends React.Component<Props, State> {
             >
               <IntlMessage
                 onlyRenderText={true}
-                id="money.give.giveButton"
+                id="wallet.give.giveButton"
                 values={{
                   amount,
                   fullName: profileMember.fullName,

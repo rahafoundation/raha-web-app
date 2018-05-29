@@ -8,7 +8,7 @@ import Loading from "../../components/Loading";
 import { ApiEndpoint } from "../../api";
 
 import { AppState } from "../../store";
-import { mint } from "../../actions/money";
+import { mint } from "../../actions/wallet";
 import { Member } from "../../reducers/membersNew";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
@@ -42,14 +42,14 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
   return (
     <section>
       <h2>
-        <IntlMessage id="money.basicIncome.title" />
+        <IntlMessage id="wallet.basicIncome.title" />
       </h2>
       <p>
-        <IntlMessage id="money.basicIncome.detail" />
+        <IntlMessage id="wallet.basicIncome.detail" />
       </p>
       <p>
         <FormattedMessage
-          id="money.basicIncome.lastMinted"
+          id="wallet.basicIncome.lastMinted"
           values={{
             lastMintedDate: <b>{loggedInMember.lastMinted.toDateString()}</b>,
             lastMintedTime: <b>{loggedInMember.lastMinted.toTimeString()}</b>
@@ -60,7 +60,7 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
         <>
           <p>
             <FormattedMessage
-              id="money.basicIncome.clickPrompt"
+              id="wallet.basicIncome.clickPrompt"
               values={{
                 mintableAmount: <b>{mintableAmount}</b>
               }}
@@ -81,7 +81,7 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
               ) : (
                 <IntlMessage
                   onlyRenderText={true}
-                  id="money.basicIncome.mintButton"
+                  id="wallet.basicIncome.mintButton"
                   values={{
                     mintableAmount
                   }}
@@ -91,7 +91,7 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
           ) : (
             <p>
               <IntlMessage
-                id="money.basicIncome.inviteConfirmationRequired"
+                id="wallet.basicIncome.inviteConfirmationRequired"
                 className="inviteNotConfirmed"
               />
             </p>
@@ -99,7 +99,7 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
         </>
       ) : (
         <p>
-          <FormattedMessage id="money.basicIncome.alreadyClaimed" />
+          <FormattedMessage id="wallet.basicIncome.alreadyClaimed" />
         </p>
       )}
     </section>

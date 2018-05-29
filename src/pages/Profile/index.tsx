@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import styled from "styled-components";
 
 import { trustMember } from "../../actions";
@@ -123,8 +124,32 @@ const ProfileElem = styled.main`
         color: red;
       }
     }
+
+    > .memberSubtitle {
+      display: flex;
+      align-items: center;
+
+      > * {
+        margin-left: 20px;
+      }
+    }
   }
 `;
+
+type WalletButtonProps = RouteComponentProps<any> & {
+  walletLink: string;
+};
+const WalletButton: React.StatelessComponent<WalletButtonProps> = props => (
+  <Button
+    type={ButtonType.PRIMARY}
+    onClick={() => {
+      props.history.push(props.walletLink);
+    }}
+  >
+    <IntlMessage id="profile.viewWallet" />
+  </Button>
+);
+const WalletButtonLink = withRouter(WalletButton);
 
 /**
  * Presentational component for displaying a profile.
@@ -185,14 +210,19 @@ const ProfileView: React.StatelessComponent<Props> = props => {
             />
           )}
         </h1>
-        {/* TODO: This component looks like it has extraneous deps */}
-        <IdentityLevel
-          ownProfile={isOwnProfile(loggedInMember, profileMember)}
-          identityLevel={inviteConfirmed ? 3 : 0}
-          networkJoinDate={0}
-          trustedByLevel2={0}
-          trustedByLevel3={0}
-        />
+        <div className="memberSubtitle">
+          {/* TODO: This component looks like it has extraneous deps */}
+          <IdentityLevel
+            ownProfile={isOwnProfile(loggedInMember, profileMember)}
+            identityLevel={inviteConfirmed ? 3 : 0}
+            networkJoinDate={0}
+            trustedByLevel2={0}
+            trustedByLevel3={0}
+          />
+          <WalletButtonLink
+            walletLink={`/m/${profileMember.username}/wallet`}
+          />
+        </div>
       </header>
 
       <main>

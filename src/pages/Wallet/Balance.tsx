@@ -12,7 +12,7 @@ const BalanceView: React.StatelessComponent<Props> = props => {
     <section>
       <h2>
         <IntlMessage
-          id="money.balance.message"
+          id="wallet.balance.message"
           values={{ balance: props.memberBalance }}
         />
       </h2>
