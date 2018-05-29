@@ -25,7 +25,7 @@ const FeedView: React.StatelessComponent<Props> = props => {
   return (
     <section>
       <h1>
-        <IntlMessage id="money.feed.header" />
+        <IntlMessage id="wallet.feed.header" />
       </h1>
       <OperationList operations={operations.reverse()} />
     </section>
