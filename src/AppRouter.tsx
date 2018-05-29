@@ -20,7 +20,7 @@ import Splash from "./pages/Splash";
 import TermsOfService from "./pages/TermsOfService";
 import Leaderboard from "./pages/Leaderboard";
 import Network from "./pages/Network";
-import Money from "./pages/Money";
+import Wallet from "./pages/Wallet";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {
@@ -53,7 +53,7 @@ function AppRouter() {
           path="/m/:memberUsername/invite"
           component={RequestInvite}
         />
-        <DefaultLayout path="/m/:memberUsername/moneybeta" component={Money} />
+        <DefaultLayout path="/m/:memberUsername/wallet" component={Wallet} />
         <DefaultLayout path="/m/:memberUsername" component={Profile} />
         <DefaultLayout path="/feed" component={GlobalFeed} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />

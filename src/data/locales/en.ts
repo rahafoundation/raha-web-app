@@ -3,6 +3,7 @@ export default {
   "profile.trustedMember": "Trusted",
   "profile.trustFailure": "Trusting failed, try again",
   "profile.memberNotFound": "Member with username {memberUsername} not found",
+  "profile.viewWallet": "View wallet (beta)",
 
   "request_invite.failed": "Requesting invite failed; please try again.",
   "request_invite.step0":
@@ -21,29 +22,29 @@ export default {
     "This is my real identity, my full name, and the only time I have joined Raha. I understand that creating duplicate or fake accounts may result in me and people I have invited losing access to our accounts.",
   "request_invite.agreements.age": "I am at least 13 years old.",
 
-  "money.title": "Raha Money (Beta)",
-  "money.balance.message": "Your balance: {balance} Raha",
-  "money.basicIncome.title": "Your basic income",
-  "money.basicIncome.detail":
+  "wallet.title": "Raha Wallet (Beta)",
+  "wallet.balance.message": "Your balance: {balance} Raha",
+  "wallet.basicIncome.title": "Your basic income",
+  "wallet.basicIncome.detail":
     'Every member of the Raha network gets to "mint" their own basic income. The amount of Raha you can mint accrues at a rate of 10 Raha per week.',
-  "money.basicIncome.lastMinted":
+  "wallet.basicIncome.lastMinted":
     "You last minted your Raha on {lastMintedDate} at {lastMintedTime}.",
-  "money.basicIncome.clickPrompt":
+  "wallet.basicIncome.clickPrompt":
     "Click the button below to mint {mintableAmount} Raha!",
-  "money.basicIncome.alreadyClaimed":
+  "wallet.basicIncome.alreadyClaimed":
     "You've minted all of your basic income for now. Come back later to mint more!",
-  "money.basicIncome.mintButton": "Mint {mintableAmount} Raha",
-  "money.basicIncome.inviteConfirmationRequired":
+  "wallet.basicIncome.mintButton": "Mint {mintableAmount} Raha",
+  "wallet.basicIncome.inviteConfirmationRequired":
     "Your invite request must be confirmed before you can mint your basic income.",
-  "money.give.detail":
+  "wallet.give.detail":
     "{fullName} is currently donating {donationPercent} of all Raha they receive back to the Raha basic income pool. This donation will be used to fund future basic income distributions for everyone in the Raha network.",
-  "money.give.amountLabel": "Amount to give:",
-  "money.give.amountPlaceholder": "Amount to give",
-  "money.give.memoLabel": "Say why:",
-  "money.give.memoPlaceholder": "for being so amazing!",
-  "money.give.memoHelper": "{charactersRemaining} characters remaining",
-  "money.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
-  "money.feed.header": "Activity Feed",
+  "wallet.give.amountLabel": "Amount to give:",
+  "wallet.give.amountPlaceholder": "Amount to give",
+  "wallet.give.memoLabel": "Say why:",
+  "wallet.give.memoPlaceholder": "for being so amazing!",
+  "wallet.give.memoHelper": "{charactersRemaining} characters remaining",
+  "wallet.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
+  "wallet.feed.header": "Activity Feed",
 
   "operationList.requestInvite": "{fromName} requested an invite from {toName}",
   "operationList.trust": "{fromName} trusted {toName}",
