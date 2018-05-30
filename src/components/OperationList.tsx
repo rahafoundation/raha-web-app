@@ -22,7 +22,7 @@ const OperationList = styled.ul`
 
   > li {
     list-style-type: none;
-    height: 48px;
+    min-height: 48px;
     padding: 0px 16px;
     display: flex;
     flex-direction: column;
