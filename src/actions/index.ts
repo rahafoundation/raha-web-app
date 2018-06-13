@@ -4,7 +4,7 @@
 // TODO: consider splitting this into many pieces
 
 import * as firebase from "firebase";
-import { Action, ActionCreator, Dispatch } from "redux";
+import { Action, ActionCreator, Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
 import { db } from "../firebaseInit";
@@ -34,7 +34,12 @@ export const REQUEST_MEMBER_BY_UID = "REQUEST_MEMBER_BY_UID";
 export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_MODAL = "HIDE_MODAL";
 
-export type AsyncAction = ThunkAction<void, AppState, void>;
+export type AsyncAction<A extends AnyAction = AnyAction> = ThunkAction<
+  void,
+  AppState,
+  void,
+  A
+>;
 export type AsyncActionCreator = ActionCreator<AsyncAction>;
 
 // TODO: is there anything more specific than this?
