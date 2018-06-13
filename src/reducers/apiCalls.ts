@@ -1,6 +1,6 @@
 import { Reducer } from "redux";
 
-import { ApiEndpointName } from "@raha/api-client";
+import { ApiEndpointName } from "@raha.app/api";
 
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
 

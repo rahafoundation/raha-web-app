@@ -7,12 +7,12 @@ import * as firebase from "firebase";
 import { Action, ActionCreator, Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { ApiEndpointName } from "@raha/api-client";
-import listOperationsCall from "@raha/api-client/dist/operations/list";
-import trustMemberCall from "@raha/api-client/dist/members/trust";
-import requestInviteCall from "@raha/api-client/dist/members/requestInvite";
-import sendInviteCall from "@raha/api-client/dist/me/sendInvite";
-import UnauthenticatedError from "@raha/api-client/dist/errors/UnauthenticatedError";
+import { ApiEndpointName } from "@raha.app/api";
+import listOperationsCall from "@raha.app/api/dist/operations/list";
+import trustMemberCall from "@raha.app/api/dist/members/trust";
+import requestInviteCall from "@raha.app/api/dist/members/requestInvite";
+import sendInviteCall from "@raha.app/api/dist/me/sendInvite";
+import UnauthenticatedError from "@raha.app/api/dist/errors/UnauthenticatedError";
 
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";

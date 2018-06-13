@@ -1,4 +1,4 @@
-import { ApiEndpointName } from "@raha/api-client";
+import { ApiEndpointName } from "@raha.app/api";
 
 import { ApiCallStatus } from "../reducers/apiCalls";
 import { AppState } from "../store";

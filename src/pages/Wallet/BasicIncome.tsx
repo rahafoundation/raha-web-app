@@ -2,7 +2,7 @@ import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpointName } from "@raha/api-client";
+import { ApiEndpointName } from "@raha.app/api";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import IntlMessage from "../../components/IntlMessage";

@@ -3,7 +3,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
-import { ApiEndpointName } from "@raha/api-client";
+import { ApiEndpointName } from "@raha.app/api";
 
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import NumberInput from "../../components/NumberInput";

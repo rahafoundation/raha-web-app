@@ -1,5 +1,5 @@
-import { ApiEndpointName } from "@raha/api-client";
-import ApiCallError from "@raha/api-client/dist/errors";
+import { ApiEndpointName } from "@raha.app/api";
+import ApiCallError from "@raha.app/api/dist/errors";
 
 import { AsyncAction } from ".";
 

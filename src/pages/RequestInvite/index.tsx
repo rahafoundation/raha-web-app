@@ -16,7 +16,7 @@ import { Redirect } from "react-router-dom";
 import { blueGrey300, red400 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
-import { ApiEndpointName } from "@raha/api-client";
+import { ApiEndpointName } from "@raha.app/api";
 import { getMembersByMid, getMembersByUid } from "../../selectors/members";
 
 import WelcomeSteps from "./WelcomeSteps";
