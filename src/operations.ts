@@ -1,3 +1,6 @@
+/**
+ * TODO: eliminate or disambiguate this file
+ */
 import * as firebase from "firebase";
 
 export enum OpCode {

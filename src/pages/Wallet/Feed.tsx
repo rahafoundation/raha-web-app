@@ -3,11 +3,14 @@ import { connect, MapStateToProps } from "react-redux";
 
 import { AppState } from "../../store";
 import { Member } from "../../reducers/membersNew";
-import { Operation, OperationType } from "../../reducers/operations";
 import { getMemberOperations } from "../../selectors/operations";
 
 import OperationList from "../../components/OperationList";
 import IntlMessage from "../../components/IntlMessage";
+import {
+  Operation,
+  OperationType
+} from "@raha.app/api-server/dist/models/Operation";
 
 interface OwnProps {
   profileMember: Member;

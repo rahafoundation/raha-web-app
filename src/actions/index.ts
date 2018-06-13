@@ -16,13 +16,13 @@ import UnauthenticatedError from "@raha.app/api/dist/errors/UnauthenticatedError
 
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";
-import { Operation } from "../reducers/operations";
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
 
 import { getAuthToken } from "../selectors/auth";
 
 import { wrapApiCallAction } from "./apiCalls";
+import { Operation } from "@raha.app/api-server/dist/models/Operation";
 
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
@@ -33,12 +33,7 @@ export const REQUEST_MEMBER_BY_UID = "REQUEST_MEMBER_BY_UID";
 export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_MODAL = "HIDE_MODAL";
 
-export type AsyncAction<A extends AnyAction = AnyAction> = ThunkAction<
-  void,
-  AppState,
-  void,
-  A
->;
+export type AsyncAction = ThunkAction<void, AppState, void>;
 export type AsyncActionCreator = ActionCreator<AsyncAction>;
 
 // TODO: is there anything more specific than this?
