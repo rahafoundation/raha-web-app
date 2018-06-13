@@ -1,5 +1,5 @@
 {
-  "name": "@raha/web-app",
+  "name": "@raha.app/web-app",
   "version": "0.2.0",
   "scripts": {
     "start": "react-scripts-ts start",
