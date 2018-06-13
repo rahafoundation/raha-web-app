@@ -5,7 +5,7 @@ import UnauthenticatedError from "@raha.app/api/dist/errors/UnauthenticatedError
 
 import { Uid } from "../identifiers";
 import { getAuthToken } from "../selectors/auth";
-import { AsyncActionCreator, OperationsAction, OperationsActionType } from "./";
+import { AsyncActionCreator, OperationsAction, OperationsActionType } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { Big } from "big.js";
 

@@ -9,7 +9,7 @@ import { auth } from "../firebaseInit";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
 
-import Loading from "../components/Loading";
+import Loading from "./Loading";
 
 interface StateProps {
   authFirebaseUser?: firebase.User;
