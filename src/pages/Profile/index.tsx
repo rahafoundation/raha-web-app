@@ -3,6 +3,8 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import styled from "styled-components";
 
+import { ApiEndpointName } from "@raha/api-client";
+
 import { trustMember } from "../../actions";
 import { AppState } from "../../store";
 import { Username } from "../../identifiers";
@@ -14,7 +16,6 @@ import Loading from "../../components/Loading";
 import IdentityLevel from "../../components/IdentityLevel";
 import InviteVideo from "../../components/InviteVideo";
 import IntlMessage from "../../components/IntlMessage";
-import { ApiEndpoint } from "../../api";
 
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
@@ -264,14 +265,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 
   const trustApiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.TRUST_MEMBER,
+    ApiEndpointName.TRUST_MEMBER,
     profileMember.uid
   );
 
   const invitedByMember =
-    profileMember && profileMember.invitedBy === GENESIS_MEMBER
+    profileMember &&
+    (profileMember.invitedBy === GENESIS_MEMBER
       ? GENESIS_MEMBER
-      : state.membersNew.byUid[profileMember.invitedBy];
+      : state.membersNew.byUid[profileMember.invitedBy]);
 
   return {
     loggedInMember,

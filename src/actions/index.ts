@@ -7,6 +7,13 @@ import * as firebase from "firebase";
 import { Action, ActionCreator, Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
+import { ApiEndpointName } from "@raha/api-client";
+import listOperationsCall from "@raha/api-client/dist/operations/list";
+import trustMemberCall from "@raha/api-client/dist/members/trust";
+import requestInviteCall from "@raha/api-client/dist/members/requestInvite";
+import sendInviteCall from "@raha/api-client/dist/me/sendInvite";
+import UnauthenticatedError from "@raha/api-client/dist/errors/UnauthenticatedError";
+
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";
 import { Operation } from "../reducers/operations";
@@ -15,18 +22,10 @@ import { AppState } from "../store";
 
 import { getAuthToken } from "../selectors/auth";
 
-import {
-  ApiEndpoint,
-  callApi,
-  TrustMemberApiEndpoint,
-  GetOperationsApiEndpoint,
-  RequestInviteApiEndpoint,
-  SendInviteApiEndpoint,
-} from "../api";
-
 import { wrapApiCallAction } from "./apiCalls";
 
-import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
+// tslint:disable-next-line:no-var-requires
+const CONFIG = require("../data/config.json");
 
 export const RECEIVE_MEMBER = "RECEIVE_MEMBER";
 export const REQUEST_MEMBER_BY_MID = "REQUEST_MEMBER_BY_MID";
@@ -211,20 +210,17 @@ export type OperationsAction = SetOperationsAction | AddOperationsAction;
 // TODO: these operations methods are likely correct, but long term inefficient.
 // We can rely on it now given that the number and size of operations are small,
 // but later rely on cached results instead.
-const _refreshOperations: ThunkAction<void, AppState, void> = wrapApiCallAction(
+const _refreshOperations: AsyncAction = wrapApiCallAction(
   async dispatch => {
-    const operations = await callApi<GetOperationsApiEndpoint>({
-      endpoint: ApiEndpoint.GET_OPERATIONS,
-      params: undefined,
-      body: undefined
-    });
+    const response = await listOperationsCall(CONFIG.apiBase);
+    const operations = response.body;
     const action: OperationsAction = {
       type: OperationsActionType.SET_OPERATIONS,
       operations
     };
     dispatch(action);
   },
-  ApiEndpoint.GET_OPERATIONS,
+  ApiEndpointName.GET_OPERATIONS,
   Date.now().toString()
 );
 export const refreshOperations: ActionCreator<typeof _refreshOperations> = () =>
@@ -248,28 +244,27 @@ export const refreshMembers: AsyncActionCreator = () => {
   };
 };
 
-export const trustMember: AsyncActionCreator = (uid: Uid) => {
+export const trustMember: AsyncActionCreator = (memberId: Uid) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
-
-      const response = await callApi<TrustMemberApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.TRUST_MEMBER,
-          params: { uid },
-          body: undefined
-        },
-        authToken
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+      const response = await trustMemberCall(
+        CONFIG.apiBase,
+        authToken,
+        memberId
       );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [response.body]
       };
       dispatch(action);
     },
-    ApiEndpoint.TRUST_MEMBER,
-    uid
+    ApiEndpointName.TRUST_MEMBER,
+    memberId
   );
 };
 
@@ -286,26 +281,22 @@ export const requestInviteFromMember: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<RequestInviteApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.REQUEST_INVITE,
-          params: { uid },
-          body: {
-            fullName,
-            videoUrl,
-            username: creatorUsername
-          }
-        },
-        authToken
+      const response = await requestInviteCall(
+        CONFIG.apiBase,
+        authToken,
+        uid,
+        fullName,
+        videoUrl,
+        creatorUsername
       );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [response.body]
       };
       dispatch(action);
     },
-    ApiEndpoint.REQUEST_INVITE,
+    ApiEndpointName.REQUEST_INVITE,
     uid
   );
 };
@@ -318,18 +309,9 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
         throw new UnauthenticatedError();
       }
 
-      await callApi<SendInviteApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.SEND_INVITE,
-          params: undefined,
-          body: {
-            inviteEmail
-          }
-        },
-        authToken
-      );
+      await sendInviteCall(CONFIG.apiBase, authToken, inviteEmail);
     },
-    ApiEndpoint.SEND_INVITE,
+    ApiEndpointName.SEND_INVITE,
     inviteEmail
   );
 };
