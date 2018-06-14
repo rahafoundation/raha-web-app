@@ -317,9 +317,9 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha.app/api-server@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/@raha.app/api-server/-/api-server-0.0.5.tgz#d43fc6c474d245990b7526d9489628f9420e3de5"
+"@raha.app/api-server@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.npmjs.org/@raha.app/api-server/-/api-server-0.0.6.tgz#dcb4f199fe962c8b1b629bf63fb234c45af2abba"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -335,11 +335,11 @@
     koa-bodyparser "^4.2.0"
     koa-router "^7.4.0"
 
-"@raha.app/api@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/@raha.app/api/-/api-0.0.5.tgz#da598adee5462406819daa8057a34a8b294a7fb7"
+"@raha.app/api@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.npmjs.org/@raha.app/api/-/api-0.0.7.tgz#ab311ee4ef979c11ea25c6f85b84a30ae2766f2e"
   dependencies:
-    "@raha.app/api-server" "0.0.5"
+    "@raha.app/api-server" "0.0.6"
     "@types/big.js" "^4.0.5"
     big.js "^5.0.0"
     url-join "^4.0.0"
