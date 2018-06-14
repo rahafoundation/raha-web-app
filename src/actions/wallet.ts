@@ -1,7 +1,7 @@
 import { ApiEndpointName } from "@raha.app/api";
-import mintCall from "@raha.app/api/dist/me/mint";
-import giveCall from "@raha.app/api/dist/members/give";
-import UnauthenticatedError from "@raha.app/api/dist/errors/UnauthenticatedError";
+import { mint as mintCall } from "@raha.app/api/dist/me/mint";
+import { give as giveCall } from "@raha.app/api/dist/members/give";
+import { UnauthenticatedError } from "@raha.app/api/dist/errors/UnauthenticatedError";
 
 import { Uid } from "../identifiers";
 import { getAuthToken } from "../selectors/auth";
