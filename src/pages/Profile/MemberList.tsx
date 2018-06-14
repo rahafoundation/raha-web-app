@@ -1,11 +1,11 @@
 import * as React from "react";
-import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
   faHandPeace,
   faHandshake,
   faEnvelopeOpen
-} from "@fortawesome/fontawesome-free-regular";
+} from "@fortawesome/free-regular-svg-icons";
 
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
