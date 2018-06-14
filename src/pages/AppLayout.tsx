@@ -1,6 +1,6 @@
 import * as firebase from "firebase";
-import { faUserPlus } from "@fortawesome/fontawesome-free-solid";
-import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   green300,
   green500,
@@ -284,4 +284,7 @@ const mapDispatchToProps: MapDispatchToProps<
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppLayoutView);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppLayoutView);

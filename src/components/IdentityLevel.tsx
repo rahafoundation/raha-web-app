@@ -1,5 +1,5 @@
-import { faCheckCircle } from "@fortawesome/fontawesome-free-solid";
-import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";

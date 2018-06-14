@@ -1,5 +1,5 @@
-import { faTimes } from "@fortawesome/fontawesome-free-solid";
-import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import * as ReactModal from "react-modal";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
@@ -88,4 +88,7 @@ const mapDispatchToProps: MapDispatchToProps<
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Modal);
