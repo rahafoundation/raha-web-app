@@ -10,7 +10,7 @@
 import * as React from "react";
 import { IntlProvider, intlShape } from "react-intl";
 import { mount, shallow } from "enzyme";
-import messages from "../data/locales/en";
+import { messages } from "../data/locales/en";
 
 // TODO make sure this file not included in prod bundle
 

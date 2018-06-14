@@ -15,7 +15,7 @@ import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
 
-import Loading from "../components/Loading";
+import { Loading } from "../components/Loading";
 
 interface StateProps {
   authFirebaseUser?: firebase.User;
@@ -25,7 +25,7 @@ interface StateProps {
 }
 type Props = StateProps;
 // TODO redirect if you are registered
-const InviteMissing: React.StatelessComponent<Props> = ({
+const InviteMissingView: React.StatelessComponent<Props> = ({
   authFirebaseUser,
   authIsLoaded,
   authMemberDocIsLoaded,
@@ -64,4 +64,7 @@ function mapStateToProps(state: AppState): StateProps {
   };
 }
 
-export default connect(mapStateToProps, {})(InviteMissing);
+export const InviteMissing = connect(
+  mapStateToProps,
+  {}
+)(InviteMissingView);

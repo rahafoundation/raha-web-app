@@ -23,7 +23,7 @@ const NetworkElem = styled.main`
   flex-direction: column;
 `;
 
-const Network: React.StatelessComponent<Props> = ({ members }) => {
+const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
   const graphNodes: Array<typeof ForceGraphNode> = [];
   const trustEdges: Array<typeof ForceGraphArrowLink> = [];
   const inviteEdges: Array<typeof ForceGraphArrowLink> = [];
@@ -92,4 +92,4 @@ function mapStateToProps(state: AppState): StateProps {
   return { members: Object.values(state.membersNew.byUsername) };
 }
 
-export default connect(mapStateToProps)(Network);
+export const Network = connect(mapStateToProps)(NetworkView);

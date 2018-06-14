@@ -1,4 +1,4 @@
-export default {
+export const messages = {
   "profile.trustButton": "Trust",
   "profile.trustedMember": "Trusted",
   "profile.trustFailure": "Trusting failed, try again",

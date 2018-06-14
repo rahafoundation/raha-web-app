@@ -187,4 +187,4 @@ const CodeOfConduct = () => (
   </div>
 );
 
-export default CodeOfConduct;
+export { CodeOfConduct }

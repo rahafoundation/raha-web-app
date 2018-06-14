@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import RahaTitle from "../components/RahaTitle";
+import { RahaTitle } from "../components/RahaTitle";
 
 const PageNotFound: React.StatelessComponent<{}> = () => (
   <div className="PageNotFound">
@@ -14,4 +14,4 @@ const PageNotFound: React.StatelessComponent<{}> = () => (
   </div>
 );
 
-export default PageNotFound;
+export { PageNotFound }

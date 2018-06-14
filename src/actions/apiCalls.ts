@@ -1,5 +1,5 @@
 import { ApiEndpoint } from "../api";
-import ApiCallError from "../errors/ApiCallError";
+import { ApiCallError } from "../errors/ApiCallError";
 import { AsyncAction } from ".";
 
 export const enum ApiCallsActionType {

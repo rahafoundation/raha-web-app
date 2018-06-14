@@ -1,4 +1,4 @@
-import ApiCallError from "./";
+import { ApiCallError } from "./";
 import { ApiCall, resolveApiEndpoint } from "../../api";
 
 function apiCallToString(apiCall: ApiCall) {
@@ -6,7 +6,7 @@ function apiCallToString(apiCall: ApiCall) {
   return `${method} ${url}`;
 }
 
-export default class InvalidApiRequestError extends ApiCallError {
+export class InvalidApiRequestError extends ApiCallError {
   public readonly endpoint: ApiCall;
 
   constructor(failedApiCall: ApiCall) {

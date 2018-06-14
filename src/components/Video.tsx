@@ -24,4 +24,4 @@ const Video: React.StatelessComponent<Props> = ({ videoUrl, className }) => {
   );
 };
 
-export default Video;
+export { Video }

@@ -45,4 +45,4 @@ const TermsOfService = () => (
   </div>
 )
 
-export default TermsOfService;
+export { TermsOfService }

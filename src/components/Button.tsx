@@ -1,5 +1,5 @@
 import * as React from "react";
-import styledUntyped, { ThemedBaseStyledInterface } from "styled-components";
+import * as styledComponents from "styled-components";
 
 import { interactive, gray } from "../constants/palette";
 import { linkStyles } from "./Link";
@@ -102,7 +102,9 @@ interface ThemeProps {
   type: ButtonType;
   size: ButtonSize;
 }
-const styled = styledUntyped as ThemedBaseStyledInterface<ThemeProps>;
+const styled = styledComponents.default as styledComponents.ThemedBaseStyledInterface<
+  ThemeProps
+>;
 
 const ButtonElem = styled.button`
   cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
@@ -205,4 +207,4 @@ const Button: React.StatelessComponent<Props> = props => {
     </ButtonElem>
   );
 };
-export default Button;
+export { Button };

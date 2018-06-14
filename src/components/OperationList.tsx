@@ -1,4 +1,4 @@
-import Big from "big.js";
+import { Big } from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -12,10 +12,10 @@ import { Operation, OperationType } from "../reducers/operations";
 import { getLoggedInMember } from "../selectors/auth";
 import { getMembersByUid } from "../selectors/members";
 
-import IntlMessage from "./IntlMessage";
+import { IntlMessage } from "./IntlMessage";
 
 // styling from: https://material-components.github.io/material-components-web-catalog/#/component/list
-const OperationList = styled.ul`
+const OperationListElem = styled.ul`
   padding: 8px 0px;
   background-color: ${green50};
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -147,11 +147,11 @@ interface StateProps {
 }
 type Props = OwnProps & StateProps;
 
-const OperationListComponent: React.StatelessComponent<Props> = props => {
+const OperationListView: React.StatelessComponent<Props> = props => {
   const { loggedInMember } = props;
 
   return (
-    <OperationList>
+    <OperationListElem>
       {props.operations.map(op => {
         const fromMember = props.getMemberForUid(op.creator_uid);
         if (!fromMember) {
@@ -212,7 +212,7 @@ const OperationListComponent: React.StatelessComponent<Props> = props => {
             return null;
         }
       })}
-    </OperationList>
+    </OperationListElem>
   );
 };
 
@@ -239,4 +239,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps)(OperationListComponent);
+export const OperationList = connect(mapStateToProps)(OperationListView);

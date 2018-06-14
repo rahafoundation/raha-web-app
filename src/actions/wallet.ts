@@ -3,7 +3,7 @@ import { AppState } from "../store";
 import { ApiEndpoint, callApi, MintApiEndpoint, GiveApiEndpoint } from "../api";
 import { Uid } from "../identifiers";
 import { getAuthToken } from "../selectors/auth";
-import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
+import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
 import { AsyncActionCreator, OperationsAction, OperationsActionType } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 

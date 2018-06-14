@@ -2,7 +2,7 @@ import * as firebase from "firebase";
 import * as React from "react";
 import styled from "styled-components";
 
-import Button, { ButtonType } from "../../../components/Button";
+import { Button, ButtonType } from "../../../components/Button";
 
 import { Step0, Step1, Step2, Step3, Step4 } from "./steps";
 import { RequestInviteFn } from "..";
@@ -38,7 +38,7 @@ const WelcomeStepsElem = styled.main`
   }
 `;
 
-export default class WelcomeSteps extends React.Component<WelcomeStepsProps> {
+export class WelcomeSteps extends React.Component<WelcomeStepsProps> {
   private handleNextClick = () => {
     this.props.navigateToStep(this.props.currentStep + 1);
   };

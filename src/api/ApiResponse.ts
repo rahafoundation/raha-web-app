@@ -11,4 +11,4 @@ type ApiResponse =
   | OperationApiResponse
   | OperationsApiResponse
   | MessageApiResponse;
-export default ApiResponse;
+export { ApiResponse }

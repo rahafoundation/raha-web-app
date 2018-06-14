@@ -52,4 +52,4 @@ const NumberInput: React.StatelessComponent<Props> = props => {
   return <NumberInputElem {...finalProps} />;
 };
 
-export default NumberInput;
+export { NumberInput };

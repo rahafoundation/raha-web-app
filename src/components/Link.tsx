@@ -33,4 +33,4 @@ const Link = styled(RouterLink)`
   }
 `;
 
-export default Link;
+export { Link }

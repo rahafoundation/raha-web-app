@@ -7,4 +7,4 @@ function LogOut() {
   return <Redirect to="/" />;
 }
 
-export default LogOut;
+export { LogOut }

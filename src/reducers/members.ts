@@ -97,4 +97,4 @@ const members: Reducer<MembersState> = (
   }
 };
 
-export default members;
+export { members }

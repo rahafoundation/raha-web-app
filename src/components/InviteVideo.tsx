@@ -1,5 +1,5 @@
 import * as React from "react";
-import Video from "./Video";
+import { Video } from "./Video";
 
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
@@ -19,4 +19,4 @@ const InviteVideo: React.StatelessComponent<Props> = ({
   }/${memberUid}/invite.mp4`;
   return <Video className={className} videoUrl={videoUrl} />;
 };
-export default InviteVideo;
+export { InviteVideo }

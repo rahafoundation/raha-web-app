@@ -4,7 +4,7 @@ import * as React from "react";
 interface Props {
   className?: string;
 }
-const Logo: React.StatelessComponent<Props> = (props: Props) => (
+export const LogoIcon: React.StatelessComponent<Props> = (props: Props) => (
   <svg viewBox="0 0 99.1 113.68" {...props} width="1em" height="1em">
     <path
       fillRule="evenodd"
@@ -15,5 +15,3 @@ const Logo: React.StatelessComponent<Props> = (props: Props) => (
     />
   </svg>
 );
-
-export default Logo;

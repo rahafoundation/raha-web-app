@@ -6,4 +6,4 @@ const RahaTitle = () => (
   </h2>
 );
 
-export default RahaTitle;
+export { RahaTitle }

@@ -21,4 +21,4 @@ const auth: Reducer<AuthState> = (state = initialState, untypedAction) => {
       return state;
   }
 };
-export default auth;
+export { auth }

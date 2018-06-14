@@ -1,7 +1,7 @@
 /**
  * Represents an error that we know how to handle in this application.
  */
-export default abstract class ApplicationError extends Error {
+export abstract class ApplicationError extends Error {
   constructor(message: string) {
     super(message);
 

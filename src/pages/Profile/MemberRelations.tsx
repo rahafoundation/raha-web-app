@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import MemberList from "./MemberList";
+import { MemberList } from "./MemberList";
 
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
@@ -68,4 +68,4 @@ const MemberRelations: React.StatelessComponent<Props> = ({
   return <MemberRelationsElem>{renderedSections}</MemberRelationsElem>;
 };
 
-export default MemberRelations;
+export { MemberRelations }

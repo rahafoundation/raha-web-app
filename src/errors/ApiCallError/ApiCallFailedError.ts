@@ -1,4 +1,4 @@
-import ApiCallError from "./";
+import { ApiCallError } from "./";
 
 function requestMethod(requestOptions?: RequestInit) {
   return requestOptions && requestOptions.method
@@ -9,7 +9,7 @@ function requestMethod(requestOptions?: RequestInit) {
 /**
  * Represents a bad response after trying to make an API call.
  */
-export default class ApiCallFailedError extends ApiCallError {
+export class ApiCallFailedError extends ApiCallError {
   public readonly response: Response;
   public readonly url: string;
   public readonly requestOptions: RequestInit;

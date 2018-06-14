@@ -7,13 +7,13 @@ import { trustMember } from "../../actions";
 import { AppState } from "../../store";
 import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
-import MemberRelations from "./MemberRelations";
+import { MemberRelations } from "./MemberRelations";
 
-import Button, { ButtonType, ButtonSize } from "../../components/Button";
-import Loading from "../../components/Loading";
-import IdentityLevel from "../../components/IdentityLevel";
-import InviteVideo from "../../components/InviteVideo";
-import IntlMessage from "../../components/IntlMessage";
+import { Button, ButtonType, ButtonSize } from "../../components/Button";
+import { Loading } from "../../components/Loading";
+import { IdentityLevel } from "../../components/IdentityLevel";
+import { InviteVideo } from "../../components/InviteVideo";
+import { IntlMessage } from "../../components/IntlMessage";
 import { ApiEndpoint } from "../../api";
 
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
@@ -269,9 +269,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   );
 
   const invitedByMember =
-    profileMember && profileMember.invitedBy === GENESIS_MEMBER
-      ? GENESIS_MEMBER
-      : state.membersNew.byUid[profileMember.invitedBy];
+    (profileMember &&
+      (profileMember.invitedBy === GENESIS_MEMBER
+        ? GENESIS_MEMBER
+        : state.membersNew.byUid[profileMember.invitedBy])) ||
+    GENESIS_MEMBER;
 
   return {
     loggedInMember,
@@ -313,6 +315,8 @@ const mergeProps: MergeProps<
   };
 };
 
-export default connect(mapStateToProps, { trustMember }, mergeProps)(
-  ProfileView
-);
+export const Profile = connect(
+  mapStateToProps,
+  { trustMember },
+  mergeProps
+)(ProfileView);

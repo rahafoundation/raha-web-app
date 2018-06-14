@@ -11,8 +11,8 @@ import { Member } from "../../reducers/membersNew";
 import { storageRef } from "../../firebaseInit";
 import { AppState } from "../../store";
 
-import Loading from "../../components/Loading";
-import IntlMessage from "../../components/IntlMessage";
+import { Loading } from "../../components/Loading";
+import { IntlMessage } from "../../components/IntlMessage";
 import { Redirect } from "react-router-dom";
 import { blueGrey300, red400 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
@@ -20,7 +20,7 @@ import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { ApiEndpoint } from "../../api";
 import { getMembersByMid, getMembersByUid } from "../../selectors/members";
 
-import WelcomeSteps from "./WelcomeSteps";
+import { WelcomeSteps } from "./WelcomeSteps";
 import { getLoggedInMemberProfileUrl } from "../../selectors/auth";
 import { getProfileUrlFromMid } from "../../helpers/profiles";
 
@@ -87,7 +87,7 @@ interface DispatchProps {
 
 export type Props = OwnProps & MergedProps;
 
-export class RequestInvite extends React.Component<Props> {
+export class RequestInviteView extends React.Component<Props> {
   public render() {
     const {
       isFirebaseUserLoaded,
@@ -235,11 +235,11 @@ const mergeProps: MergeProps<
   };
 };
 
-export default connect(
+export const RequestInvite = connect(
   mapStateToProps,
   {
     requestInviteFromMember: requestInviteFromMemberAction,
     pushRoute: pushRouteAction
   },
   mergeProps
-)(RequestInvite);
+)(RequestInviteView);

@@ -47,4 +47,4 @@ const TextInput: React.StatelessComponent<Props> = props => {
   return <TextInputElem {...finalProps} />;
 };
 
-export default TextInput;
+export { TextInput }

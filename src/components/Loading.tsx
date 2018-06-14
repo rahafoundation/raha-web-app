@@ -1,5 +1,5 @@
 import * as React from "react";
 
-export default function Loading() {
+export function Loading() {
   return <div>Loading</div>;
 }

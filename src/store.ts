@@ -3,7 +3,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { routerMiddleware as createRouterMiddleware } from "react-router-redux";
 
-import rootReducer from "./reducers";
+import { rootReducer } from "./reducers";
 import { routerHistory } from "./AppRouter";
 
 const routerMiddleware = createRouterMiddleware(routerHistory);
@@ -14,4 +14,4 @@ const store = createStore(
 );
 
 export { AppState } from "./reducers";
-export default store;
+export { store };
