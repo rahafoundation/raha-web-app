@@ -2,7 +2,6 @@ import * as firebase from "firebase";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
-import * as path from "path";
 import { push as pushRouteAction } from "react-router-redux";
 
 import { requestInviteFromMember as requestInviteFromMemberAction } from "../../actions";
@@ -17,7 +16,7 @@ import { Redirect } from "react-router-dom";
 import { blueGrey300, red400 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha.app/api";
 import { getMembersByMid, getMembersByUid } from "../../selectors/members";
 
 import WelcomeSteps from "./WelcomeSteps";
@@ -186,7 +185,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const requestInviteStatus = !!requestingFromMember
     ? getStatusOfApiCall(
         state,
-        ApiEndpoint.REQUEST_INVITE,
+        ApiEndpointName.REQUEST_INVITE,
         requestingFromMember.uid
       )
     : undefined;

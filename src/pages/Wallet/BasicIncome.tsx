@@ -2,10 +2,11 @@ import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
+import { ApiEndpointName } from "@raha.app/api";
+
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import IntlMessage from "../../components/IntlMessage";
 import Loading from "../../components/Loading";
-import { ApiEndpoint } from "../../api";
 
 import { AppState } from "../../store";
 import { mint } from "../../actions/wallet";
@@ -117,7 +118,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const mintApiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.MINT,
+    ApiEndpointName.MINT,
     ownProps.loggedInMember.uid
   );
 

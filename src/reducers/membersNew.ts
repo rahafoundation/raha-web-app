@@ -4,8 +4,11 @@ import { Reducer } from "redux";
 
 import { Uid, Username } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
-import { Operation, OperationType } from "./operations";
 import OperationInvalidError from "../errors/OperationInvalidError";
+import {
+  Operation,
+  OperationType
+} from "@raha.app/api-server/dist/models/Operation";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",

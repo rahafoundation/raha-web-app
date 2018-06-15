@@ -3,7 +3,8 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha.app/api";
+
 import Button, { ButtonType, ButtonSize } from "../../components/Button";
 import NumberInput from "../../components/NumberInput";
 import TextInput from "../../components/TextInput";
@@ -193,7 +194,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const giveApiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.GIVE,
+    ApiEndpointName.GIVE,
     ownProps.profileMember.uid
   );
 

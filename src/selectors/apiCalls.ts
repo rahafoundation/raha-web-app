@@ -1,4 +1,5 @@
-import { ApiEndpoint } from "../api";
+import { ApiEndpointName } from "@raha.app/api";
+
 import { ApiCallStatus } from "../reducers/apiCalls";
 import { AppState } from "../store";
 
@@ -9,7 +10,7 @@ import { AppState } from "../store";
  */
 export function getStatusOfApiCall(
   state: AppState,
-  endpoint: ApiEndpoint,
+  endpoint: ApiEndpointName,
   identifier: string
 ): ApiCallStatus | undefined {
   const apiCallsForEndpoint = state.apiCalls[endpoint];

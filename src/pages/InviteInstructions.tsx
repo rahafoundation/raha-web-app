@@ -3,8 +3,9 @@ import { connect, MapStateToProps } from "react-redux";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
+import { ApiEndpointName } from "@raha.app/api";
+
 import { AppState } from "../store";
-import { ApiEndpoint } from "../api";
 import { getStatusOfApiCall } from "../selectors/apiCalls";
 import { sendInvite } from "../actions";
 import { ApiCallStatusType, ApiCallStatus } from "../reducers/apiCalls";
@@ -142,7 +143,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   return {
     sendInviteApiCallStatus: getStatusOfApiCall(
       state,
-      ApiEndpoint.SEND_INVITE,
+      ApiEndpointName.SEND_INVITE,
       inviteEmail
     )
   };

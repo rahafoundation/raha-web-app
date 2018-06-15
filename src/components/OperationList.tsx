@@ -8,11 +8,14 @@ import { green50 } from "material-ui/styles/colors";
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
 import { Member } from "../reducers/membersNew";
-import { Operation, OperationType } from "../reducers/operations";
 import { getLoggedInMember } from "../selectors/auth";
 import { getMembersByUid } from "../selectors/members";
 
 import IntlMessage from "./IntlMessage";
+import {
+  Operation,
+  OperationType
+} from "@raha.app/api-server/dist/models/Operation";
 
 // styling from: https://material-components.github.io/material-components-web-catalog/#/component/list
 const OperationList = styled.ul`

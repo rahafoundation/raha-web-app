@@ -6,10 +6,10 @@ import { green100 } from "material-ui/styles/colors";
 
 import { AppState } from "../store";
 import { Member } from "../reducers/membersNew";
-import { Operation, OperationType } from "../reducers/operations";
 
 import IntlMessage from "../components/IntlMessage";
 import OperationList from "../components/OperationList";
+import { Operation } from "@raha.app/api-server/dist/models/Operation";
 
 /* ==================
  * Styled components

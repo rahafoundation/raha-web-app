@@ -1,5 +1,7 @@
 import { Reducer } from "redux";
-import { ApiEndpoint } from "../api";
+
+import { ApiEndpointName } from "@raha.app/api";
+
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
 
 export enum ApiCallStatusType {
@@ -15,7 +17,7 @@ export interface ApiCallStatus {
 }
 
 export type ApiCallsState = {
-  readonly [key in ApiEndpoint]?: { [identifier: string]: ApiCallStatus }
+  readonly [key in ApiEndpointName]?: { [identifier: string]: ApiCallStatus }
 };
 
 export const reducer: Reducer<ApiCallsState> = (
