@@ -8,8 +8,8 @@ import { AppState } from "../store";
 import { Member } from "../reducers/membersNew";
 import { Operation, OperationType } from "../reducers/operations";
 
-import IntlMessage from "../components/IntlMessage";
-import OperationList from "../components/OperationList";
+import { IntlMessage } from "../components/IntlMessage";
+import { OperationList } from "../components/OperationList";
 
 /* ==================
  * Styled components
@@ -50,7 +50,7 @@ interface StateProps {
 
 type Props = OwnProps & StateProps;
 
-const GlobalFeed: React.StatelessComponent<Props> = props => {
+const GlobalFeedView: React.StatelessComponent<Props> = props => {
   const { operations } = props;
   return (
     <FeedElem>
@@ -77,4 +77,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps)(GlobalFeed);
+export const GlobalFeed = connect(mapStateToProps)(GlobalFeedView);

@@ -50,7 +50,7 @@ interface DispatchProps {
 interface OwnProps {}
 type Props = OwnProps & StateProps & DispatchProps;
 
-export const Modal: React.StatelessComponent<Props> = props => {
+export const ModalView: React.StatelessComponent<Props> = props => {
   const { hideModal, modalElem } = props;
 
   return (
@@ -88,4 +88,7 @@ const mapDispatchToProps: MapDispatchToProps<
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+export const Modal = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ModalView);

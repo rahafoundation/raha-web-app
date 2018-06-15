@@ -1,8 +1,8 @@
-import randomColor from "random-material-color";
+import { randomColor } from "random-material-color";
 import * as React from "react";
 import styled, { ThemeProvider } from "styled-components";
 
-import Link from "../../components/Link";
+import { Link } from "../../components/Link";
 
 import { Member } from "../../reducers/membersNew";
 
@@ -89,4 +89,4 @@ const MemberThumbnail: React.StatelessComponent<Props> = ({ member }) => {
     </ThemeProvider>
   );
 };
-export default MemberThumbnail;
+export { MemberThumbnail };

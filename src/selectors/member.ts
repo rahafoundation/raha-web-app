@@ -1,4 +1,4 @@
-import Big from "big.js";
+import { Big } from "big.js";
 
 import { AppState } from "../store";
 import { Uid } from "../identifiers";

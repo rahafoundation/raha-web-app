@@ -19,11 +19,11 @@ import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
 
-import InviteInstructions from "./InviteInstructions";
+import { InviteInstructions } from "./InviteInstructions";
 
-import Link from "../components/Link";
-import LogoIcon from "../components/LogoIcon";
-import Modal from "../components/Modal";
+import { Link } from "../components/Link";
+import { LogoIcon } from "../components/LogoIcon";
+import { Modal } from "../components/Modal";
 
 const NARROW_WIDTH_SCREEN = "420px";
 
@@ -284,4 +284,7 @@ const mapDispatchToProps: MapDispatchToProps<
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppLayoutView);
+export const AppLayout = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppLayoutView);

@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import { routerReducer, RouterState } from "react-router-redux";
 
-import modal, { ModalState } from "./modal";
+import { modal, ModalState } from "./modal";
 
 // TODO: get rid of the two below reducers
-import members, { MembersState } from "./members";
+import { members, MembersState } from "./members";
 
 import { OperationsState, reducer as operations } from "./operations";
 import {
@@ -13,7 +13,7 @@ import {
 } from "./membersNew";
 import { ApiCallsState, reducer as apiCalls } from "./apiCalls";
 
-import auth, { AuthState } from "./auth";
+import { auth, AuthState } from "./auth";
 
 export interface AppState {
   members: MembersState; // TODO: nuke this
@@ -34,4 +34,4 @@ const rootReducer = combineReducers({
   router: routerReducer
 });
 
-export default rootReducer;
+export { rootReducer };

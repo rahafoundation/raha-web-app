@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 import { authSetFirebaseUser, refreshMembers } from "./actions";
-import AppRouter from "./AppRouter";
+import { AppRouter } from "./AppRouter";
 import { auth } from "./firebaseInit";
-import store from "./store";
+import { store } from "./store";
 
 class App extends React.Component {
   public componentDidMount() {
@@ -22,4 +22,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export { App }

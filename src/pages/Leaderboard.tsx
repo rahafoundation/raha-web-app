@@ -18,11 +18,11 @@ const LeaderboardElem = styled.main`
   flex-direction: column;
 `;
 
-const Leaderboard: React.StatelessComponent<Props> = ({ members }) => {
-  members
-    .sort(
-      (a, b) => Object.values(b.invitedSet).length - Object.values(a.invitedSet).length
-    )
+const LeaderboardView: React.StatelessComponent<Props> = ({ members }) => {
+  members.sort(
+    (a, b) =>
+      Object.values(b.invitedSet).length - Object.values(a.invitedSet).length
+  );
   return (
     <LeaderboardElem>
       <section>
@@ -46,4 +46,4 @@ function mapStateToProps(state: AppState): StateProps {
   return { members: Object.values(state.membersNew.byUsername) };
 }
 
-export default connect(mapStateToProps)(Leaderboard);
+export const Leaderboard = connect(mapStateToProps)(LeaderboardView);

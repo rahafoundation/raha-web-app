@@ -4,16 +4,16 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
 import { ApiEndpoint } from "../../api";
-import Button, { ButtonType, ButtonSize } from "../../components/Button";
-import NumberInput from "../../components/NumberInput";
-import TextInput from "../../components/TextInput";
+import { Button, ButtonType, ButtonSize } from "../../components/Button";
+import { NumberInput } from "../../components/NumberInput";
+import { TextInput } from "../../components/TextInput";
 
 import { AppState } from "../../store";
 import { give } from "../../actions/wallet";
 import { Member } from "../../reducers/membersNew";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
-import IntlMessage from "../../components/IntlMessage";
+import { IntlMessage } from "../../components/IntlMessage";
 
 const MAX_MEMO_LENGTH = 140;
 
@@ -217,6 +217,8 @@ const mergeProps: MergeProps<
   };
 };
 
-export default connect(mapStateToProps, { give }, mergeProps)(
-  injectIntl(GiveView)
-);
+export const Give = connect(
+  mapStateToProps,
+  { give },
+  mergeProps
+)(injectIntl(GiveView));

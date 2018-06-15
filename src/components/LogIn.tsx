@@ -9,7 +9,7 @@ import { auth } from "../firebaseInit";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
 
-import Loading from "../components/Loading";
+import { Loading } from "../components/Loading";
 
 interface StateProps {
   authFirebaseUser?: firebase.User;
@@ -19,7 +19,7 @@ interface StateProps {
 type Props = StateProps & {
   noRedirect: boolean;
 };
-const LogIn: React.StatelessComponent<Props> = ({
+const LogInView: React.StatelessComponent<Props> = ({
   authFirebaseUser,
   authMemberDocIsLoaded,
   authMemberDoc,
@@ -62,4 +62,4 @@ function mapStateToProps(state: AppState): StateProps {
   };
 }
 
-export default connect(mapStateToProps)(LogIn);
+export const LogIn = connect(mapStateToProps)(LogInView);

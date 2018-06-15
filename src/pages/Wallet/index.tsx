@@ -1,4 +1,4 @@
-import Big from "big.js";
+import { Big } from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
@@ -8,19 +8,19 @@ import { AppState } from "../../store";
 import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
-import Button, { ButtonType, ButtonSize } from "../../components/Button";
-import IntlMessage from "../../components/IntlMessage";
-import Loading from "../../components/Loading";
+import { Button, ButtonType, ButtonSize } from "../../components/Button";
+import { IntlMessage } from "../../components/IntlMessage";
+import { Loading } from "../../components/Loading";
 
 import { getMembersByUid } from "../../selectors/members";
 import { getLoggedInMember } from "../../selectors/auth";
 
 import { green } from "../../constants/palette";
 
-import Balance from "./Balance";
-import BasicIncome from "./BasicIncome";
-import Give from "./Give";
-import Feed from "./Feed";
+import { Balance } from "./Balance";
+import { BasicIncome } from "./BasicIncome";
+import { Give } from "./Give";
+import { Feed } from "./Feed";
 
 /* ================
  * Component types
@@ -186,4 +186,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps)(WalletView);
+export const Wallet = connect(mapStateToProps)(WalletView);

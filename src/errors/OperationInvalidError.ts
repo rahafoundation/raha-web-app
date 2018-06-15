@@ -1,7 +1,7 @@
-import ApplicationError from "./ApplicationError";
+import { ApplicationError } from "./ApplicationError";
 import { Operation } from "../reducers/operations";
 
-export default class OperationInvalidError extends ApplicationError {
+export class OperationInvalidError extends ApplicationError {
   public readonly operation: Operation;
 
   constructor(message: string, operation: Operation) {

@@ -132,4 +132,4 @@ const IdentityLevel: React.StatelessComponent<Props> = ({
   );
 };
 
-export default IdentityLevel;
+export { IdentityLevel }

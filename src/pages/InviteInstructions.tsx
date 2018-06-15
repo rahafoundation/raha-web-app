@@ -9,7 +9,7 @@ import { getStatusOfApiCall } from "../selectors/apiCalls";
 import { sendInvite } from "../actions";
 import { ApiCallStatusType, ApiCallStatus } from "../reducers/apiCalls";
 
-import Button, { ButtonSize } from "../components/Button";
+import { Button, ButtonSize } from "../components/Button";
 
 import { green } from "../constants/palette";
 
@@ -76,7 +76,7 @@ const invite: (
   }
 };
 
-const InviteInstructions: React.StatelessComponent<Props> = props => {
+const InviteInstructionsView: React.StatelessComponent<Props> = props => {
   const { inviteUrl, fullName, sendInviteApiCallStatus } = props;
 
   let isSendingInvite = false;
@@ -148,4 +148,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps, { sendInvite })(InviteInstructions);
+export const InviteInstructions = connect(
+  mapStateToProps,
+  { sendInvite }
+)(InviteInstructionsView);

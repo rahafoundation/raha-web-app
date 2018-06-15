@@ -2,9 +2,9 @@ import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import Button, { ButtonType, ButtonSize } from "../../components/Button";
-import IntlMessage from "../../components/IntlMessage";
-import Loading from "../../components/Loading";
+import { Button, ButtonType, ButtonSize } from "../../components/Button";
+import { IntlMessage } from "../../components/IntlMessage";
+import { Loading } from "../../components/Loading";
 import { ApiEndpoint } from "../../api";
 
 import { AppState } from "../../store";
@@ -150,4 +150,8 @@ const mergeProps: MergeProps<
   };
 };
 
-export default connect(mapStateToProps, { mint }, mergeProps)(BasicIncomeView);
+export const BasicIncome = connect(
+  mapStateToProps,
+  { mint },
+  mergeProps
+)(BasicIncomeView);

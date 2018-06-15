@@ -30,4 +30,4 @@ const modal: Reducer<ModalState> = (
   }
 };
 
-export default modal;
+export { modal }

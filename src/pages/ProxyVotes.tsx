@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import IntlMessage from "../components/IntlMessage";
+import { IntlMessage } from "../components/IntlMessage";
 import { AppState } from "../reducers";
 import { Uid } from "../identifiers";
 import {
@@ -25,7 +25,9 @@ const ProxyVotesElem = styled.main`
 `;
 
 // TODO these should be nice thumbnails presented in a component also used by Leaderboard.tsx
-const ProxyVotes: React.StatelessComponent<Props> = ({ memberAndVotes }) => {
+const ProxyVotesView: React.StatelessComponent<Props> = ({
+  memberAndVotes
+}) => {
   return (
     <ProxyVotesElem>
       <section>
@@ -56,14 +58,16 @@ function getAncestors(
   for (
     let votingForUid: Uid | typeof GENESIS_MEMBER = votingForMember.uid;
     votingForUid !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
-    votingForUid = votingForMember.invitedBy  // TODO needs to change to votingFor
+    votingForUid = votingForMember.invitedBy // TODO needs to change to votingFor
   ) {
     votingForMember = membersByUid[votingForUid];
     if (votingForMember === undefined) {
       throw Error(`Cannot vote for invalid uid ${votingForUid}`);
     }
     if (ancestors.has(votingForUid)) {
-      throw Error(`Cycle in ancestors of ${member.uid}: ${votingForUid} found twice`);
+      throw Error(
+        `Cycle in ancestors of ${member.uid}: ${votingForUid} found twice`
+      );
     }
     ancestors.add(votingForUid);
   }
@@ -103,4 +107,4 @@ function mapStateToProps(state: AppState): Props {
   return { memberAndVotes };
 }
 
-export default connect(mapStateToProps)(ProxyVotes);
+export const ProxyVotes = connect(mapStateToProps)(ProxyVotesView);

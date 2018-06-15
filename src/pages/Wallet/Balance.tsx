@@ -1,4 +1,4 @@
-import IntlMessage from "../../components/IntlMessage";
+import { IntlMessage } from "../../components/IntlMessage";
 import * as React from "react";
 
 interface OwnProps {
@@ -7,7 +7,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const BalanceView: React.StatelessComponent<Props> = props => {
+export const Balance: React.StatelessComponent<Props> = props => {
   return (
     <section>
       <h2>
@@ -19,5 +19,3 @@ const BalanceView: React.StatelessComponent<Props> = props => {
     </section>
   );
 };
-
-export default BalanceView;

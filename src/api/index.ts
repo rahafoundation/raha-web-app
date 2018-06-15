@@ -1,14 +1,15 @@
 // TODO: consider splitting the actual API endpoint types into their finer grained files
 import { Uid } from "../identifiers";
-import InvalidApiRequestError from "../errors/ApiCallError/InvalidApiRequestError";
-import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
-import ApiResponse, {
+import { InvalidApiRequestError } from "../errors/ApiCallError/InvalidApiRequestError";
+import { ApiCallFailedError } from "../errors/ApiCallError/ApiCallFailedError";
+import {
+  ApiResponse,
   OperationsApiResponse,
   OperationApiResponse,
   MessageApiResponse
 } from "./ApiResponse";
-import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
-import NetworkError from "../errors/ApiCallError/NetworkError";
+import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
+import { NetworkError } from "../errors/ApiCallError/NetworkError";
 
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");

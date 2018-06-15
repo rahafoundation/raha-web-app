@@ -6,8 +6,8 @@ import { Member } from "../../reducers/membersNew";
 import { Operation, OperationType } from "../../reducers/operations";
 import { getMemberOperations } from "../../selectors/operations";
 
-import OperationList from "../../components/OperationList";
-import IntlMessage from "../../components/IntlMessage";
+import { OperationList } from "../../components/OperationList";
+import { IntlMessage } from "../../components/IntlMessage";
 
 interface OwnProps {
   profileMember: Member;
@@ -48,4 +48,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   };
 };
 
-export default connect(mapStateToProps)(FeedView);
+export const Feed = connect(mapStateToProps)(FeedView);

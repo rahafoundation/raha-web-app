@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as firebase from "firebase";
-import Button, { ButtonType } from "./Button";
+import { Button, ButtonType } from "./Button";
 import styled from "styled-components";
-import IntlMessage from "./IntlMessage";
+import { IntlMessage } from "./IntlMessage";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_VIDEO_SIZE = 60 * BYTES_PER_MIB;
@@ -32,7 +32,7 @@ const VideoUploaderElem = styled.div`
     display: block;
   }
 `;
-export default class VideoUploader extends React.Component<Props, State> {
+export class VideoUploader extends React.Component<Props, State> {
   private uploadVideoInput?: HTMLInputElement | null;
 
   constructor(props: Props) {
@@ -110,7 +110,7 @@ export default class VideoUploader extends React.Component<Props, State> {
           <div>
             Uploaded{" "}
             {Math.round(
-              100.0 * this.state.uploadedBytes / this.state.totalBytes
+              (100.0 * this.state.uploadedBytes) / this.state.totalBytes
             )}%
           </div>
         )}

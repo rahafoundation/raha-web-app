@@ -2,14 +2,14 @@ import * as firebase from "firebase";
 import * as React from "react";
 import styled from "styled-components";
 
-import IntlMessage from "../../../components/IntlMessage";
+import { IntlMessage } from "../../../components/IntlMessage";
 import { RequestInviteFn } from "..";
 import { getUsername } from "../../../members";
-import LogIn from "../../../components/LogIn";
-import Button from "../../../components/Button";
-import Video from "../../../components/Video";
-import VideoUploader from "../../../components/VideoUploader";
-import TextInput from "../../../components/TextInput";
+import { LogIn } from "../../../components/LogIn";
+import { Button } from "../../../components/Button";
+import { Video } from "../../../components/Video";
+import { VideoUploader } from "../../../components/VideoUploader";
+import { TextInput } from "../../../components/TextInput";
 
 export const Step0: React.StatelessComponent<{ inviterName: string }> = ({
   inviterName

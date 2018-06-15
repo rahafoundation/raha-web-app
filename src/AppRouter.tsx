@@ -5,22 +5,22 @@ import createHistory from "history/createBrowserHistory";
 
 import "./App.css";
 
-import AppLayout from "./pages/AppLayout";
-import CodeOfConduct from "./pages/CodeOfConduct";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import InviteMissing from "./pages/InviteMissing";
-import LogIn from "./components/LogIn";
-import LogOut from "./pages/LogOut";
-import GlobalFeed from "./pages/GlobalFeed";
-import PageNotFound from "./pages/PageNotFound";
-import Profile from "./pages/Profile";
-import ProxyVotes from "./pages/ProxyVotes";
-import RequestInvite from "./pages/RequestInvite";
-import Splash from "./pages/Splash";
-import TermsOfService from "./pages/TermsOfService";
-import Leaderboard from "./pages/Leaderboard";
-import Network from "./pages/Network";
-import Wallet from "./pages/Wallet";
+import { AppLayout } from "./pages/AppLayout";
+import { CodeOfConduct } from "./pages/CodeOfConduct";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { InviteMissing } from "./pages/InviteMissing";
+import { LogIn } from "./components/LogIn";
+import { LogOut } from "./pages/LogOut";
+import { GlobalFeed } from "./pages/GlobalFeed";
+import { PageNotFound } from "./pages/PageNotFound";
+import { Profile } from "./pages/Profile";
+import { ProxyVotes } from "./pages/ProxyVotes";
+import { RequestInvite } from "./pages/RequestInvite";
+import { Splash } from "./pages/Splash";
+import { TermsOfService } from "./pages/TermsOfService";
+import { Leaderboard } from "./pages/Leaderboard";
+import { Network } from "./pages/Network";
+import { Wallet } from "./pages/Wallet";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {
@@ -66,4 +66,4 @@ function AppRouter() {
   );
 }
 
-export default AppRouter;
+export { AppRouter };

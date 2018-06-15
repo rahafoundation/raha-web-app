@@ -26,7 +26,7 @@ import {
 
 import { wrapApiCallAction } from "./apiCalls";
 
-import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
+import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
 
 export const RECEIVE_MEMBER = "RECEIVE_MEMBER";
 export const REQUEST_MEMBER_BY_MID = "REQUEST_MEMBER_BY_MID";

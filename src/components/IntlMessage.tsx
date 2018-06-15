@@ -40,7 +40,7 @@ type Props = RenderByTagNameProps | RenderTextProps | CustomRenderProps;
  *   <IntlMessage id="greeting", values={{greeting: "hi"}}  />
  *
  * ... with a custom rendering function, on a message with only one part:
- *   import Greeting from "./components/Greeting";
+ *   import { Greeting } from "./components/Greeting";
  *   <IntlMessage id="hi" render={(name) => <Greeting name={name} />
  *
  * ... with a custom rendering function, on a message with many parts:
@@ -83,4 +83,4 @@ const IntlMessage: React.StatelessComponent<Props> = props => {
   );
 };
 
-export default IntlMessage;
+export { IntlMessage }

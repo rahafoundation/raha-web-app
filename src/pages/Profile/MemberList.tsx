@@ -13,7 +13,7 @@ import { green, interactive } from "../../constants/palette";
 
 import { Member } from "../../reducers/membersNew";
 
-import MemberThumbnail from "./MemberThumbnail";
+import { MemberThumbnail } from "./MemberThumbnail";
 
 /* ==========
  * Constants
@@ -212,4 +212,4 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
     );
   }
 }
-export default MemberList;
+export { MemberList }
