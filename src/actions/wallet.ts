@@ -6,6 +6,7 @@ import { getAuthToken } from "../selectors/auth";
 import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
 import { AsyncActionCreator, OperationsAction, OperationsActionType } from "./";
 import { wrapApiCallAction } from "./apiCalls";
+import { MintType } from "../reducers/operations";
 
 export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
   return wrapApiCallAction(
@@ -20,7 +21,8 @@ export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
           endpoint: ApiEndpoint.MINT,
           params: undefined,
           body: {
-            amount
+            amount,
+            type: MintType.BASIC_INCOME
           }
         },
         authToken
