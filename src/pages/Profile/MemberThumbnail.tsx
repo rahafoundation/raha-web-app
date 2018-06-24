@@ -1,4 +1,4 @@
-import { randomColor } from "random-material-color";
+import { getColor } from "random-material-color";
 import * as React from "react";
 import styled, { ThemeProvider } from "styled-components";
 
@@ -74,7 +74,7 @@ function getInitialsForName(name: string): string {
 
 // TODO(#14) improve this thumbnail
 const MemberThumbnail: React.StatelessComponent<Props> = ({ member }) => {
-  const backgroundColor = randomColor.getColor({
+  const backgroundColor = getColor({
     text: `${member.username}${member.fullName}`
   });
   return (
