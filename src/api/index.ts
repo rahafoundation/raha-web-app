@@ -10,6 +10,7 @@ import {
 } from "./ApiResponse";
 import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
 import { NetworkError } from "../errors/ApiCallError/NetworkError";
+import { MintPayload } from "../reducers/operations";
 
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
@@ -61,11 +62,7 @@ type SendInviteApiCall = ApiCallDefinition<
   void,
   { inviteEmail: string }
 >;
-type MintApiCall = ApiCallDefinition<
-  ApiEndpoint.MINT,
-  void,
-  { amount: string }
->;
+type MintApiCall = ApiCallDefinition<ApiEndpoint.MINT, void, MintPayload>;
 type GiveApiCall = ApiCallDefinition<
   ApiEndpoint.GIVE,
   { uid: Uid },
