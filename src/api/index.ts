@@ -31,7 +31,8 @@ export const enum ApiEndpoint {
   REQUEST_INVITE = "REQUEST_INVITE",
   SEND_INVITE = "SEND_INVITE",
   MINT = "MINT",
-  GIVE = "GIVE"
+  GIVE = "GIVE",
+  MIGRATE = "MIGRATE"
 }
 
 /**
@@ -68,6 +69,12 @@ type GiveApiCall = ApiCallDefinition<
   { uid: Uid },
   { amount: string; memo?: string }
 >;
+type MigrateApiCall = ApiCallDefinition<
+  ApiEndpoint.MIGRATE,
+  void,
+  { mobileNumber: string }
+>;
+
 /**
  * All API calls you can make, and the arguments you need to call them.
  */
@@ -77,7 +84,8 @@ export type ApiCall =
   | RequestInviteApiCall
   | SendInviteApiCall
   | MintApiCall
-  | GiveApiCall;
+  | GiveApiCall
+  | MigrateApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -115,6 +123,10 @@ export type GiveApiEndpoint = ApiEndpointDefinition<
   GiveApiCall,
   OperationApiResponse
 >;
+export type MigrateApiEndpoint = ApiEndpointDefinition<
+  MigrateApiCall,
+  MessageApiResponse
+>;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
@@ -122,7 +134,8 @@ type ApiDefinition =
   | RequestInviteApiEndpoint
   | SendInviteApiEndpoint
   | MintApiEndpoint
-  | GiveApiEndpoint;
+  | GiveApiEndpoint
+  | MigrateApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -171,6 +184,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.GIVE]: {
     uri: "members/:uid/give",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.MIGRATE]: {
+    uri: "me/migrate",
     method: HttpVerb.POST
   }
 };

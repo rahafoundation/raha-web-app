@@ -22,6 +22,7 @@ import {
   GetOperationsApiEndpoint,
   RequestInviteApiEndpoint,
   SendInviteApiEndpoint,
+  MigrateApiEndpoint
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -326,5 +327,32 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
     },
     ApiEndpoint.SEND_INVITE,
     inviteEmail
+  );
+};
+
+export const migrate: AsyncActionCreator = (
+  memberId: Uid,
+  mobileNumber: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      await callApi<MigrateApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.MIGRATE,
+          params: undefined,
+          body: {
+            mobileNumber
+          }
+        },
+        authToken
+      );
+    },
+    ApiEndpoint.MIGRATE,
+    memberId
   );
 };
