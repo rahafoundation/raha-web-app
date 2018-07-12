@@ -330,6 +330,10 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
   );
 };
 
+/**
+ * TODO: Remove this and all associated API resources once all
+ * G/FB auth users have been migrated to phones.
+ */
 export const migrate: AsyncActionCreator = (
   memberId: Uid,
   mobileNumber: string

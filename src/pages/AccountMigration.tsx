@@ -1,3 +1,8 @@
+/**
+ * A page for migrating users from G/FB auth to phone-based accounts.
+ * TODO: Remove once all original users have been migrated.
+ */
+
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
