@@ -267,7 +267,7 @@ export async function callApi<Def extends ApiDefinition>(
   }
 
   if (res.status > 399) {
-    throw new ApiCallFailedError(url, requestOptions, res);
+    throw new ApiCallFailedError(url, requestOptions, res, await res.text());
   }
   try {
     const responseData = await res.json();

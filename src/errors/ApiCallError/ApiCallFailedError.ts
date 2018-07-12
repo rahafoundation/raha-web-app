@@ -14,12 +14,21 @@ export class ApiCallFailedError extends ApiCallError {
   public readonly url: string;
   public readonly requestOptions: RequestInit;
 
-  constructor(url: string, requestOptions: RequestInit, response: Response) {
-    super(
-      `${requestMethod(requestOptions)} to url '${url}' failed with status ${
-        response.status
-      }`
-    );
+  constructor(
+    url: string,
+    requestOptions: RequestInit,
+    response: Response,
+    responseText: string
+  ) {
+    if (response.status === 400) {
+      super(responseText);
+    } else {
+      super(
+        `${requestMethod(requestOptions)} to url '${url}' failed with status ${
+          response.status
+        }: ${responseText}`
+      );
+    }
 
     this.response = response;
     this.url = url;

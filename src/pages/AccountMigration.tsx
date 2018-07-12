@@ -35,9 +35,6 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   }
 
   public render() {
-    //tslint:disable
-    console.log(this.props.loggedInMemberId);
-
     return (
       <div
         style={{
@@ -99,8 +96,9 @@ class AccountMigrationComponent extends React.Component<Props, State> {
             this.props.migrationApiCallStatus.status ===
               ApiCallStatusType.FAILURE && (
               <p style={{ color: "#FF5722" }}>
-                There was an error in submitting your mobile number. Please try
-                again.
+                {this.props.migrationApiCallStatus.error
+                  ? this.props.migrationApiCallStatus.error.message
+                  : "Error transitioning your account. Please try again."}
               </p>
             )}
           {this.props.migrationApiCallStatus &&
