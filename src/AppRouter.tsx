@@ -21,6 +21,7 @@ import { TermsOfService } from "./pages/TermsOfService";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Network } from "./pages/Network";
 import { Wallet } from "./pages/Wallet";
+import { AccountMigration } from "./pages/AccountMigration";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {
@@ -60,6 +61,7 @@ function AppRouter() {
         <DefaultLayout path="/leaderboard" component={Leaderboard} />
         <DefaultLayout path="/votes" component={ProxyVotes} />
         <DefaultLayout path="/network" component={Network} />
+        <DefaultLayout path="/accountMigration" component={AccountMigration} />
         <DefaultLayout component={PageNotFound} />
       </Switch>
     </ConnectedRouter>
