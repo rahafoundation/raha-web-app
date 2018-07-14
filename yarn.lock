@@ -183,6 +183,10 @@
     "@types/cheerio" "*"
     "@types/react" "*"
 
+"@types/google-libphonenumber@^7.4.16":
+  version "7.4.16"
+  resolved "https://registry.yarnpkg.com/@types/google-libphonenumber/-/google-libphonenumber-7.4.16.tgz#cd982619f66a8582e6d2e1d795f5b74f8ac08229"
+
 "@types/history@*", "@types/history@^4.6.2":
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"
@@ -3458,6 +3462,10 @@ globby@^6.1.0:
     object-assign "^4.0.1"
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
+
+google-libphonenumber@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/google-libphonenumber/-/google-libphonenumber-3.1.8.tgz#076ecc21e2113371b9d67f6b7dd9ac66db9722cc"
 
 got@^6.7.1:
   version "6.7.1"

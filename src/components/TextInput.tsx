@@ -19,6 +19,8 @@ type Props = {
   value?: string;
   className?: string;
   style?: React.CSSProperties;
+  type?: string;
+  disabled?: boolean;
 } & (
   | {
       onChange: React.EventHandler<React.FormEvent<HTMLInputElement>>;
@@ -33,13 +35,15 @@ const handleChange: (
   handler(e.currentTarget.value);
 
 const TextInput: React.StatelessComponent<Props> = props => {
-  const { placeholder, value, style, className } = props;
+  const { placeholder, value, style, className, type, disabled } = props;
+  const finalType = type ? type : "text";
   const finalProps = {
-    type: "text",
     placeholder,
     value,
     style,
     className,
+    disabled,
+    type: finalType,
     onChange:
       "onChange" in props ? props.onChange : handleChange(props.onTextChange),
     ...("defaultValue" in props ? { defaultValue: props.defaultValue } : {})
