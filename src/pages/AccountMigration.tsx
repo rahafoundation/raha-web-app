@@ -15,11 +15,10 @@ import {
 import { auth } from "../firebaseInit";
 import { TextInput } from "../components/TextInput";
 import { Button, ButtonSize, ButtonType } from "../components/Button";
-import { migrate } from "../actions";
 import { AppState } from "../reducers";
-import { getLoggedInMember } from "../selectors/auth";
-import { getStatusOfApiCall } from "../selectors/apiCalls";
-import { ApiEndpoint } from "../api";
+import { getLoggedInMember, getAuthToken } from "../selectors/auth";
+import { ApiEndpoint, ValidateMobileNumberApiEndpoint, callApi } from "../api";
+import { Uid } from "../identifiers";
 
 const HelpParagraph: React.StatelessComponent<{}> = () => (
   <p>
@@ -34,11 +33,11 @@ interface OwnProps {}
 
 interface StateProps {
   memberIsTransitionedToMobile?: boolean;
+  loggedInMemberId?: Uid;
+  getAuthToken: () => Promise<string | undefined>;
 }
 
-interface DispatchProps {
-  migrate: typeof migrate;
-}
+interface DispatchProps {}
 
 type Props = OwnProps & StateProps & DispatchProps;
 
@@ -46,7 +45,9 @@ interface State {
   mobileNumber: string;
   confirmationCode: string;
 
+  submittingPhoneNumber: boolean;
   waitingForRecaptchaVerification: boolean;
+  submittingConfirmationCode: boolean;
   waitingForConfirmation: boolean;
   transitionSuccessful: boolean;
 
@@ -65,7 +66,9 @@ class AccountMigrationComponent extends React.Component<Props, State> {
     this.state = {
       mobileNumber: "",
       confirmationCode: "",
+      submittingPhoneNumber: false,
       waitingForRecaptchaVerification: true,
+      submittingConfirmationCode: false,
       waitingForConfirmation: false,
       transitionSuccessful: false
     };
@@ -94,17 +97,38 @@ class AccountMigrationComponent extends React.Component<Props, State> {
     });
   };
 
+  private validatePhoneNumber = async (mobileNumber: string) => {
+    const authToken = await this.props.getAuthToken();
+    await callApi<ValidateMobileNumberApiEndpoint>(
+      {
+        endpoint: ApiEndpoint.VALIDATE_MOBILE_NUMBER,
+        params: undefined,
+        body: {
+          mobileNumber
+        }
+      },
+      authToken
+    );
+  };
+
   private submitPhoneNumber = async () => {
     const phoneNumberUtil = PhoneNumberUtil.getInstance();
     const mobileNumber = this.state.mobileNumber;
     let parsedMobileNumber;
+
+    this.setState({ submittingPhoneNumber: true });
+
+    // Validate phone number locally
     try {
       parsedMobileNumber = phoneNumberUtil.parse(mobileNumber);
     } catch {
       try {
         parsedMobileNumber = phoneNumberUtil.parse("+1" + mobileNumber);
       } catch (e) {
-        this.setState({ phoneNumberError: "Phone number format is invalid." });
+        this.setState({
+          phoneNumberError: "Phone number format is invalid.",
+          submittingPhoneNumber: false
+        });
         return;
       }
     }
@@ -112,10 +136,26 @@ class AccountMigrationComponent extends React.Component<Props, State> {
       parsedMobileNumber,
       PhoneNumberFormat.E164
     );
+
+    // Validate phone number against our API
+    try {
+      await this.validatePhoneNumber(formattedMobileNumber);
+    } catch (e) {
+      this.setState({
+        phoneNumberError: e.message
+          ? (e.message as string)
+          : "An error occurred submitting your phone number. Please try again.",
+        submittingPhoneNumber: false
+      });
+      return;
+    }
+
     this.setState({
       phoneNumberError: undefined,
       waitingForRecaptchaVerification: true
     });
+
+    // Submit phone number for OTP
     if (this.recaptchaVerifier) {
       try {
         this.phoneNumberConfirmationResult = await auth.signInWithPhoneNumber(
@@ -130,21 +170,26 @@ class AccountMigrationComponent extends React.Component<Props, State> {
         this.setState({
           phoneNumberError: e.message
             ? (e.message as string)
-            : "An error occurred submitting your phone number. Please try again."
+            : "An error occurred submitting your phone number. Please try again.",
+          submittingPhoneNumber: false
         });
       }
     } else {
       this.setState({
-        phoneNumberError: "A Recaptcha error occurred. Please refresh the page."
+        phoneNumberError:
+          "A Recaptcha error occurred. Please refresh the page.",
+        submittingPhoneNumber: false
       });
     }
   };
 
   private submitConfirmationCode = async () => {
-    this.setState({
-      confirmationCodeError: undefined
-    });
     if (this.phoneNumberConfirmationResult) {
+      this.setState({
+        submittingConfirmationCode: true,
+        confirmationCodeError: undefined
+      });
+
       try {
         const credential = firebase.auth.PhoneAuthProvider.credential(
           this.phoneNumberConfirmationResult.verificationId,
@@ -156,7 +201,8 @@ class AccountMigrationComponent extends React.Component<Props, State> {
             waitingForConfirmation: false,
             transitionSuccessful: true
           });
-          // TODO REMOVE THIS
+          // TODO REMOVE THIS once we're ready to actually start linking accounts.
+          // Doing this programatically since it doesn't seem possible to do it via console.
           await auth.currentUser.unlink(
             firebase.auth.PhoneAuthProvider.PROVIDER_ID
           );
@@ -166,13 +212,15 @@ class AccountMigrationComponent extends React.Component<Props, State> {
         this.setState({
           confirmationCodeError: e.message
             ? (e.message as string)
-            : "An error occurred submitting your confirmation code. Please try again."
+            : "An error occurred submitting your confirmation code. Please try again.",
+          submittingConfirmationCode: false
         });
       }
     } else {
       this.setState({
         confirmationCodeError:
-          "There was an error handling your confirmation code. Please refresh the page."
+          "There was an error handling your confirmation code. Please refresh the page.",
+        submittingConfirmationCode: false
       });
     }
   };
@@ -210,7 +258,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
           </p>
           {this.props.memberIsTransitionedToMobile ? (
             <div>
-              <h3 style={{ color: "#4CAF50" }}>
+              <h3 style={styles.successText}>
                 Your account has already been successfully transitioned to
                 mobile!
               </h3>
@@ -224,7 +272,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
               </h4>
               <p>
                 You will receive a text message to verify your number.{" "}
-                <span style={{ color: "#9E9E9E" }}>
+                <span style={styles.secondaryText}>
                   Note: standard text message rates will apply.
                 </span>
               </p>
@@ -234,6 +282,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
                   type="tel"
                   value={this.state.mobileNumber}
                   placeholder="(123) 444-5555"
+                  disabled={this.state.submittingPhoneNumber}
                 />
                 {this.state.waitingForRecaptchaVerification && (
                   <Button
@@ -241,6 +290,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
                     type={ButtonType.PRIMARY}
                     onClick={this.submitPhoneNumber}
                     style={{ margin: 8 }}
+                    disabled={this.state.submittingPhoneNumber}
                   >
                     Submit
                   </Button>
@@ -248,9 +298,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
               </div>
               <div id="recaptchaContainer" style={recaptchaStyle} />
               {this.state.phoneNumberError && (
-                <p style={{ color: "#FF5722" }}>
-                  {this.state.phoneNumberError}
-                </p>
+                <p style={styles.errorText}>{this.state.phoneNumberError}</p>
               )}
               {this.state.waitingForConfirmation && (
                 <div>
@@ -264,18 +312,20 @@ class AccountMigrationComponent extends React.Component<Props, State> {
                       }}
                       value={this.state.confirmationCode}
                       placeholder="123456"
+                      disabled={this.state.submittingConfirmationCode}
                     />
                     <Button
                       size={ButtonSize.LARGE}
                       type={ButtonType.PRIMARY}
                       onClick={this.submitConfirmationCode}
                       style={{ margin: 8 }}
+                      disabled={this.state.submittingConfirmationCode}
                     >
                       Submit
                     </Button>
                   </div>
                   {this.state.confirmationCodeError && (
-                    <p style={{ color: "#FF5722" }}>
+                    <p style={styles.errorText}>
                       {this.state.confirmationCodeError}
                     </p>
                   )}
@@ -283,7 +333,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
               )}
               {this.state.transitionSuccessful && (
                 <div>
-                  <h3 style={{ color: "#4CAF50" }}>
+                  <h3 style={styles.successText}>
                     Account successfully transitioned to mobile!
                   </h3>
                   <p>
@@ -322,16 +372,25 @@ const mapStateToProps: MapStateToProps<
 
   const loggedInMember = getLoggedInMember(state);
   const loggedInMemberId = loggedInMember ? loggedInMember.uid : undefined;
-  const migrationApiCallStatus = loggedInMemberId
-    ? getStatusOfApiCall(state, ApiEndpoint.MIGRATE, loggedInMemberId)
-    : undefined;
   return {
     memberIsTransitionedToMobile,
     loggedInMemberId,
-    migrationApiCallStatus
+    getAuthToken: () => getAuthToken(state)
   };
 };
 
-export const AccountMigration = connect(mapStateToProps, { migrate })(
+export const AccountMigration = connect(mapStateToProps)(
   AccountMigrationComponent
 );
+
+const styles = {
+  successText: {
+    color: "#4CAF50"
+  },
+  secondaryText: {
+    color: "#9E9E9E"
+  },
+  errorText: {
+    color: "#FF5722"
+  }
+};
