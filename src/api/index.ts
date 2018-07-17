@@ -32,7 +32,8 @@ export const enum ApiEndpoint {
   SEND_INVITE = "SEND_INVITE",
   MINT = "MINT",
   GIVE = "GIVE",
-  VALIDATE_MOBILE_NUMBER = "VALIDATE_MOBILE_NUMBER"
+  VALIDATE_MOBILE_NUMBER = "VALIDATE_MOBILE_NUMBER",
+  SEND_APP_INSTALL_TEXT = "SEND_APP_INSTALL_TEXT"
 }
 
 /**
@@ -74,6 +75,11 @@ type ValidateMobileNumberApiCall = ApiCallDefinition<
   void,
   { mobileNumber: string }
 >;
+type SendAppInstallTextApiCall = ApiCallDefinition<
+  ApiEndpoint.SEND_APP_INSTALL_TEXT,
+  void,
+  { mobileNumber: string }
+>;
 
 /**
  * All API calls you can make, and the arguments you need to call them.
@@ -85,7 +91,8 @@ export type ApiCall =
   | SendInviteApiCall
   | MintApiCall
   | GiveApiCall
-  | ValidateMobileNumberApiCall;
+  | ValidateMobileNumberApiCall
+  | SendAppInstallTextApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -127,6 +134,10 @@ export type ValidateMobileNumberApiEndpoint = ApiEndpointDefinition<
   ValidateMobileNumberApiCall,
   MessageApiResponse
 >;
+export type SendAppInstallTextApiEndpoint = ApiEndpointDefinition<
+  SendAppInstallTextApiCall,
+  MessageApiResponse
+>;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
@@ -135,7 +146,8 @@ type ApiDefinition =
   | SendInviteApiEndpoint
   | MintApiEndpoint
   | GiveApiEndpoint
-  | ValidateMobileNumberApiEndpoint;
+  | ValidateMobileNumberApiEndpoint
+  | SendAppInstallTextApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -188,6 +200,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.VALIDATE_MOBILE_NUMBER]: {
     uri: "me/validateMobileNumber",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.SEND_APP_INSTALL_TEXT]: {
+    uri: "me/sendAppInstallText",
     method: HttpVerb.POST
   }
 };
