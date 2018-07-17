@@ -22,7 +22,7 @@ import {
   GetOperationsApiEndpoint,
   RequestInviteApiEndpoint,
   SendInviteApiEndpoint,
-  ValidateMobileNumberApiEndpoint
+  SendAppInstallTextApiEndpoint
 } from "../api";
 
 import { wrapApiCallAction } from "./apiCalls";
@@ -327,5 +327,26 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
     },
     ApiEndpoint.SEND_INVITE,
     inviteEmail
+  );
+};
+
+export const sendAppInstallText: AsyncActionCreator = (
+  mobileNumber: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      await callApi<SendAppInstallTextApiEndpoint>(
+        {
+          endpoint: ApiEndpoint.SEND_APP_INSTALL_TEXT,
+          params: undefined,
+          body: {
+            mobileNumber
+          }
+        },
+        undefined
+      );
+    },
+    ApiEndpoint.SEND_INVITE,
+    mobileNumber
   );
 };

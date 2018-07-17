@@ -19,6 +19,7 @@ import { AppState } from "../reducers";
 import { getLoggedInMember, getAuthToken } from "../selectors/auth";
 import { ApiEndpoint, ValidateMobileNumberApiEndpoint, callApi } from "../api";
 import { Uid } from "../identifiers";
+import { sendAppInstallText } from "../actions";
 
 const HelpParagraph: React.StatelessComponent<{}> = () => (
   <p>
@@ -37,7 +38,9 @@ interface StateProps {
   getAuthToken: () => Promise<string | undefined>;
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  sendAppInstallText: typeof sendAppInstallText;
+}
 
 type Props = OwnProps & StateProps & DispatchProps;
 
@@ -60,6 +63,8 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   private phoneNumberConfirmationResult:
     | firebase.auth.ConfirmationResult
     | undefined;
+  // We don't need this state to trigger a component re-render
+  private formattedMobileNumber: string | undefined;
 
   constructor(props: Props) {
     super(props);
@@ -137,6 +142,8 @@ class AccountMigrationComponent extends React.Component<Props, State> {
       PhoneNumberFormat.E164
     );
 
+    this.formattedMobileNumber = formattedMobileNumber;
+
     // Validate phone number against our API
     try {
       await this.validatePhoneNumber(formattedMobileNumber);
@@ -201,12 +208,14 @@ class AccountMigrationComponent extends React.Component<Props, State> {
             waitingForConfirmation: false,
             transitionSuccessful: true
           });
-          // TODO REMOVE THIS once we're ready to actually start linking accounts.
-          // Doing this programatically since it doesn't seem possible to do it via console.
-          await auth.currentUser.unlink(
-            firebase.auth.PhoneAuthProvider.PROVIDER_ID
-          );
-          // TODO send install link via API
+
+          // Send install link via text
+          if (this.formattedMobileNumber) {
+            this.props.sendAppInstallText(this.formattedMobileNumber);
+          } else {
+            // tslint:disable-next-line:no-console This should never happen.
+            console.error("Error: Unable to get formatted mobile number.");
+          }
         }
       } catch (e) {
         this.setState({
@@ -379,9 +388,9 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-export const AccountMigration = connect(mapStateToProps)(
-  AccountMigrationComponent
-);
+export const AccountMigration = connect(mapStateToProps, {
+  sendAppInstallText
+})(AccountMigrationComponent);
 
 const styles = {
   successText: {
