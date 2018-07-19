@@ -33,7 +33,7 @@ const HelpParagraph: React.StatelessComponent<{}> = () => (
 interface OwnProps {}
 
 interface StateProps {
-  memberIsTransitionedToMobile?: boolean;
+  memberIsTransitionedToMobile: boolean;
   loggedInMemberId?: Uid;
   getAuthToken: () => Promise<string | undefined>;
 }
@@ -265,7 +265,8 @@ class AccountMigrationComponent extends React.Component<Props, State> {
             Instead of using Google or Facebook, the mobile app will simply text
             a passcode to your mobile number to log you in.
           </p>
-          {this.props.memberIsTransitionedToMobile ? (
+          {this.props.memberIsTransitionedToMobile &&
+          !this.state.transitionSuccessful ? (
             <div>
               <h3 style={styles.successText}>
                 Your account has already been successfully transitioned to
