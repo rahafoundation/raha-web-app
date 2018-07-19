@@ -1,5 +1,5 @@
 {
-  "apiBase": "http://localhost:4000/api/",
+  "apiBase": "https://raha-5395e.appspot.com/api/",
   "publicVideoBucket": "raha-video",
   "firebase": {
     "apiKey": "AIzaSyBXuACowZcLcr1wlhM53LHtibFwa59EmAY",
