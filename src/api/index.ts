@@ -33,7 +33,8 @@ export const enum ApiEndpoint {
   MINT = "MINT",
   GIVE = "GIVE",
   VALIDATE_MOBILE_NUMBER = "VALIDATE_MOBILE_NUMBER",
-  SEND_APP_INSTALL_TEXT = "SEND_APP_INSTALL_TEXT"
+  SEND_APP_INSTALL_TEXT = "SEND_APP_INSTALL_TEXT",
+  SSO_DISCOURSE = "SSO_DISCOURSE"
 }
 
 /**
@@ -80,6 +81,11 @@ type SendAppInstallTextApiCall = ApiCallDefinition<
   void,
   { mobileNumber: string }
 >;
+type SSODiscourseApiCall = ApiCallDefinition<
+  ApiEndpoint.SSO_DISCOURSE,
+  void,
+  { ssoRequestPayload: string; ssoRequestSignature: string }
+>;
 
 /**
  * All API calls you can make, and the arguments you need to call them.
@@ -92,7 +98,8 @@ export type ApiCall =
   | MintApiCall
   | GiveApiCall
   | ValidateMobileNumberApiCall
-  | SendAppInstallTextApiCall;
+  | SendAppInstallTextApiCall
+  | SSODiscourseApiCall;
 
 /**
  * Definition of how to use an API endpoint, i.e. what you have to provide to
@@ -138,6 +145,10 @@ export type SendAppInstallTextApiEndpoint = ApiEndpointDefinition<
   SendAppInstallTextApiCall,
   MessageApiResponse
 >;
+export type SSODiscourseApiEndpoint = ApiEndpointDefinition<
+  SSODiscourseApiCall,
+  MessageApiResponse
+>;
 
 type ApiDefinition =
   | TrustMemberApiEndpoint
@@ -147,7 +158,8 @@ type ApiDefinition =
   | MintApiEndpoint
   | GiveApiEndpoint
   | ValidateMobileNumberApiEndpoint
-  | SendAppInstallTextApiEndpoint;
+  | SendAppInstallTextApiEndpoint
+  | SSODiscourseApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations
@@ -204,6 +216,10 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   },
   [ApiEndpoint.SEND_APP_INSTALL_TEXT]: {
     uri: "me/sendAppInstallText",
+    method: HttpVerb.POST
+  },
+  [ApiEndpoint.SSO_DISCOURSE]: {
+    uri: "sso/discourse",
     method: HttpVerb.POST
   }
 };
