@@ -6,5 +6,11 @@ service firebase.storage {
                     && request.auth.uid == userId;
       allow read: if request.auth.uid == userId;
     }
+    match /invite-video/{videoToken}/{contentId=**} {
+      // TODO prevent people from overwriting their files? Seems "allow create" still allows overwrite.
+      allow create: if request.resource.size < 61 * 1024 * 1024 // 61 MB (slightly more relaxed than client-side 60 MB)
+                    && request.auth != null;
+      allow get: if request.auth != null;
+    }
   }
 }
