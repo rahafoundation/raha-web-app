@@ -18,13 +18,21 @@ interface StateProps {
 }
 type Props = StateProps & {
   noRedirect: boolean;
+  signInSuccessCallback?: () => boolean;
 };
 const LogInView: React.StatelessComponent<Props> = ({
   authFirebaseUser,
   authMemberDocIsLoaded,
   authMemberDoc,
-  noRedirect
+  noRedirect,
+  signInSuccessCallback
 }) => {
+  const signInSuccess =
+    signInSuccessCallback ||
+    // Default action is to prevent FirebaseAuth from redirecting on success.
+    // We handle redirect manually below.
+    (() => false);
+
   const uiConfig = {
     signInFlow: "redirect",
     signInOptions: [
@@ -33,11 +41,7 @@ const LogInView: React.StatelessComponent<Props> = ({
       firebase.auth.GithubAuthProvider.PROVIDER_ID
     ],
     callbacks: {
-      signInSuccess: () => {
-        // Prevent FirebaseAuth from redirecting on success.
-        // We handle redirect manually below.
-        return false;
-      }
+      signInSuccess
     }
   };
   if (!noRedirect) {
