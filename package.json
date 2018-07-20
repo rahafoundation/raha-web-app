@@ -11,10 +11,8 @@
     "use-prod-config": "cp src/data/prod.config.json src/data/config.json",
     "use-test-config": "cp src/data/test.config.json src/data/config.json",
     "use-local-config": "cp src/data/local.config.json src/data/config.json",
-    "deploy-test":
-      "yarn use-test-config && yarn build && firebase deploy --project raha-test",
-    "deploy-prod":
-      "yarn use-prod-config && yarn build && firebase deploy --project raha-5395e"
+    "deploy-test": "yarn use-test-config && yarn build && firebase deploy --project raha-test",
+    "deploy-prod": "yarn use-prod-config && yarn build && firebase deploy --project raha-5395e"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -22,7 +20,7 @@
     "@fortawesome/fontawesome-free-regular": "^5.0.8",
     "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "@fortawesome/react-fontawesome": "^0.0.17",
-    "@raha/api": "^0.0.12",
+    "@raha/api": "^0.0.13",
     "big.js": "5.0.3",
     "classnames": "^2.2.5",
     "firebase": "^4.9.0",
@@ -50,6 +48,7 @@
     "@types/enzyme": "^3.1.9",
     "@types/enzyme-adapter-react-16": "^1.0.2",
     "@types/google-libphonenumber": "^7.4.16",
+    "@types/history": "^4.6.2",
     "@types/jest": "^22.2.2",
     "@types/material-ui": "^0.21.1",
     "@types/node": "^9.6.1",
@@ -59,7 +58,6 @@
     "@types/react-modal": "^3.1.2",
     "@types/react-redux": "^5.0.15",
     "@types/react-router-dom": "^4.2.6",
-    "@types/history": "^4.6.2",
     "@types/react-router-redux": "^5.0.14",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",

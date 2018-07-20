@@ -369,9 +369,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha/api@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.12.tgz#a84dd5afc08d364bc4ebb2d4cda0cfb3919c9f30"
+"@raha/api@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.13.tgz#47abb1688e5d30c80f0b77d54c59bed2dfa4f0fd"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -2874,7 +2874,7 @@ discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
 
-discourse-sso@rahafoundation/discourse_sso_node:
+"discourse-sso@github:rahafoundation/discourse_sso_node":
   version "1.0.3"
   resolved "https://codeload.github.com/rahafoundation/discourse_sso_node/tar.gz/bc12549a86b73a40d1a506fd5a3e67e509abd6d7"
 
