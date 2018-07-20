@@ -369,9 +369,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha/api@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.8.tgz#9a8aed67efabe48bb179f05ac2ec5a5ec26eb2d4"
+"@raha/api@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.10.tgz#699973d023f70403d98992c4a9af4252d2e92a97"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -382,6 +382,7 @@
     async-busboy "^0.6.2"
     big.js "^5.0.3"
     coconutjs "^2.2.0"
+    discourse-sso rahafoundation/discourse_sso_node
     enum-values "^1.2.1"
     firebase-admin "^5.12.0"
     http-status "^1.2.0"
@@ -2872,6 +2873,10 @@ dir-glob@^2.0.0:
 discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
+
+"discourse-sso@github:rahafoundation/discourse_sso_node":
+  version "1.0.3"
+  resolved "https://codeload.github.com/rahafoundation/discourse_sso_node/tar.gz/bc12549a86b73a40d1a506fd5a3e67e509abd6d7"
 
 dns-equal@^1.0.0:
   version "1.0.0"

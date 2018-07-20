@@ -20,7 +20,7 @@
     "@fortawesome/fontawesome-free-regular": "^5.0.8",
     "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "@fortawesome/react-fontawesome": "^0.0.17",
-    "@raha/api": "^0.0.8",
+    "@raha/api": "^0.0.10",
     "@types/history": "^4.6.2",
     "@types/react-router-redux": "^5.0.14",
     "big.js": "5.0.3",
