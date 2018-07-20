@@ -1,9 +1,13 @@
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
+import {
+  Operation,
+  OperationType
+} from "@raha/api/dist/shared/models/Operation";
+
 import { AppState } from "../../store";
 import { Member } from "../../reducers/membersNew";
-import { Operation, OperationType } from "../../reducers/operations";
 import { getMemberOperations } from "../../selectors/operations";
 
 import { OperationList } from "../../components/OperationList";

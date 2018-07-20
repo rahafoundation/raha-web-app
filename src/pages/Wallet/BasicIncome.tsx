@@ -1,11 +1,13 @@
+import { Big } from "big.js";
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { Button, ButtonType, ButtonSize } from "../../components/Button";
 import { IntlMessage } from "../../components/IntlMessage";
 import { Loading } from "../../components/Loading";
-import { ApiEndpoint } from "../../api";
 
 import { AppState } from "../../store";
 import { mint } from "../../actions/wallet";
@@ -117,7 +119,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const mintApiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.MINT,
+    ApiEndpointName.MINT,
     ownProps.loggedInMember.uid
   );
 
@@ -141,17 +143,17 @@ const mergeProps: MergeProps<
   return {
     ...stateProps,
     mint: () => {
-      dispatchProps.mint(
-        ownProps.loggedInMember.uid,
-        stateProps.mintableAmount
-      );
+      if (stateProps.mintableAmount) {
+        dispatchProps.mint(
+          ownProps.loggedInMember.uid,
+          new Big(stateProps.mintableAmount)
+        );
+      }
     },
     ...ownProps
   };
 };
 
-export const BasicIncome = connect(
-  mapStateToProps,
-  { mint },
-  mergeProps
-)(BasicIncomeView);
+export const BasicIncome = connect(mapStateToProps, { mint }, mergeProps)(
+  BasicIncomeView
+);

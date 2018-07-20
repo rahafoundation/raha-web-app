@@ -5,10 +5,14 @@ import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 import { green50 } from "material-ui/styles/colors";
 
+import {
+  Operation,
+  OperationType
+} from "@raha/api/dist/shared/models/Operation";
+
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
 import { Member } from "../reducers/membersNew";
-import { Operation, OperationType } from "../reducers/operations";
 import { getLoggedInMember } from "../selectors/auth";
 import { getMembersByUid } from "../selectors/members";
 

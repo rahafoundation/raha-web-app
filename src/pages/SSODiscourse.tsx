@@ -2,10 +2,14 @@ import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
+import { getSSODiscourseRedirect } from "@raha/api/dist/client/sso/ssoDiscourse";
+
 import { LogIn } from "../components/LogIn";
-import { SSODiscourseApiEndpoint, callApi, ApiEndpoint } from "../api";
 import { AppState } from "../reducers";
 import { getAuthToken } from "../selectors/auth";
+import { UnauthenticatedError } from "../../node_modules/@raha/api/dist/client/errors/UnauthenticatedError";
+// tslint:disable-next-line:no-var-requires
+const CONFIG = require("../data/config.json");
 
 interface OwnProps {}
 
@@ -37,24 +41,23 @@ class SSODiscourseView extends React.Component<Props, State> {
     }
 
     const authToken = await this.props.getAuthToken();
-    const response = await callApi<SSODiscourseApiEndpoint>(
-      {
-        endpoint: ApiEndpoint.SSO_DISCOURSE,
-        params: undefined,
-        body: {
-          ssoRequestPayload,
-          ssoRequestSignature
-        }
-      },
-      authToken
+    if (!authToken) {
+      throw new UnauthenticatedError();
+    }
+    const { body } = await getSSODiscourseRedirect(
+      CONFIG.apiBase,
+      authToken,
+      ssoRequestPayload,
+      ssoRequestSignature
     );
-    return response;
+
+    return body;
   }
 
   private signInSuccessCallback = () => {
     (async () => {
       try {
-        const {message} = await this.getRedirectUri();
+        const { message } = await this.getRedirectUri();
         window.location.assign(message);
       } catch (e) {
         this.setState({

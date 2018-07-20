@@ -369,9 +369,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha/api@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.10.tgz#699973d023f70403d98992c4a9af4252d2e92a97"
+"@raha/api@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.0.12.tgz#a84dd5afc08d364bc4ebb2d4cda0cfb3919c9f30"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -2874,7 +2874,7 @@ discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
 
-"discourse-sso@github:rahafoundation/discourse_sso_node":
+discourse-sso@rahafoundation/discourse_sso_node:
   version "1.0.3"
   resolved "https://codeload.github.com/rahafoundation/discourse_sso_node/tar.gz/bc12549a86b73a40d1a506fd5a3e67e509abd6d7"
 
@@ -8704,9 +8704,9 @@ style-loader@0.19.0:
     loader-utils "^1.0.2"
     schema-utils "^0.3.0"
 
-styled-components@^3.2.3:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-3.2.6.tgz#99e6e75a746bdedd295a17e03dd1493055a1cc3b"
+styled-components@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-3.3.3.tgz#09e702055ab11f7a8eab8229b1c0d0b855095686"
   dependencies:
     buffer "^5.0.3"
     css-to-react-native "^2.0.3"
@@ -9093,9 +9093,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.8.1:
-  version "2.8.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"
+typescript@^2.9.2:
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
 
 ua-parser-js@^0.7.9:
   version "0.7.18"
