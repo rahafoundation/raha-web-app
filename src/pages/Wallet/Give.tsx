@@ -1,9 +1,11 @@
+import { Big } from "big.js";
 import * as React from "react";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { Button, ButtonType, ButtonSize } from "../../components/Button";
 import { NumberInput } from "../../components/NumberInput";
 import { TextInput } from "../../components/TextInput";
@@ -32,7 +34,7 @@ interface DispatchProps {
   give: typeof give;
 }
 type MergedProps = StateProps & {
-  give?: (amount: string, memo?: string) => void;
+  give?: (amount: Big, memo?: string) => void;
 };
 
 type Props = OwnProps & InjectedProps & MergedProps;
@@ -85,7 +87,13 @@ class GiveView extends React.Component<Props, State> {
     const { amount, memo } = this.state;
 
     if (this.props.give && amount) {
-      this.props.give(amount, memo);
+      try {
+        const bigAmount = new Big(amount);
+        this.props.give(bigAmount, memo);
+      } catch (e) {
+        // tslint:disable-next-line:no-console
+        console.error(e);
+      }
     }
   };
 
@@ -193,7 +201,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const giveApiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.GIVE,
+    ApiEndpointName.GIVE,
     ownProps.profileMember.uid
   );
 
@@ -210,15 +218,13 @@ const mergeProps: MergeProps<
 > = (stateProps, dispatchProps, ownProps) => {
   return {
     ...stateProps,
-    give: (amount: string, memo?: string) => {
+    give: (amount: Big, memo?: string) => {
       dispatchProps.give(ownProps.profileMember.uid, amount, memo);
     },
     ...ownProps
   };
 };
 
-export const Give = connect(
-  mapStateToProps,
-  { give },
-  mergeProps
-)(injectIntl(GiveView));
+export const Give = connect(mapStateToProps, { give }, mergeProps)(
+  injectIntl(GiveView)
+);

@@ -1,5 +1,6 @@
-import { ApiEndpoint } from "../api";
-import { ApiCallError } from "../errors/ApiCallError";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { ApiCallFailedError } from "@raha/api/dist/client/errors/ApiCallFailedError";
+
 import { AsyncAction } from ".";
 
 export const enum ApiCallsActionType {
@@ -9,7 +10,7 @@ export const enum ApiCallsActionType {
 }
 
 export interface ApiCallsActionBase {
-  endpoint: ApiEndpoint;
+  endpoint: ApiEndpointName;
   identifier: string;
 }
 
@@ -21,7 +22,7 @@ interface ApiCallSuccessAction extends ApiCallsActionBase {
 }
 interface ApiCallFailedAction extends ApiCallsActionBase {
   type: ApiCallsActionType.FAILURE;
-  error: ApiCallError;
+  error: ApiCallFailedError;
 }
 export type ApiCallsAction =
   | ApiCallStartedAction
@@ -44,7 +45,7 @@ export type ApiCallsAction =
  */
 export const wrapApiCallAction: (
   asyncAction: AsyncAction,
-  endpoint: ApiEndpoint,
+  endpoint: ApiEndpointName,
   identifier: string
 ) => AsyncAction = (asyncAction, endpoint, identifier) => {
   return async (dispatch, getState, extraArgument) => {
@@ -67,7 +68,7 @@ export const wrapApiCallAction: (
       return result;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.error("API Call failed: ", err);
+      console.error("API Call failed:", err);
       const failureAction: ApiCallsAction = {
         type: ApiCallsActionType.FAILURE,
         endpoint,
@@ -77,7 +78,7 @@ export const wrapApiCallAction: (
       dispatch(failureAction);
 
       // continue throwing unrelated errors
-      if (!(err instanceof ApiCallError)) {
+      if (!(err instanceof ApiCallFailedError)) {
         throw err;
       }
     }

@@ -20,6 +20,11 @@
 
 1.  `firebase deploy --project <project-id> --only firestore:rules`
 
+### Troubleshooting
+
+1. If you run into errors installing node modules, you may have to downgrade
+   your version of Node. The latest LTS version (8.1) seems to work well.
+
 ### Contributing
 
 We welcome outside contributions! We try to label issues that are fairly isolated with [good first issue](https://github.com/rahafoundation/raha-web-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If you are looking for guidance, please comment on or create an issue.

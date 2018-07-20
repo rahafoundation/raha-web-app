@@ -1,10 +1,13 @@
 import { Big } from "big.js";
-import { User } from "firebase";
 import { Reducer } from "redux";
+
+import {
+  Operation,
+  OperationType
+} from "@raha/api/dist/shared/models/Operation";
 
 import { Uid, Username } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";
-import { Operation, OperationType } from "./operations";
 import { OperationInvalidError } from "../errors/OperationInvalidError";
 
 const GENESIS_REQUEST_INVITE_OPS = [

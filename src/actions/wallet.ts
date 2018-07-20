@@ -1,14 +1,19 @@
-import { AppState } from "../store";
+import { Big } from "big.js";
 
-import { ApiEndpoint, callApi, MintApiEndpoint, GiveApiEndpoint } from "../api";
+import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
+import { mint as callMint } from "@raha/api/dist/client/me/mint";
+import { give as callGive } from "@raha/api/dist/client/members/give";
+import { MintType } from "@raha/api/dist/shared/models/Operation";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { Uid } from "../identifiers";
 import { getAuthToken } from "../selectors/auth";
-import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
 import { AsyncActionCreator, OperationsAction, OperationsActionType } from "./";
 import { wrapApiCallAction } from "./apiCalls";
-import { MintType } from "../reducers/operations";
+// tslint:disable-next-line:no-var-requires
+const CONFIG = require("../data/config.json");
 
-export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
+export const mint: AsyncActionCreator = (uid: Uid, amount: Big) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -16,32 +21,25 @@ export const mint: AsyncActionCreator = (uid: Uid, amount: string) => {
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<MintApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.MINT,
-          params: undefined,
-          body: {
-            amount,
-            type: MintType.BASIC_INCOME
-          }
-        },
-        authToken
-      );
+      const { body } = await callMint(CONFIG.apiBase, authToken, {
+        amount,
+        type: MintType.BASIC_INCOME
+      });
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.MINT,
+    ApiEndpointName.MINT,
     uid
   );
 };
 
 export const give: AsyncActionCreator = (
   uid: Uid,
-  amount: string,
+  amount: Big,
   memo?: string
 ) => {
   return wrapApiCallAction(
@@ -51,25 +49,21 @@ export const give: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<GiveApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.GIVE,
-          params: { uid },
-          body: {
-            amount,
-            memo
-          }
-        },
-        authToken
+      const { body } = await callGive(
+        CONFIG.apiBase,
+        authToken,
+        uid,
+        amount,
+        memo
       );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.GIVE,
+    ApiEndpointName.GIVE,
     uid
   );
 };
