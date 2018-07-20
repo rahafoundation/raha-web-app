@@ -1,6 +1,7 @@
+import { Operation } from "@raha/api/dist/shared/models/Operation";
+
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
-import { Operation } from "../reducers/operations";
 
 export function getMemberOperations(state: AppState, uid: Uid): Operation[] {
   return state.operations.filter(op => {

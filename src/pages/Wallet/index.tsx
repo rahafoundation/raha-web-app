@@ -8,14 +8,10 @@ import { AppState } from "../../store";
 import { Username } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../../reducers/membersNew";
 
-import { Button, ButtonType, ButtonSize } from "../../components/Button";
 import { IntlMessage } from "../../components/IntlMessage";
 import { Loading } from "../../components/Loading";
 
-import { getMembersByUid } from "../../selectors/members";
 import { getLoggedInMember } from "../../selectors/auth";
-
-import { green } from "../../constants/palette";
 
 import { Balance } from "./Balance";
 import { BasicIncome } from "./BasicIncome";

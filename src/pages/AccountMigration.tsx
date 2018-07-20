@@ -12,14 +12,17 @@ import {
   PhoneNumberFormat
 } from "google-libphonenumber";
 
+import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist/client/me/validateMobileNumber";
+
 import { auth } from "../firebaseInit";
 import { TextInput } from "../components/TextInput";
 import { Button, ButtonSize, ButtonType } from "../components/Button";
 import { AppState } from "../reducers";
-import { getLoggedInMember, getAuthToken } from "../selectors/auth";
-import { ApiEndpoint, ValidateMobileNumberApiEndpoint, callApi } from "../api";
+import { getLoggedInMember } from "../selectors/auth";
 import { Uid } from "../identifiers";
 import { sendAppInstallText } from "../actions";
+// tslint:disable-next-line:no-var-requires
+const CONFIG = require("../data/config.json");
 
 const HelpParagraph: React.StatelessComponent<{}> = () => (
   <p>
@@ -35,7 +38,6 @@ interface OwnProps {}
 interface StateProps {
   memberIsTransitionedToMobile: boolean;
   loggedInMemberId?: Uid;
-  getAuthToken: () => Promise<string | undefined>;
 }
 
 interface DispatchProps {
@@ -103,17 +105,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   };
 
   private validatePhoneNumber = async (mobileNumber: string) => {
-    const authToken = await this.props.getAuthToken();
-    await callApi<ValidateMobileNumberApiEndpoint>(
-      {
-        endpoint: ApiEndpoint.VALIDATE_MOBILE_NUMBER,
-        params: undefined,
-        body: {
-          mobileNumber
-        }
-      },
-      authToken
-    );
+    await callValidateMobileNumber(CONFIG.apiBase, mobileNumber);
   };
 
   private submitPhoneNumber = async () => {
@@ -384,8 +376,7 @@ const mapStateToProps: MapStateToProps<
   const loggedInMemberId = loggedInMember ? loggedInMember.uid : undefined;
   return {
     memberIsTransitionedToMobile,
-    loggedInMemberId,
-    getAuthToken: () => getAuthToken(state)
+    loggedInMemberId
   };
 };
 

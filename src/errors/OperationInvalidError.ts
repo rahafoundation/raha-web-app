@@ -1,5 +1,6 @@
+import { Operation } from "@raha/api/dist/shared/models/Operation";
+
 import { ApplicationError } from "./ApplicationError";
-import { Operation } from "../reducers/operations";
 
 export class OperationInvalidError extends ApplicationError {
   public readonly operation: Operation;

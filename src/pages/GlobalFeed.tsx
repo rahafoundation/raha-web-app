@@ -4,9 +4,10 @@ import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 import { green100 } from "material-ui/styles/colors";
 
+import { Operation } from "@raha/api/dist/shared/models/Operation";
+
 import { AppState } from "../store";
 import { Member } from "../reducers/membersNew";
-import { Operation, OperationType } from "../reducers/operations";
 
 import { IntlMessage } from "../components/IntlMessage";
 import { OperationList } from "../components/OperationList";

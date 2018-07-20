@@ -2,8 +2,9 @@ import * as firebase from "firebase";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
-import * as path from "path";
 import { push as pushRouteAction } from "react-router-redux";
+
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
 
 import { requestInviteFromMember as requestInviteFromMemberAction } from "../../actions";
 import { getPrivateVideoInviteRef } from "../../connectors";
@@ -17,8 +18,7 @@ import { Redirect } from "react-router-dom";
 import { blueGrey300, red400 } from "material-ui/styles/colors";
 import { getStatusOfApiCall } from "../../selectors/apiCalls";
 import { ApiCallStatusType, ApiCallStatus } from "../../reducers/apiCalls";
-import { ApiEndpoint } from "../../api";
-import { getMembersByMid, getMembersByUid } from "../../selectors/members";
+import { getMembersByMid } from "../../selectors/members";
 
 import { WelcomeSteps } from "./WelcomeSteps";
 import { getLoggedInMemberProfileUrl } from "../../selectors/auth";
@@ -186,7 +186,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const requestInviteStatus = !!requestingFromMember
     ? getStatusOfApiCall(
         state,
-        ApiEndpoint.REQUEST_INVITE,
+        ApiEndpointName.REQUEST_INVITE,
         requestingFromMember.uid
       )
     : undefined;
