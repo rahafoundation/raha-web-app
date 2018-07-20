@@ -7,11 +7,10 @@ import * as firebase from "firebase";
 import { Action, ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { callApi } from "@raha/api/dist/client/callApi";
 import { list as callListOperations } from "@raha/api/dist/client/operations/list";
 import { trust as callTrust } from "@raha/api/dist/client/members/trust";
 import { sendInvite as callSendInvite } from "@raha/api/dist/client/me/sendInvite";
-import { requestInvite as callRequestInvite } from "@raha/api/dist/client/members/requestInvite";
+import { webRequestInvite as callRequestInvite } from "@raha/api/dist/client/members/webRequestInvite";
 import { sendAppInstallText as callSendAppInstallText } from "@raha/api/dist/client/me/sendAppInstallText";
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
 import { Operation } from "@raha/api/dist/shared/models/Operation";
