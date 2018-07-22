@@ -21,7 +21,6 @@ import { AppState } from "../reducers";
 import { getLoggedInMember } from "../selectors/auth";
 import { Uid } from "../identifiers";
 import { sendAppInstallText } from "../actions";
-import { LogIn } from "../components/LogIn";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
 
@@ -68,7 +67,6 @@ class AccountMigrationComponent extends React.Component<Props, State> {
     | undefined;
   // We don't need this state to trigger a component re-render
   private formattedMobileNumber: string | undefined;
-  private recaptchaContainer?: HTMLDivElement | null;
 
   constructor(props: Props) {
     super(props);
@@ -84,15 +82,13 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    if (this.recaptchaContainer) {
-      this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-        "recaptchaContainer"
-      );
-    }
+    this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      "recaptchaContainer"
+    );
   }
 
   public componentWillUnmount() {
-    if (this.recaptchaContainer && this.recaptchaVerifier) {
+    if (this.recaptchaVerifier) {
       this.recaptchaVerifier.clear();
     }
   }
@@ -231,35 +227,6 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   };
 
   public render() {
-    if (!this.props.loggedInMemberId) {
-      if (auth.currentUser) {
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center"
-            }}
-          >
-            <h1>Transition to the Raha Mobile App</h1>
-            <p>
-              It looks like you logged in with an account that is not associated
-              with any existing Raha member. Please log out and try again.
-            </p>
-            <Button
-              onClick={() => {
-                auth.signOut();
-              }}
-            >
-              Log out
-            </Button>
-          </div>
-        );
-      } else {
-        return <LogIn noRedirect={true} />;
-      }
-    }
-
     const recaptchaStyle =
       this.state.waitingForRecaptchaVerification && !this.state.phoneNumberError
         ? { display: "block" }
@@ -331,11 +298,7 @@ class AccountMigrationComponent extends React.Component<Props, State> {
                   </Button>
                 )}
               </div>
-              <div
-                id="recaptchaContainer"
-                style={recaptchaStyle}
-                ref={elem => (this.recaptchaContainer = elem)}
-              />
+              <div id="recaptchaContainer" style={recaptchaStyle} />
               {this.state.phoneNumberError && (
                 <p style={styles.errorText}>{this.state.phoneNumberError}</p>
               )}
