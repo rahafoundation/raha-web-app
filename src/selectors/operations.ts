@@ -1,4 +1,4 @@
-import { Operation } from "@raha/api/dist/shared/models/Operation";
+import { Operation } from "@raha/api-shared/models/Operation";
 
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
