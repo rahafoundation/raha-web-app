@@ -8,7 +8,7 @@ import { green50 } from "material-ui/styles/colors";
 import {
   Operation,
   OperationType
-} from "@raha/api/dist/shared/models/Operation";
+} from "@raha/api-shared/models/Operation";
 
 import { Uid } from "../identifiers";
 import { AppState } from "../store";
