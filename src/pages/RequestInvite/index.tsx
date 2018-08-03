@@ -4,7 +4,7 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 import { push as pushRouteAction } from "react-router-redux";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { requestInviteFromMember as requestInviteFromMemberAction } from "../../actions";
 import { getPrivateVideoInviteRef } from "../../connectors";

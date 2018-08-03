@@ -2,12 +2,12 @@ import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
-import { getSSODiscourseRedirect } from "@raha/api/sso/ssoDiscourse";
+import { getSSODiscourseRedirect } from "@raha/api/dist/sso/ssoDiscourse";
 
 import { LogIn } from "../components/LogIn";
 import { AppState } from "../reducers";
 import { getAuthToken } from "../selectors/auth";
-import { UnauthenticatedError } from "../../node_modules/@raha/api/errors/UnauthenticatedError";
+import { UnauthenticatedError } from "../../node_modules/@raha/api/dist/errors/UnauthenticatedError";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
 

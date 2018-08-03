@@ -1,10 +1,10 @@
 import { Big } from "big.js";
 
-import { UnauthenticatedError } from "@raha/api/errors/UnauthenticatedError";
-import { mint as callMint } from "@raha/api/me/mint";
-import { give as callGive } from "@raha/api/members/give";
-import { MintType } from "@raha/api-shared/models/Operation";
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
+import { mint as callMint } from "@raha/api/dist/me/mint";
+import { give as callGive } from "@raha/api/dist/members/give";
+import { MintType } from "@raha/api-shared/dist/models/Operation";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { Uid } from "../identifiers";
 import { getAuthToken } from "../selectors/auth";

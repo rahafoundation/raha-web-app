@@ -3,7 +3,7 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import styled from "styled-components";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { trustMember } from "../../actions";
 import { AppState } from "../../store";

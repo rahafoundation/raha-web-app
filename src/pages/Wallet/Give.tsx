@@ -4,7 +4,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import styled from "styled-components";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { Button, ButtonType, ButtonSize } from "../../components/Button";
 import { NumberInput } from "../../components/NumberInput";

@@ -3,7 +3,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { AppState } from "../store";
 import { getStatusOfApiCall } from "../selectors/apiCalls";
