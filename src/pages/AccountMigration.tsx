@@ -12,7 +12,7 @@ import {
   PhoneNumberFormat
 } from "google-libphonenumber";
 
-import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/me/validateMobileNumber";
+import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist/me/validateMobileNumber";
 
 import { auth } from "../firebaseInit";
 import { TextInput } from "../components/TextInput";

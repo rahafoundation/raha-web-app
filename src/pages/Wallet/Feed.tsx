@@ -4,7 +4,7 @@ import { connect, MapStateToProps } from "react-redux";
 import {
   Operation,
   OperationType
-} from "@raha/api-shared/models/Operation";
+} from "@raha/api-shared/dist/models/Operation";
 
 import { AppState } from "../../store";
 import { Member } from "../../reducers/membersNew";

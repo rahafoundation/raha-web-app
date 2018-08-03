@@ -7,14 +7,14 @@ import * as firebase from "firebase";
 import { Action, ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { list as callListOperations } from "@raha/api/operations/list";
-import { trust as callTrust } from "@raha/api/members/trust";
-import { sendInvite as callSendInvite } from "@raha/api/me/sendInvite";
-import { webRequestInvite as callRequestInvite } from "@raha/api/members/webRequestInvite";
-import { sendAppInstallText as callSendAppInstallText } from "@raha/api/me/sendAppInstallText";
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
-import { Operation } from "@raha/api-shared/models/Operation";
-import { UnauthenticatedError } from "@raha/api/errors/UnauthenticatedError";
+import { list as callListOperations } from "@raha/api/dist/operations/list";
+import { trust as callTrust } from "@raha/api/dist/members/trust";
+import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
+import { webRequestInvite as callRequestInvite } from "@raha/api/dist/members/webRequestInvite";
+import { sendAppInstallText as callSendAppInstallText } from "@raha/api/dist/me/sendAppInstallText";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { Operation } from "@raha/api-shared/dist/models/Operation";
+import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";

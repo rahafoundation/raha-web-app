@@ -4,7 +4,7 @@ import { Reducer } from "redux";
 import {
   Operation,
   OperationType
-} from "@raha/api-shared/models/Operation";
+} from "@raha/api-shared/dist/models/Operation";
 
 import { Uid, Username } from "../identifiers";
 import { MembersAction, OperationsActionType } from "../actions";

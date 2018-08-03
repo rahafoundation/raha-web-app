@@ -1,7 +1,7 @@
 import { Reducer } from "redux";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
-import { ApiCallError } from "@raha/api/errors";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { ApiCallError } from "@raha/api/dist/errors";
 
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
 
