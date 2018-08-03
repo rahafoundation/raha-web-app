@@ -4,6 +4,8 @@
     "esbenp.prettier-vscode",
     "eg2.tslint",
     "toba.vsfire",
-    "msjsdiag.debugger-for-chrome"
+    "msjsdiag.debugger-for-chrome",
+    "stkb.rewrap",
+    "spywhere.guides"
   ]
 }
