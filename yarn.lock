@@ -158,18 +158,18 @@
   dependencies:
     humps "^2.0.1"
 
-"@raha/api-shared@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/@raha/api-shared/-/api-shared-0.0.6.tgz#212f82f412209dc40ca99342243b5399026383e9"
+"@raha/api-shared@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/@raha/api-shared/-/api-shared-0.1.0.tgz#11c0bcd0ecfabdf37a49b50b987e65b2215ac237"
   dependencies:
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
-"@raha/api@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.npmjs.org/@raha/api/-/api-0.1.2.tgz#abbd373a47958d978cce944b5c9b602a4de3a127"
+"@raha/api@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/@raha/api/-/api-0.2.0.tgz#ce1d2e7ba20bb8426fbd2e9bb0a58d06ab989005"
   dependencies:
-    "@raha/api-shared" "^0.0.6"
+    "@raha/api-shared" "^0.1.0"
     big.js "^5.0.3"
     url-join "^4.0.0"
 
