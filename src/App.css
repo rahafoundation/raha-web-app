@@ -97,3 +97,7 @@
   justify-content: center;
   flex-direction: column;
 }
+
+.AcceptInvite {
+  text-align: center;
+}
