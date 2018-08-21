@@ -62,14 +62,20 @@ function isOwnProfile(
   loggedInMember: Member | undefined,
   profileMember: Member
 ): boolean {
-  return !!loggedInMember && loggedInMember.uid === profileMember.uid;
+  return (
+    !!loggedInMember &&
+    loggedInMember.get("memberId") === profileMember.get("memberId")
+  );
 }
 
 function trustsMember(
   loggedInMember: Member | undefined,
   toTrust: Member
 ): boolean {
-  return !!loggedInMember && loggedInMember.trustsSet[toTrust.uid];
+  return (
+    !!loggedInMember &&
+    loggedInMember.get("trusts").includes(toTrust.get("memberId"))
+  );
 }
 
 function canTrustMember(
@@ -80,18 +86,6 @@ function canTrustMember(
     !!loggedInMember &&
     !isOwnProfile(loggedInMember, toTrust) &&
     !trustsMember(loggedInMember, toTrust)
-  );
-}
-
-/**
- * Invite confirmed is defined by satifying one of the following:
- * a) the user was invited as part of the genesis
- * b) the user has been trusted by the person inviting them.
- */
-function isInviteConfirmed(profileMember: Member): boolean {
-  return (
-    profileMember.invitedBy === GENESIS_MEMBER ||
-    profileMember.invitedBy in profileMember.trustedBySet
   );
 }
 
@@ -171,7 +165,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
     invitedByMember,
     invitedMembers
   } = profileData;
-  const inviteConfirmed = isInviteConfirmed(profileMember);
+  const inviteConfirmed = profileMember.get("inviteConfirmed");
   const trustApiCallStatus = props.trustApiCallStatus
     ? props.trustApiCallStatus.status
     : undefined;
@@ -180,7 +174,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
     <ProfileElem>
       <header>
         <h1 className="memberTitle">
-          {profileMember.fullName}
+          {profileMember.get("fullName")}
 
           {props.trust &&
             canTrustMember(loggedInMember, profileMember) && (
@@ -221,7 +215,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
             trustedByLevel3={0}
           />
           <WalletButtonLink
-            walletLink={`/m/${profileMember.username}/wallet`}
+            walletLink={`/m/${profileMember.get("username")}/wallet`}
           />
         </div>
       </header>
@@ -229,7 +223,7 @@ const ProfileView: React.StatelessComponent<Props> = props => {
       <main>
         {inviteConfirmed ? (
           // TODO: should be using internationalized message
-          <InviteVideo memberUid={profileMember.uid} />
+          <InviteVideo memberUid={profileMember.get("memberId")} />
         ) : (
           <div>Pending trust confirmation before showing public video</div>
         )}
@@ -256,25 +250,26 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const loggedInMember = getLoggedInMember(state);
   const memberUsername = ownProps.match.params.memberUsername;
-  const profileMember = state.membersNew.byUsername[memberUsername];
+  const profileMember = state.membersNew.byMemberUsername.get(memberUsername);
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized
-    const isLoading = Object.keys(state.membersNew.byUsername).length === 0;
+    const isLoading = state.membersNew.byMemberUsername.size === 0;
     return { isLoading, loggedInMember, memberUsername };
   }
 
   const trustApiCallStatus = getStatusOfApiCall(
     state,
     ApiEndpointName.TRUST_MEMBER,
-    profileMember.uid
+    profileMember.get("memberId")
   );
 
+  const invitedByMemberId = profileMember.get("invitedBy");
   const invitedByMember =
-    (profileMember &&
-      (profileMember.invitedBy === GENESIS_MEMBER
-        ? GENESIS_MEMBER
-        : state.membersNew.byUid[profileMember.invitedBy])) ||
-    GENESIS_MEMBER;
+    invitedByMemberId === GENESIS_MEMBER
+      ? GENESIS_MEMBER
+      : invitedByMemberId
+        ? state.membersNew.byMemberId.get(invitedByMemberId) || GENESIS_MEMBER
+        : GENESIS_MEMBER;
 
   return {
     loggedInMember,
@@ -285,12 +280,18 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
       // NOTE: these type assertions only work because the client has the full
       // application state, since we run through all operations on the client at
       // the moment. When that changes, this, too, needs to change.
-      trustedMembers: getMembersByUid(state, profileMember.trusts) as Member[],
+      trustedMembers: getMembersByUid(
+        state,
+        profileMember.get("trusts").toArray()
+      ) as Member[],
       trustedByMembers: getMembersByUid(
         state,
-        profileMember.trustedBy
+        profileMember.get("trustedBy").toArray()
       ) as Member[],
-      invitedMembers: getMembersByUid(state, profileMember.invited) as Member[],
+      invitedMembers: getMembersByUid(
+        state,
+        profileMember.get("invited").toArray()
+      ) as Member[],
       invitedByMember
     },
     trustApiCallStatus
@@ -307,7 +308,7 @@ const mergeProps: MergeProps<
     return stateProps;
   }
 
-  const profileUid = stateProps.profileData.profileMember.uid;
+  const profileUid = stateProps.profileData.profileMember.get("memberId");
   return {
     ...stateProps,
     trust: () => {

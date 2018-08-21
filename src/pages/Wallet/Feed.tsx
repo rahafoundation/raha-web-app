@@ -45,7 +45,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   ownProps
 ) => {
   return {
-    operations: getMemberOperations(state, ownProps.profileMember.uid).filter(
+    operations: getMemberOperations(
+      state,
+      ownProps.profileMember.get("memberId")
+    ).filter(
       op =>
         op.op_code === OperationType.MINT || op.op_code === OperationType.GIVE
     )

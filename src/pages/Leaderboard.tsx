@@ -19,10 +19,7 @@ const LeaderboardElem = styled.main`
 `;
 
 const LeaderboardView: React.StatelessComponent<Props> = ({ members }) => {
-  members.sort(
-    (a, b) =>
-      Object.values(b.invitedSet).length - Object.values(a.invitedSet).length
-  );
+  members.sort((a, b) => b.get("invited").size - a.get("invited").size);
   return (
     <LeaderboardElem>
       <section>
@@ -32,8 +29,8 @@ const LeaderboardView: React.StatelessComponent<Props> = ({ members }) => {
         <h1>Invited count leaderboard</h1>
         <ol>
           {members.map(member => (
-            <li key={member.uid}>
-              {member.fullName}: {Object.values(member.invitedSet).length}
+            <li key={member.get("memberId")}>
+              {member.get("fullName")}: {member.get("invited").size}
             </li>
           ))}
         </ol>
@@ -43,7 +40,9 @@ const LeaderboardView: React.StatelessComponent<Props> = ({ members }) => {
 };
 
 function mapStateToProps(state: AppState): StateProps {
-  return { members: Object.values(state.membersNew.byUsername) };
+  return {
+    members: Object.values(state.membersNew.byMemberUsername.toObject())
+  };
 }
 
 export const Leaderboard = connect(mapStateToProps)(LeaderboardView);

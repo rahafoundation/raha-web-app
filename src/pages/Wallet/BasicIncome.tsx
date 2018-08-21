@@ -53,8 +53,16 @@ const BasicIncomeView: React.StatelessComponent<Props> = props => {
         <FormattedMessage
           id="wallet.basicIncome.lastMinted"
           values={{
-            lastMintedDate: <b>{loggedInMember.lastMinted.toDateString()}</b>,
-            lastMintedTime: <b>{loggedInMember.lastMinted.toTimeString()}</b>
+            lastMintedDate: (
+              <b>
+                {loggedInMember.get("lastMintedBasicIncomeAt").toDateString()}
+              </b>
+            ),
+            lastMintedTime: (
+              <b>
+                {loggedInMember.get("lastMintedBasicIncomeAt").toTimeString()}
+              </b>
+            )
           }}
         />
       </p>
@@ -120,12 +128,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const mintApiCallStatus = getStatusOfApiCall(
     state,
     ApiEndpointName.MINT,
-    ownProps.loggedInMember.uid
+    ownProps.loggedInMember.get("memberId")
   );
 
   const mintableAmount = getMemberMintableAmount(
     state,
-    ownProps.loggedInMember.uid
+    ownProps.loggedInMember.get("memberId")
   );
 
   return {
@@ -145,7 +153,7 @@ const mergeProps: MergeProps<
     mint: () => {
       if (stateProps.mintableAmount) {
         dispatchProps.mint(
-          ownProps.loggedInMember.uid,
+          ownProps.loggedInMember.get("memberId"),
           new Big(stateProps.mintableAmount)
         );
       }

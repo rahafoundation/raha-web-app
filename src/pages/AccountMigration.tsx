@@ -373,7 +373,9 @@ const mapStateToProps: MapStateToProps<
     userAuthProviders.indexOf(firebase.auth.PhoneAuthProvider.PROVIDER_ID) >= 0;
 
   const loggedInMember = getLoggedInMember(state);
-  const loggedInMemberId = loggedInMember ? loggedInMember.uid : undefined;
+  const loggedInMemberId = loggedInMember
+    ? loggedInMember.get("memberId")
+    : undefined;
   return {
     memberIsTransitionedToMobile,
     loggedInMemberId

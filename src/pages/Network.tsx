@@ -30,29 +30,37 @@ const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
   members.forEach(member => {
     graphNodes.push(
       <ForceGraphNode
-        key={member.uid}
-        node={{ id: member.uid, label: member.username }}
+        key={member.get("memberId")}
+        node={{ id: member.get("memberId"), label: member.get("username") }}
         fill="gray"
       />
     );
-    Object.keys(member.trustsSet).forEach(trustedUid => {
+    for (const trustedUid of member.get("trusts").toArray()) {
       trustEdges.push(
         <ForceGraphArrowLink
-          key={`${member.uid}=>${trustedUid}`}
-          link={{ source: member.uid, target: trustedUid, value: 1 }}
+          key={`${member.get("memberId")}=>${trustedUid}`}
+          link={{
+            source: member.get("memberId"),
+            target: trustedUid,
+            value: 1
+          }}
           stroke="blue"
         />
       );
-    });
-    Object.keys(member.invitedSet).forEach(invitedUid => {
+    }
+    for (const invitedUid of member.get("invited").toArray()) {
       inviteEdges.push(
         <ForceGraphArrowLink
-          key={`${member.uid}=>${invitedUid}`}
-          link={{ source: member.uid, target: invitedUid, value: 1 }}
+          key={`${member.get("memberId")}=>${invitedUid}`}
+          link={{
+            source: member.get("memberId"),
+            target: invitedUid,
+            value: 1
+          }}
           stroke="green"
         />
       );
-    });
+    }
   });
   return (
     <NetworkElem>
@@ -89,7 +97,9 @@ const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
 };
 
 function mapStateToProps(state: AppState): StateProps {
-  return { members: Object.values(state.membersNew.byUsername) };
+  return {
+    members: Object.values(state.membersNew.byMemberUsername.toObject())
+  };
 }
 
 export const Network = connect(mapStateToProps)(NetworkView);
