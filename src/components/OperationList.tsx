@@ -45,10 +45,13 @@ function getNameForMember(
   member: Member,
   loggedInMember: Member | undefined
 ): string {
-  if (loggedInMember && member.uid === loggedInMember.uid) {
+  if (
+    loggedInMember &&
+    member.get("memberId") === loggedInMember.get("memberId")
+  ) {
     return "You";
   } else {
-    return member.fullName;
+    return member.get("fullName");
   }
 }
 
@@ -59,7 +62,9 @@ function getDisplayAmount(
 ): string {
   if (loggedInMember) {
     for (const i in involvedMembers) {
-      if (involvedMembers[i].uid === loggedInMember.uid) {
+      if (
+        involvedMembers[i].get("memberId") === loggedInMember.get("memberId")
+      ) {
         return ` ${amount}`;
       }
     }
@@ -72,6 +77,34 @@ function getDisplayAmount(
  */
 const OperationListElement: React.StatelessComponent<any> = props => (
   <li>{props.children}</li>
+);
+
+interface CreateMemberProps {
+  fullName: string;
+}
+const CreateMember: React.StatelessComponent<CreateMemberProps> = props => (
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.createMember"
+      values={{ fullName: props.fullName }}
+    />
+  </OperationListElement>
+);
+
+interface VerifyProps {
+  verifierName: string;
+  verifiedName: string;
+}
+const Verify: React.StatelessComponent<VerifyProps> = props => (
+  <OperationListElement>
+    <IntlMessage
+      id="operationList.verify"
+      values={{
+        verifiedName: props.verifiedName,
+        verifierName: props.verifierName
+      }}
+    />
+  </OperationListElement>
 );
 
 interface RequestInviteProps {
@@ -164,6 +197,20 @@ const OperationListView: React.StatelessComponent<Props> = props => {
         const fromName = getNameForMember(fromMember, loggedInMember);
 
         switch (op.op_code) {
+          case OperationType.INVITE:
+          case OperationType.REQUEST_VERIFICATION:
+            return null;
+          case OperationType.CREATE_MEMBER:
+            return <CreateMember fullName={fromName} />;
+          case OperationType.VERIFY: {
+            const toMember = props.getMemberForUid(op.data.to_uid);
+            return toMember ? (
+              <Verify
+                verifiedName={getNameForMember(toMember, loggedInMember)}
+                verifierName={fromName}
+              />
+            ) : null;
+          }
           case OperationType.REQUEST_INVITE: {
             const toMember = props.getMemberForUid(op.data.to_uid);
             return toMember ? (

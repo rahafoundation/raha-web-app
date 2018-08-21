@@ -75,16 +75,16 @@ function getInitialsForName(name: string): string {
 // TODO(#14) improve this thumbnail
 const MemberThumbnail: React.StatelessComponent<Props> = ({ member }) => {
   const backgroundColor = getColor({
-    text: `${member.username}${member.fullName}`
+    text: `${member.get("username")}${member.get("fullName")}`
   });
   return (
     <ThemeProvider theme={{ thumbnailBackgroundColor: backgroundColor }}>
-      <MemberThumbnailElem to={`/m/${member.username}`}>
+      <MemberThumbnailElem to={`/m/${member.get("username")}`}>
         {/* TODO: if thumbnail image exists, show that instead of initials */}
         <span className="thumbnailImage">
-          {getInitialsForName(member.fullName)}
+          {getInitialsForName(member.get("fullName"))}
         </span>
-        <span className="memberName">{member.fullName}</span>
+        <span className="memberName">{member.get("fullName")}</span>
       </MemberThumbnailElem>
     </ThemeProvider>
   );

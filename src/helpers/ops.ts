@@ -1,11 +1,12 @@
-import { OpCode, OpDoc, Operation } from "../operations";
+import { OpDoc, Operation } from "../operations";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 export type OpLookupTable = Map<string, Operation>;
 
 type UidOps = [string, Operation];
 export function getMemberUidToOp(
   uidOps: UidOps[],
-  opCode: OpCode,
+  opCode: OperationType,
   getUid: (op: OpDoc) => string
 ): OpLookupTable {
   const res = new Map();

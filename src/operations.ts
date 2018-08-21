@@ -1,15 +1,5 @@
 import * as firebase from "firebase";
-
-export enum OpCode {
-  ADMIN = "ADMIN",
-  FLAG = "FLAG",
-  REQUEST_INVITE = "REQUEST_INVITE",
-  TRUST = "TRUST",
-  UNADMIN = "UNADMIN",
-  UNFLAG = "UNFLAG",
-  UNTRUST = "UNTRUST",
-  VOTE = "VOTE"
-}
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 interface ToId {
   to_uid: string;
@@ -38,12 +28,12 @@ export interface OperationData {
   created_at: Date; // firebase.firestore.FieldValue;
   creator_uid: string;
   data: OpData;
-  op_code: OpCode;
+  op_code: OperationType;
   op_seq: number | null;
 }
 
 const getOperation = (
-  opCode: OpCode,
+  opCode: OperationType,
   creatorUid: string,
   data: OpData
 ): OperationData => {
@@ -62,7 +52,7 @@ export const getTrustOperation = (
   creatorUid: string,
   toUid: string
 ): OperationData => {
-  return getOperation(OpCode.TRUST, creatorUid, {
+  return getOperation(OperationType.TRUST, creatorUid, {
     to_uid: toUid
   });
 };

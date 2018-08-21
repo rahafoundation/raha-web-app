@@ -46,18 +46,9 @@ function isOwnProfile(
   loggedInMember: Member | undefined,
   profileMember: Member
 ): boolean {
-  return !!loggedInMember && loggedInMember.uid === profileMember.uid;
-}
-
-/**
- * Invite confirmed is defined by satifying one of the following:
- * a) the user was invited as part of the genesis
- * b) the user has been trusted by the person inviting them.
- */
-function isInviteConfirmed(profileMember: Member): boolean {
   return (
-    profileMember.invitedBy === GENESIS_MEMBER ||
-    profileMember.invitedBy in profileMember.trustedBySet
+    !!loggedInMember &&
+    loggedInMember.get("memberId") === profileMember.get("memberId")
   );
 }
 
@@ -118,7 +109,7 @@ const WalletView: React.StatelessComponent<Props> = props => {
     );
   }
   const { profileMember } = profileData;
-  const inviteConfirmed = isInviteConfirmed(profileMember);
+  const inviteConfirmed = profileMember.get("inviteConfirmed");
   const isLoggedInMembersProfile = isOwnProfile(loggedInMember, profileMember);
 
   return (
@@ -160,15 +151,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
 ) => {
   const loggedInMember = getLoggedInMember(state);
   const memberUsername = ownProps.match.params.memberUsername;
-  const profileMember = state.membersNew.byUsername[memberUsername];
+  const profileMember = state.membersNew.byMemberUsername.get(memberUsername);
   if (!profileMember) {
     // trust action could not have been initiated if profile never was initialized
-    const isLoading = Object.keys(state.membersNew.byUsername).length === 0;
+    const isLoading = state.membersNew.byMemberUsername.size === 0;
     return { isLoading, loggedInMember, memberUsername };
   }
 
   const memberBalance = loggedInMember
-    ? loggedInMember.balance.toString()
+    ? loggedInMember.get("balance").toString()
     : undefined;
 
   return {

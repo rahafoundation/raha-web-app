@@ -105,7 +105,7 @@ class GiveView extends React.Component<Props, State> {
     try {
       return (
         this.state.amount &&
-        this.props.loggedInMember.balance.gte(this.state.amount)
+        this.props.loggedInMember.get("balance").gte(this.state.amount)
       );
     } catch (error) {
       return false;
@@ -125,7 +125,7 @@ class GiveView extends React.Component<Props, State> {
           <IntlMessage
             id="wallet.give.detail"
             values={{
-              fullName: <b>{profileMember.fullName}</b>,
+              fullName: <b>{profileMember.get("fullName")}</b>,
               donationPercent: <b>3%</b>
             }}
           />
@@ -178,7 +178,7 @@ class GiveView extends React.Component<Props, State> {
                 id="wallet.give.giveButton"
                 values={{
                   amount,
-                  fullName: profileMember.fullName,
+                  fullName: profileMember.get("fullName"),
                   memo: memo ? ` ${memo}` : ""
                 }}
               />
@@ -202,7 +202,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const giveApiCallStatus = getStatusOfApiCall(
     state,
     ApiEndpointName.GIVE,
-    ownProps.profileMember.uid
+    ownProps.profileMember.get("memberId")
   );
 
   return {
@@ -219,7 +219,7 @@ const mergeProps: MergeProps<
   return {
     ...stateProps,
     give: (amount: Big, memo?: string) => {
-      dispatchProps.give(ownProps.profileMember.uid, amount, memo);
+      dispatchProps.give(ownProps.profileMember.get("memberId"), amount, memo);
     },
     ...ownProps
   };

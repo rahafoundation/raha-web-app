@@ -6,12 +6,12 @@ export function getMembersByUid(
   state: AppState,
   uids: Uid[]
 ): Array<Member | undefined> {
-  return uids.map(uid => state.membersNew.byUid[uid]);
+  return uids.map(uid => state.membersNew.byMemberId.get(uid));
 }
 
 export function getMembersByMid(
   state: AppState,
   mids: Uid[]
 ): Array<Member | undefined> {
-  return mids.map(username => state.membersNew.byUsername[username]);
+  return mids.map(username => state.membersNew.byMemberUsername.get(username));
 }

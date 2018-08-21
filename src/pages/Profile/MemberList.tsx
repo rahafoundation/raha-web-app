@@ -165,7 +165,7 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
     const INITIAL_LIST_SIZE = 4;
 
     const memberThumbnails = members.map(member => (
-      <li key={member.uid}>
+      <li key={member.get("memberId")}>
         <MemberThumbnail member={member} />
       </li>
     ));
@@ -212,4 +212,4 @@ class MemberList extends React.Component<MemberListProps, MemberListState> {
     );
   }
 }
-export { MemberList }
+export { MemberList };

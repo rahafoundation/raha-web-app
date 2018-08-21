@@ -18,7 +18,7 @@ export function getLoggedInMember(state: AppState) {
     ? state.auth.firebaseUser.uid
     : undefined;
   return loggedInFirebaseUid
-    ? state.membersNew.byUid[loggedInFirebaseUid]
+    ? state.membersNew.byMemberId.get(loggedInFirebaseUid)
     : undefined;
 }
 
@@ -27,5 +27,5 @@ export function getLoggedInMemberProfileUrl(state: AppState) {
   if (!member) {
     return;
   }
-  return getProfileUrlFromMid(member.username);
+  return getProfileUrlFromMid(member.get("username"));
 }

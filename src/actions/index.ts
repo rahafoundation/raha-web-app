@@ -283,7 +283,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
       };
       dispatch(action);
     },
-    ApiEndpointName.REQUEST_INVITE,
+    ApiEndpointName.WEB_REQUEST_INVITE,
     uid
   );
 };

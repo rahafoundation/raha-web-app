@@ -5,17 +5,10 @@ import styled from "styled-components";
 import { IntlMessage } from "../components/IntlMessage";
 import { AppState } from "../reducers";
 import { Uid } from "../identifiers";
-import {
-  Member,
-  MemberLookupTable,
-  GENESIS_MEMBER
-} from "../reducers/membersNew";
+import { Member, GENESIS_MEMBER } from "../reducers/membersNew";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import { Map } from "immutable";
 
-interface OwnProps {}
-interface StateProps {
-  members: Member[];
-}
-interface DispatchProps {}
 interface Props {
   memberAndVotes: [[Member, number]];
 }
@@ -37,8 +30,8 @@ const ProxyVotesView: React.StatelessComponent<Props> = ({
           {memberAndVotes.map(memberAndVote => {
             const [member, votes] = memberAndVote;
             return (
-              <li key={member.uid}>
-                {member.fullName}: {votes}
+              <li key={member.get("memberId")}>
+                {member.get("fullName")}: {votes}
               </li>
             );
           })}
@@ -50,23 +43,27 @@ const ProxyVotesView: React.StatelessComponent<Props> = ({
 
 function getAncestors(
   member: Member,
-  membersByUid: MemberLookupTable
+  membersByUid: Map<MemberId, Member>
 ): Set<Uid> {
   // Everyone is their own ancestor in this function
-  let votingForMember = member;
+  let votingForMember: Member | undefined = member;
   const ancestors = new Set<Uid>();
   for (
-    let votingForUid: Uid | typeof GENESIS_MEMBER = votingForMember.uid;
-    votingForUid !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
-    votingForUid = votingForMember.invitedBy // TODO needs to change to votingFor
+    let votingForUid: MemberId | undefined | typeof GENESIS_MEMBER = member.get(
+      "memberId"
+    );
+    !!votingForUid && votingForUid !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
+    votingForUid = votingForMember.get("invitedBy") // TODO needs to change to votingFor
   ) {
-    votingForMember = membersByUid[votingForUid];
+    votingForMember = membersByUid.get(votingForUid);
     if (votingForMember === undefined) {
       throw Error(`Cannot vote for invalid uid ${votingForUid}`);
     }
     if (ancestors.has(votingForUid)) {
       throw Error(
-        `Cycle in ancestors of ${member.uid}: ${votingForUid} found twice`
+        `Cycle in ancestors of ${member.get(
+          "memberId"
+        )}: ${votingForUid} found twice`
       );
     }
     ancestors.add(votingForUid);
@@ -81,26 +78,26 @@ function incrementKey(counts: Map<any, number>, key: any) {
 
 function incVotesForAncestors(
   member: Member,
-  membersByUid: MemberLookupTable,
-  votesByUid: Map<Uid, number>
+  membersByUid: Map<string, Member>,
+  votesByUid: Map<string, number>
 ) {
   const ancestors = getAncestors(member, membersByUid);
   ancestors.forEach(a => incrementKey(votesByUid, a));
 }
 
-function getVotesByUid(membersByUid: MemberLookupTable) {
-  const votesByUid = new Map<Uid, number>();
-  Object.values(membersByUid).forEach(m =>
-    incVotesForAncestors(m, membersByUid, votesByUid)
-  );
+function getVotesByUid(membersByUid: Map<MemberId, Member>) {
+  const votesByUid = Map<MemberId, number>();
+  for (const m of membersByUid.values()) {
+    incVotesForAncestors(m, membersByUid, votesByUid);
+  }
   return votesByUid;
 }
 
 function mapStateToProps(state: AppState): Props {
-  const membersByUid = state.membersNew.byUid;
+  const membersByUid = state.membersNew.byMemberId;
   const votesByUid = getVotesByUid(membersByUid);
   const memberAndVotes = Array.from(votesByUid, uidAndVote => [
-    membersByUid[uidAndVote[0]],
+    membersByUid.get(uidAndVote[0]),
     uidAndVote[1]
   ]) as [[Member, number]];
   memberAndVotes.sort((a, b) => b[1] - a[1]);

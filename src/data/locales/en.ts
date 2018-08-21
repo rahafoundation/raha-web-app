@@ -46,6 +46,8 @@ export const messages = {
   "wallet.give.giveButton": "Give {amount} Raha to {fullName}{memo}",
   "wallet.feed.header": "Activity Feed",
 
+  "operationList.createMember": "{fullName} joined Raha",
+  "operationList.verify": "{verifierName} verified {verifiedName}'s profile",
   "operationList.requestInvite": "{fromName} requested an invite from {toName}",
   "operationList.trust": "{fromName} trusted {toName}",
   "operationList.mint": "{fromName} minted{amount} Raha",

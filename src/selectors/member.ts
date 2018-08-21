@@ -10,9 +10,11 @@ export function getMemberMintableAmount(
   state: AppState,
   uid: Uid
 ): string | undefined {
-  const member = state.membersNew.byUid[uid];
+  const member = state.membersNew.byMemberId.get(uid);
   if (member) {
-    return new Big(new Date().getTime() - member.lastMinted.getTime())
+    return new Big(
+      new Date().getTime() - member.get("lastMintedBasicIncomeAt").getTime()
+    )
       .div(MILLISECONDS_PER_WEEK)
       .times(RAHA_UBI_WEEKLY_RATE)
       .round(2, 0)

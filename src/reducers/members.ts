@@ -68,7 +68,10 @@ const members: Reducer<MembersState> = (
       const isFetching = true;
       const username = action.username;
       const newMid = {
-        [username]: { ...state.byUsername[username], ...{ isFetching, username } }
+        [username]: {
+          ...state.byUsername[username],
+          ...{ isFetching, username }
+        }
       };
       return {
         byUsername: {
@@ -97,4 +100,4 @@ const members: Reducer<MembersState> = (
   }
 };
 
-export { members }
+export { members };

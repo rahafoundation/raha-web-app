@@ -143,7 +143,7 @@ export class RequestInviteView extends React.Component<Props> {
           )}
         <WelcomeSteps
           currentStep={this.props.currentStep}
-          inviterName={requestingFromMember.fullName}
+          inviterName={requestingFromMember.get("fullName")}
           loggedInUser={loggedInUserProp}
           requestInvite={requestInvite}
           navigateToStep={(stepNum: number) => {
@@ -181,13 +181,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, AppState> = (
   const isOwnInvitePage =
     !!loggedInFirebaseUser &&
     !!requestingFromMember &&
-    loggedInFirebaseUser.uid === requestingFromMember.uid;
+    loggedInFirebaseUser.uid === requestingFromMember.get("memberId");
 
   const requestInviteStatus = !!requestingFromMember
     ? getStatusOfApiCall(
         state,
-        ApiEndpointName.REQUEST_INVITE,
-        requestingFromMember.uid
+        ApiEndpointName.WEB_REQUEST_INVITE,
+        requestingFromMember.get("memberId")
       )
     : undefined;
 
@@ -217,7 +217,7 @@ const mergeProps: MergeProps<
     return baseMergedProps;
   }
 
-  const requestingFromUid = stateProps.requestingFromMember.uid;
+  const requestingFromUid = stateProps.requestingFromMember.get("memberId");
   return {
     ...baseMergedProps,
     requestInvite: (
