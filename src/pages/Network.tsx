@@ -35,7 +35,7 @@ const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
         fill="gray"
       />
     );
-    for (const trustedUid of member.get("trusts").toArray()) {
+    member.get("trusts").forEach(trustedUid => {
       trustEdges.push(
         <ForceGraphArrowLink
           key={`${member.get("memberId")}=>${trustedUid}`}
@@ -47,8 +47,8 @@ const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
           stroke="blue"
         />
       );
-    }
-    for (const invitedUid of member.get("invited").toArray()) {
+    });
+    member.get("invited").forEach(invitedUid => {
       inviteEdges.push(
         <ForceGraphArrowLink
           key={`${member.get("memberId")}=>${invitedUid}`}
@@ -60,7 +60,7 @@ const NetworkView: React.StatelessComponent<Props> = ({ members }) => {
           stroke="green"
         />
       );
-    }
+    });
   });
   return (
     <NetworkElem>
