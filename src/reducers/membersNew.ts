@@ -27,10 +27,10 @@ export const GENESIS_CREATE_MEMBER_OPS = [
   "Y8FiyjOLs9O8AZNGzhwQ"
 ];
 export const GENESIS_VERIFY_OPS = [
-  "MXWYBxTN00yuSrOUicms",
-  "QZqLrlOALH4bMDhy9dhh",
-  "UH0ASdG8c2f1MVxWSAnw",
-  "vN5lzdG2y5UZa968D1yP"
+  "qOEVqNGusyeQCgHdCPH0",
+  "JL0xoltdHyRjDLVRbOhR",
+  "quYwzTPmplD37t2hoYIP",
+  "U4epeWMpG9RrSGskWYGE"
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 export const RAHA_BASIC_INCOME_MEMBER = Symbol("RAHA_BASIC_INCOME_MEMBER_ID");
