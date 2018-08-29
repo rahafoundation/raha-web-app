@@ -24,6 +24,7 @@ import { Wallet } from "./pages/Wallet";
 import { AccountMigration } from "./pages/AccountMigration";
 import { SSODiscourse } from "./pages/SSODiscourse";
 import { AcceptInvite } from "./pages/AcceptInvite";
+import { Metrics } from "./pages/Metrics";
 
 // tslint:disable-next-line:no-any
 const DefaultLayout = (props: any) => {
@@ -64,6 +65,7 @@ function AppRouter() {
         <DefaultLayout path="/votes" component={ProxyVotes} />
         <DefaultLayout path="/network" component={Network} />
         <DefaultLayout path="/accountMigration" component={AccountMigration} />
+        <DefaultLayout path="/metrics" component={Metrics} />
         <DefaultLayout path="/sso/discourse" component={SSODiscourse} />
         <DefaultLayout path="/invite" component={AcceptInvite} />
         <DefaultLayout component={PageNotFound} />
