@@ -21,6 +21,7 @@ import { AppState } from "../reducers";
 import { getLoggedInMember } from "../selectors/auth";
 import { Uid } from "../identifiers";
 import { sendAppInstallText } from "../actions";
+import { LogIn } from "../components/LogIn";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
 
@@ -38,6 +39,7 @@ interface OwnProps {}
 interface StateProps {
   memberIsTransitionedToMobile: boolean;
   loggedInMemberId?: Uid;
+  authIsLoaded: boolean;
 }
 
 interface DispatchProps {
@@ -227,6 +229,36 @@ class AccountMigrationComponent extends React.Component<Props, State> {
   };
 
   public render() {
+    if (this.props.authIsLoaded && !this.props.loggedInMemberId) {
+      if (auth.currentUser) {
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center"
+            }}
+          >
+            <h1>Transition to the Raha Mobile App</h1>
+            <p>
+              It looks like you logged in with an account that is not associated
+              with any existing Raha member. Please log out and try again.
+            </p>
+            <Button
+              onClick={async () => {
+                await auth.signOut();
+                this.forceUpdate();
+              }}
+            >
+              Log out
+            </Button>
+          </div>
+        );
+      } else {
+        return <LogIn noRedirect={true} signInSuccessCallback={() => { this.forceUpdate(); return false; }} />;
+      }
+    }
+
     const recaptchaStyle =
       this.state.waitingForRecaptchaVerification && !this.state.phoneNumberError
         ? { display: "block" }
@@ -377,6 +409,7 @@ const mapStateToProps: MapStateToProps<
     ? loggedInMember.get("memberId")
     : undefined;
   return {
+    authIsLoaded: state.auth.isLoaded,
     memberIsTransitionedToMobile,
     loggedInMemberId
   };
