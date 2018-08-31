@@ -22,7 +22,7 @@ type Props = OwnProps & StateProps;
  *
  * Returns MAC, our "monthly active creators" metric which
  * means the number of verified users who have created a
- * public transaction within the last 30 days.
+ * public operation within the last 30 days.
  */
 function getMac(operations: Operation[], members: Map<MemberId, Member>) {
   const lastMonth = new Date();
@@ -51,7 +51,7 @@ const MetricsView: React.StatelessComponent<Props> = props => {
     <section style={{ margin: "20px" }}>
       <h2>MAC (Monthly Active Creators)</h2>
       <h3>
-        How many verified members have created at least one transaction in the
+        How many verified members have created at least one operation in the
         last 30 days?
       </h3>
       <h1>{getMac(operations, members)}</h1>
