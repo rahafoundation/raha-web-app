@@ -168,9 +168,6 @@ export class Member {
 
   public verifyMember(memberId: MemberId) {
     return this.withFields({
-      inviteConfirmed:
-        this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
-      isVerified: true,
       verified: this.fields.verified.add(memberId)
     });
   }
@@ -178,6 +175,7 @@ export class Member {
   public beVerifiedByMember(memberId: MemberId) {
     return this.withFields({
       verifiedBy: this.fields.verifiedBy.add(memberId),
+      isVerified: true,
       inviteConfirmed:
         this.fields.inviteConfirmed || this.fields.invitedBy === memberId
     });
