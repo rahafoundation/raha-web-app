@@ -88,7 +88,7 @@
 
 .InviteError {
   margin: 0.75rem 0;
-  color: #d9534f;
+  color: #aa7a78;
 }
 
 .PageNotFound {
@@ -98,6 +98,15 @@
   flex-direction: column;
 }
 
-.AcceptInvite {
+.AcceptInviteSteps {
+  display: flex;
+  flex-direction: row;
   text-align: center;
+}
+
+.AcceptInviteStep {
+  flex: 1;
+  background-color: #eeeeee;
+  margin: 18px;
+  padding: 8px;
 }
