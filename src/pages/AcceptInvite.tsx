@@ -6,9 +6,9 @@ const AcceptInvite: React.StatelessComponent<{}> = () => {
   // Parse out invite token
   let inviteToken;
   const query = window.location.search.substring(1);
-  const vars = query.split("&");
-  for (let i = 0; i < vars.length; i++) {
-    const pair = vars[i].split("=");
+  const queryVars = query.split("&");
+  for (const queryVar of queryVars) {
+    const pair = queryVar.split("=");
     if (decodeURIComponent(pair[0]) === "t") {
       inviteToken = decodeURIComponent(pair[1]);
       break;
