@@ -64,6 +64,8 @@ const AcceptInvite: React.StatelessComponent<{}> = () => {
           <IntlMessage id="accept_invite_step2" />
         </h3>
         <p>
+          {/* We are providing both links in case the HTTPS link fails to open the app due to the email client
+          not respecting the app link to Raha. We're unsure if raha:// works in all cases, so we're leaving both for now. */}
           <a style={{ fontSize: 18 }} href={httpsSchemeDeeplink}>
             {httpsSchemeDeeplink}
           </a>
