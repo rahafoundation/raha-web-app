@@ -28,9 +28,12 @@ const CONFIG = require("../data/config.json");
 const HelpParagraph: React.StatelessComponent<{}> = () => (
   <p>
     If you have run into any issues, email us at{" "}
-    <a href="mailto:help@raha.app">help@raha.app</a> or check out the migration
-    thread on our forums. Thank you for being part of the Raha network and a
-    more equitable economy for everyone!
+    <a href="mailto:help@raha.app">help@raha.app</a> or check out the{" "}
+    <a href="https://discuss.raha.app/t/migrating-your-account-to-the-mobile-app/165">
+      migration thread
+    </a>{" "}
+    on our forums. Thank you for being part of the Raha network and a more
+    equitable economy for everyone!
   </p>
 );
 
@@ -255,7 +258,15 @@ class AccountMigrationComponent extends React.Component<Props, State> {
           </div>
         );
       } else {
-        return <LogIn noRedirect={true} signInSuccessCallback={() => { this.forceUpdate(); return false; }} />;
+        return (
+          <LogIn
+            noRedirect={true}
+            signInSuccessCallback={() => {
+              this.forceUpdate();
+              return false;
+            }}
+          />
+        );
       }
     }
 

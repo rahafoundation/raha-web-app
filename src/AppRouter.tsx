@@ -50,7 +50,6 @@ function AppRouter() {
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
         <DefaultLayout path="/privacy-policy" component={PrivacyPolicy} />
-
         <DefaultLayout path="/feed" component={GlobalFeed} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
         <DefaultLayout path="/leaderboard" component={Leaderboard} />
@@ -60,6 +59,17 @@ function AppRouter() {
         <DefaultLayout path="/metrics" component={Metrics} />
         <DefaultLayout path="/sso/discourse" component={SSODiscourse} />
         <DefaultLayout path="/invite" component={AcceptInvite} />
+
+        <DefaultLayout
+          path="/m/:memberUsername/invite"
+          component={AccountMigration}
+        />
+        <DefaultLayout
+          path="/m/:memberUsername/wallet"
+          component={AccountMigration}
+        />
+        <DefaultLayout path="/m/:memberUsername" component={AccountMigration} />
+
         <DefaultLayout component={PageNotFound} />
       </Switch>
     </ConnectedRouter>
