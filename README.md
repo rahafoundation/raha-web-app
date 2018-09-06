@@ -9,7 +9,7 @@
 1.  It is also helpful to install in your browser the [React](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) and [Redux](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en) devtools extensions, to make it easier to inspect what's going on while you're making changes to the app.
 1.  Look at [`AppRouter.js`](src/components/AppRouter.js) for all of the main pages, visit/click around, and assign yourself an [issue](https://github.com/rahafoundation/raha-web-app/issues)!
 1.  To test locally install watchman using `brew install watchman` and run `yarn test`.
-1.  After logging in to the test db for the first time, you will be taken to [http://localhost:3000/invite_missing](http://localhost:3000/invite_missing) because your authentication uid is different. To fix this see [edit your test uid](https://github.com/rahafoundation/firebase-backup#edit-your-personal-test-uid).
+1.  After logging in to the test db for the first time, you will be taken to [http://localhost:3000/invite-missing](http://localhost:3000/invite-missing) because your authentication uid is different. To fix this see [edit your test uid](https://github.com/rahafoundation/firebase-backup#edit-your-personal-test-uid).
 
 ## Deploy
 
@@ -22,8 +22,8 @@
 
 ### Troubleshooting
 
-1. If you run into errors installing node modules, you may have to downgrade
-   your version of Node. The latest LTS version (8.1) seems to work well.
+1.  If you run into errors installing node modules, you may have to downgrade
+    your version of Node. The latest LTS version (8.1) seems to work well.
 
 ### Contributing
 

@@ -12,8 +12,6 @@ export const messages = {
   invite_pending:
     "Hi {full_name}! You have requested an invite from {invite_from_link}. After they trust you and the community approves, you will become a full member! Contact {help_email} with any questions.",
   loading: "Loading",
-  invite_missing:
-    "Thank you for logging in {display_name}! Your account is inactive, to become a member you need a member to create an invite video with you. Contact {help_email} with any questions. You are logged in using account {login_account}, if this is wrong please {logout}.",
   own_invite_page: "This is what your invite page looks like to others:",
   page_not_found: "{404} page not found, go {home}.",
   upload_invite: "Upload your public invite video! Max 60 MB.",
