@@ -66,6 +66,7 @@ interface State {
 }
 
 class AccountMigrationComponent extends React.Component<Props, State> {
+  private recaptchaContainer: any;
   private recaptchaVerifier: firebase.auth.RecaptchaVerifier | undefined;
   private phoneNumberConfirmationResult:
     | firebase.auth.ConfirmationResult
@@ -86,10 +87,25 @@ class AccountMigrationComponent extends React.Component<Props, State> {
     };
   }
 
+  /**
+   * The recaptcha container may not have been rendered if the user is not
+   * properly authenticated, so we need to check that the recaptcha container
+   * both exists and has not already been initialized before initializing it.
+   */
+  private _initializeRecaptchaContainer() {
+    if (this.recaptchaContainer && !this.recaptchaVerifier) {
+      this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+        "recaptchaContainer"
+      );
+    }
+  }
+
   public componentDidMount() {
-    this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-      "recaptchaContainer"
-    );
+    this._initializeRecaptchaContainer();
+  }
+
+  public componentDidUpdate() {
+    this._initializeRecaptchaContainer();
   }
 
   public componentWillUnmount() {
@@ -341,7 +357,11 @@ class AccountMigrationComponent extends React.Component<Props, State> {
                   </Button>
                 )}
               </div>
-              <div id="recaptchaContainer" style={recaptchaStyle} />
+              <div
+                id="recaptchaContainer"
+                style={recaptchaStyle}
+                ref={container => (this.recaptchaContainer = container)}
+              />
               {this.state.phoneNumberError && (
                 <p style={styles.errorText}>{this.state.phoneNumberError}</p>
               )}
