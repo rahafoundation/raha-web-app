@@ -22,8 +22,6 @@ const CONFIG = require("../data/config.json");
 export const RECEIVE_MEMBER = "RECEIVE_MEMBER";
 export const REQUEST_MEMBER_BY_MID = "REQUEST_MEMBER_BY_MID";
 export const REQUEST_MEMBER_BY_UID = "REQUEST_MEMBER_BY_UID";
-export const SHOW_MODAL = "SHOW_MODAL";
-export const HIDE_MODAL = "HIDE_MODAL";
 
 export type AsyncAction = ThunkAction<void, AppState, void>;
 export type AsyncActionCreator = ActionCreator<AsyncAction>;
@@ -69,25 +67,6 @@ const receiveMember: ActionCreator<ReceiveMemberAction> = (
   byUsername,
   memberDoc,
   receivedAt: Date.now()
-});
-
-export interface HideModalAction extends Action {
-  type: typeof HIDE_MODAL;
-}
-export interface ShowModalAction extends Action {
-  type: typeof SHOW_MODAL;
-  element: React.ReactNode;
-}
-
-export const showModal: ActionCreator<ShowModalAction> = (
-  element: React.ReactNode
-) => ({
-  type: SHOW_MODAL,
-  element
-});
-
-export const hideModal: ActionCreator<HideModalAction> = () => ({
-  type: HIDE_MODAL
 });
 
 async function fetchMemberByMid(
