@@ -5,10 +5,6 @@ interface ToId {
   to_uid: string;
 }
 
-interface RequestInviteOpData extends ToId {
-  full_name: string;
-}
-
 type TrustOpData = ToId;
 
 export interface OpMeta {
@@ -21,7 +17,7 @@ export type Operation = OpMeta & {
   op: OpDoc;
 };
 
-type OpData = TrustOpData | RequestInviteOpData;
+type OpData = TrustOpData;
 export interface OperationData {
   block_at: Date | null;
   block_seq: number | null;

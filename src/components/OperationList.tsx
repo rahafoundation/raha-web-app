@@ -107,22 +107,6 @@ const Verify: React.StatelessComponent<VerifyProps> = props => (
   </OperationListElement>
 );
 
-interface RequestInviteProps {
-  fromName: string;
-  toName: string;
-}
-const RequestInvite: React.StatelessComponent<RequestInviteProps> = props => (
-  <OperationListElement>
-    <IntlMessage
-      id="operationList.requestInvite"
-      values={{
-        fromName: <b>{props.fromName}</b>,
-        toName: <b>{props.toName}</b>
-      }}
-    />
-  </OperationListElement>
-);
-
 interface TrustProps {
   fromName: string;
   toName: string;
@@ -208,15 +192,6 @@ const OperationListView: React.StatelessComponent<Props> = props => {
               <Verify
                 verifiedName={getNameForMember(toMember, loggedInMember)}
                 verifierName={fromName}
-              />
-            ) : null;
-          }
-          case OperationType.REQUEST_INVITE: {
-            const toMember = props.getMemberForUid(op.data.to_uid);
-            return toMember ? (
-              <RequestInvite
-                fromName={fromName}
-                toName={getNameForMember(toMember, loggedInMember)}
               />
             ) : null;
           }

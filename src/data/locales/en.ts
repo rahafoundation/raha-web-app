@@ -1,7 +1,6 @@
 export const messages = {
   "operationList.createMember": "{fullName} joined Raha",
   "operationList.verify": "{verifierName} verified {verifiedName}'s profile",
-  "operationList.requestInvite": "{fromName} requested an invite from {toName}",
   "operationList.trust": "{fromName} trusted {toName}",
   "operationList.mint": "{fromName} minted{amount} Raha",
   "operationList.give": "{toName} received{amount} Raha from {fromName}",
