@@ -14,7 +14,6 @@ import { LogOut } from "./pages/LogOut";
 import { GlobalFeed } from "./pages/GlobalFeed";
 import { PageNotFound } from "./pages/PageNotFound";
 import { ProxyVotes } from "./pages/ProxyVotes";
-import { RequestInvite } from "./pages/RequestInvite";
 import { Splash } from "./pages/Splash";
 import { TermsOfService } from "./pages/TermsOfService";
 import { Leaderboard } from "./pages/Leaderboard";
@@ -51,11 +50,6 @@ function AppRouter() {
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />
         <DefaultLayout path="/privacy-policy" component={PrivacyPolicy} />
-
-        <DefaultLayout
-          path="/m/:memberUsername/invite"
-          component={RequestInvite}
-        />
 
         <DefaultLayout path="/feed" component={GlobalFeed} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />

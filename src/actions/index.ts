@@ -10,7 +10,6 @@ import { ThunkAction } from "redux-thunk";
 import { list as callListOperations } from "@raha/api/dist/operations/list";
 import { trust as callTrust } from "@raha/api/dist/members/trust";
 import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
-import { webRequestInvite as callRequestInvite } from "@raha/api/dist/members/webRequestInvite";
 import { sendAppInstallText as callSendAppInstallText } from "@raha/api/dist/me/sendAppInstallText";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
@@ -253,37 +252,6 @@ export const trustMember: AsyncActionCreator = (uid: Uid) => {
       dispatch(action);
     },
     ApiEndpointName.TRUST_MEMBER,
-    uid
-  );
-};
-
-export const requestInviteFromMember: AsyncActionCreator = (
-  uid: Uid,
-  fullName: string,
-  videoUrl: string,
-  creatorUsername: string
-) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-      const { body } = await callRequestInvite(
-        CONFIG.apiBase,
-        authToken,
-        uid,
-        fullName,
-        videoUrl,
-        creatorUsername
-      );
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
-      };
-      dispatch(action);
-    },
-    ApiEndpointName.WEB_REQUEST_INVITE,
     uid
   );
 };
