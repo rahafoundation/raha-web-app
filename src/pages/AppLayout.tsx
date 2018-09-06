@@ -7,17 +7,15 @@ import {
 } from "material-ui/styles/colors";
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
-import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 import styled from "styled-components";
 
-import { showModal as showModalAction } from "../actions";
 import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
 
 import { Link } from "../components/Link";
 import { LogoIcon } from "../components/LogoIcon";
-import { Modal } from "../components/Modal";
 
 const NARROW_WIDTH_SCREEN = "420px";
 
@@ -109,7 +107,6 @@ interface MemberDetails {
 }
 interface HeaderProps {
   memberDetails?: MemberDetails;
-  showModal: (elem: React.ReactNode) => void;
 }
 const Header: React.StatelessComponent<HeaderProps> = props => {
   const { memberDetails } = props;
@@ -158,18 +155,10 @@ interface StateProps {
   authMemberDoc: MemberDoc;
   authMemberDocIsLoaded: boolean;
 }
-interface DispatchProps {
-  showModal: (elem: React.ReactNode) => void;
-}
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 
 export const AppLayoutView: React.StatelessComponent<Props> = props => {
-  const {
-    authFirebaseUser,
-    authMemberDoc,
-    authMemberDocIsLoaded,
-    showModal
-  } = props;
+  const { authFirebaseUser, authMemberDoc, authMemberDocIsLoaded } = props;
   let memberDetails: MemberDetails | undefined; // TODO do not overload memberDetails with multiple types
   if (authMemberDoc) {
     // TODO if invite missing
@@ -185,14 +174,13 @@ export const AppLayoutView: React.StatelessComponent<Props> = props => {
       profileUrl: "/invite_missing"
     };
   }
-  const headerProps = { memberDetails, showModal };
+  const headerProps = { memberDetails };
   return (
     <AppLayoutElem id="appLayout">
       <Header {...headerProps} />
       <main>{props.children}</main>
       <div className="spacer" />
       <Footer />
-      <Modal />
     </AppLayoutElem>
   );
 };
@@ -214,17 +202,4 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-const mapDispatchToProps: MapDispatchToProps<
-  DispatchProps,
-  OwnProps
-> = dispatch => {
-  return {
-    showModal: (element: React.ReactNode) => {
-      dispatch(showModalAction(element));
-    }
-  };
-};
-
-export const AppLayout = connect(mapStateToProps, mapDispatchToProps)(
-  AppLayoutView
-);
+export const AppLayout = connect(mapStateToProps)(AppLayoutView);
