@@ -217,14 +217,6 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   if (operation.op_code === OperationType.VERIFY) {
     return !!operation.data.to_uid;
   }
-  if (operation.op_code === OperationType.REQUEST_INVITE) {
-    // Force to boolean
-    // TODO: consider how else this could be messed up
-    if (!!operation.data.to_uid) {
-      return true;
-    }
-    return false;
-  }
 
   if (operation.op_code === OperationType.TRUST) {
     return !!operation.data.to_uid;
@@ -464,7 +456,7 @@ function applyOperation(
         assertMemberIdPresentInState(newState, creator_uid, operation);
         assertMemberIdPresentInState(newState, to_uid, operation);
         // TODO: Update donationRecipient state.
-        // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
+        // Currently we don't do this as RAHA isn't a normal member created via a CREATE_MEMBER operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
         const giver = (newState.byMemberId.get(creator_uid) as Member).giveRaha(
@@ -498,7 +490,6 @@ function applyOperation(
  */
 const OP_CODE_ORDERING = [
   OperationType.CREATE_MEMBER,
-  OperationType.REQUEST_INVITE,
   OperationType.REQUEST_VERIFICATION,
   OperationType.VERIFY,
   OperationType.TRUST,
