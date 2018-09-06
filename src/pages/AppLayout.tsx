@@ -1,10 +1,6 @@
 import * as firebase from "firebase";
-import { faUserPlus } from "@fortawesome/fontawesome-free-solid";
-import * as FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {
-  green300,
   green500,
-  green700,
   grey200,
   lightGreen300,
   lightGreen500
@@ -18,8 +14,6 @@ import { showModal as showModalAction } from "../actions";
 import { getAuthMemberDoc, getAuthMemberDocIsLoaded } from "../connectors";
 import { MemberDoc } from "../members";
 import { AppState } from "../store";
-
-import { InviteInstructions } from "./InviteInstructions";
 
 import { Link } from "../components/Link";
 import { LogoIcon } from "../components/LogoIcon";
@@ -86,37 +80,6 @@ const HeaderElem = styled.header`
 
     height: 100%;
 
-    > .inviteButton {
-      height: 100%;
-      padding: 0 20px;
-      background: ${green700};
-      cursor: pointer;
-      transition: background 0.1s;
-
-      > .icon {
-        margin-right: 8px;
-      }
-
-      :hover,
-      :active,
-      :focus {
-        background: ${green300};
-      }
-
-      border: none;
-      color: white;
-      font-size: 1rem;
-
-      @media (max-width: ${NARROW_WIDTH_SCREEN}) {
-        .icon {
-          margin-right: 0;
-        }
-        .inviteButtonText {
-          display: none;
-        }
-      }
-    }
-
     > .loggedInUser,
     .logIn {
       height: 100%;
@@ -139,15 +102,6 @@ const HeaderElem = styled.header`
   }
 `;
 
-function handleInviteClick(
-  fullName: string,
-  inviteUrl: string,
-  showModal: (elem: React.ReactNode) => void
-) {
-  return () =>
-    showModal(<InviteInstructions fullName={fullName} inviteUrl={inviteUrl} />);
-}
-
 interface MemberDetails {
   fullName: string | null;
   inviteUrl?: string;
@@ -158,7 +112,7 @@ interface HeaderProps {
   showModal: (elem: React.ReactNode) => void;
 }
 const Header: React.StatelessComponent<HeaderProps> = props => {
-  const { memberDetails, showModal } = props;
+  const { memberDetails } = props;
 
   return (
     <HeaderElem>
@@ -167,19 +121,6 @@ const Header: React.StatelessComponent<HeaderProps> = props => {
       </a>
       {memberDetails && (
         <span className="userSection">
-          {memberDetails.inviteUrl && (
-            <button
-              className="inviteButton"
-              onClick={handleInviteClick(
-                memberDetails.fullName || "",
-                memberDetails.inviteUrl,
-                showModal
-              )}
-            >
-              <FontAwesomeIcon className="icon" icon={faUserPlus} />
-              <span className="inviteButtonText">Invite</span>
-            </button>
-          )}
           {memberDetails.profileUrl && (
             <Link className="loggedInUser" to={memberDetails.profileUrl}>
               {memberDetails.fullName}
@@ -284,7 +225,6 @@ const mapDispatchToProps: MapDispatchToProps<
   };
 };
 
-export const AppLayout = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppLayoutView);
+export const AppLayout = connect(mapStateToProps, mapDispatchToProps)(
+  AppLayoutView
+);

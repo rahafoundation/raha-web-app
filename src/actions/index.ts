@@ -235,41 +235,6 @@ export const refreshMembers: AsyncActionCreator = () => {
   };
 };
 
-export const trustMember: AsyncActionCreator = (uid: Uid) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-
-      const { body } = await callTrust(CONFIG.apiBase, authToken, uid);
-
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
-      };
-      dispatch(action);
-    },
-    ApiEndpointName.TRUST_MEMBER,
-    uid
-  );
-};
-
-export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-      await callSendInvite(CONFIG.apiBase, authToken, inviteEmail);
-    },
-    ApiEndpointName.SEND_INVITE,
-    inviteEmail
-  );
-};
-
 export const sendAppInstallText: AsyncActionCreator = (
   mobileNumber: string
 ) => {
