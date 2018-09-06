@@ -8,7 +8,6 @@ import "./App.css";
 import { AppLayout } from "./pages/AppLayout";
 import { CodeOfConduct } from "./pages/CodeOfConduct";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
-import { InviteMissing } from "./pages/InviteMissing";
 import { LogIn } from "./components/LogIn";
 import { LogOut } from "./pages/LogOut";
 import { GlobalFeed } from "./pages/GlobalFeed";
@@ -45,7 +44,7 @@ function AppRouter() {
     <ConnectedRouter history={routerHistory}>
       <Switch>
         <DefaultLayout exact={true} path="/" component={Splash} />
-        <DefaultLayout path="/invite_missing" component={InviteMissing} />
+        <DefaultLayout path="/invite-missing" component={AccountMigration} />
         <DefaultLayout path="/login" component={LogIn} />
         <DefaultLayout path="/logout" component={LogOut} />
         <DefaultLayout path="/code-of-conduct" component={CodeOfConduct} />

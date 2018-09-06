@@ -171,7 +171,7 @@ export const AppLayoutView: React.StatelessComponent<Props> = props => {
   } else if (authMemberDocIsLoaded && authFirebaseUser) {
     memberDetails = {
       fullName: authFirebaseUser.displayName,
-      profileUrl: "/invite_missing"
+      profileUrl: "/invite-missing"
     };
   }
   const headerProps = { memberDetails };

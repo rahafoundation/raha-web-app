@@ -52,7 +52,7 @@ const LogInView: React.StatelessComponent<Props> = ({
       return <Redirect to={`/m/${authMemberDoc.get("username")}`} />;
     }
     if (authFirebaseUser) {
-      return <Redirect to={`/invite_missing`} />;
+      return <Redirect to={`/invite-missing`} />;
     }
   }
   return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
