@@ -431,32 +431,6 @@ function applyOperation(
         ) as Member).beVerifiedByMember(creator_uid);
         return addMembersToState(newState, [verifier, verified]);
       }
-      case OperationType.REQUEST_INVITE: {
-        const { full_name, to_uid, username } = operation.data;
-
-        const memberData = {
-          memberId: creator_uid,
-          username,
-          fullName: full_name,
-          createdAt,
-          lastMintedBasicIncomeAt: createdAt,
-          lastOpCreatedAt: createdAt
-        };
-
-        assertMemberIdPresentInState(newState, to_uid, operation);
-        assertMemberIdNotPresentInState(newState, creator_uid, operation);
-
-        const inviter = (newState.byMemberId.get(
-          to_uid
-        ) as Member).inviteMember(creator_uid);
-        const inviteRequester = new Member({
-          ...memberData,
-          invitedBy: to_uid,
-          inviteConfirmed: false,
-          isVerified: false
-        }).trustMember(to_uid);
-        return addMembersToState(newState, [inviter, inviteRequester]);
-      }
       case OperationType.TRUST: {
         const { to_uid } = operation.data;
 
