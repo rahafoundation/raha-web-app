@@ -8,18 +8,13 @@ import { Action, ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
 import { list as callListOperations } from "@raha/api/dist/operations/list";
-import { trust as callTrust } from "@raha/api/dist/members/trust";
-import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
 import { sendAppInstallText as callSendAppInstallText } from "@raha/api/dist/me/sendAppInstallText";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
-import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
 import { db } from "../firebaseInit";
 import { MemberDoc, MemberEntry } from "../members";
-import { Uid } from "../identifiers";
 import { AppState } from "../store";
-import { getAuthToken } from "../selectors/auth";
 import { wrapApiCallAction } from "./apiCalls";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
