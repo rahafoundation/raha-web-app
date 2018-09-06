@@ -19,7 +19,6 @@ import { Splash } from "./pages/Splash";
 import { TermsOfService } from "./pages/TermsOfService";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Network } from "./pages/Network";
-import { Wallet } from "./pages/Wallet";
 import { AccountMigration } from "./pages/AccountMigration";
 import { SSODiscourse } from "./pages/SSODiscourse";
 import { AcceptInvite } from "./pages/AcceptInvite";
@@ -57,7 +56,6 @@ function AppRouter() {
           path="/m/:memberUsername/invite"
           component={RequestInvite}
         />
-        <DefaultLayout path="/m/:memberUsername/wallet" component={Wallet} />
 
         <DefaultLayout path="/feed" component={GlobalFeed} />
         <DefaultLayout path="/terms-of-service" component={TermsOfService} />
