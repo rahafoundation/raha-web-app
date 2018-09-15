@@ -4,10 +4,10 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { getSSODiscourseRedirect } from "@raha/api/dist/sso/ssoDiscourse";
 
-import { LogIn } from "../components/LogIn";
 import { AppState } from "../reducers";
 import { getAuthToken } from "../selectors/auth";
 import { UnauthenticatedError } from "../../node_modules/@raha/api/dist/errors/UnauthenticatedError";
+import { MobileLogIn } from "../components/MobileLogIn";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
 
@@ -74,13 +74,12 @@ class SSODiscourseView extends React.Component<Props, State> {
         style={{
           height: "100%",
           display: "flex",
-          justifyContent: "center"
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column"
         }}
       >
-        <LogIn
-          noRedirect={true}
-          signInSuccessCallback={this.signInSuccessCallback}
-        />
+        <MobileLogIn signInSuccessCallback={this.signInSuccessCallback} />
         {this.state.error && (
           <p style={{ color: "#FF5722", maxWidth: 200 }}>{this.state.error}</p>
         )}
