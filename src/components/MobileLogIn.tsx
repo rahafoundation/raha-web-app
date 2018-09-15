@@ -17,6 +17,7 @@ import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist
 import { auth } from "../firebaseInit";
 import { TextInput } from "../components/TextInput";
 import { Button, ButtonSize, ButtonType } from "../components/Button";
+import { Link } from "../components/Link";
 import { AppState } from "../reducers";
 import { getLoggedInMember } from "../selectors/auth";
 import { sendAppInstallText } from "../actions";
@@ -357,6 +358,10 @@ class MobileLogInComponent extends React.Component<Props, State> {
       >
         <h1>Log in to Raha</h1>
         {this._renderContent()}
+        <p>
+          Still using Google, Facebook, or Github to log in? Migrate your
+          account <Link to="/accountMigration">here</Link>.
+        </p>
       </div>
     );
   }
