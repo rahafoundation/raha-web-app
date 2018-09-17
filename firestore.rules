@@ -3,17 +3,5 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth.uid != null;
     }
-
-    match /members/{id} {
-      allow read;
-    }
-
-    match /operations/{id} {
-      allow read;
-    }
-
-    match /uidToVideoHashMap/{id} {
-      allow read;
-    }
   }
 }
