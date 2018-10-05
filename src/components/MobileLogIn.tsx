@@ -42,6 +42,8 @@ interface DispatchProps {
 type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
+  countryCode?: string;
+  regionCode?: string;
   mobileNumber: string;
   confirmationCode: string;
 
@@ -51,6 +53,7 @@ interface State {
   waitingForConfirmation: boolean;
   transitionSuccessful: boolean;
 
+  countryCodeError?: string;
   phoneNumberError?: string;
   confirmationCodeError?: string;
 }
@@ -67,6 +70,8 @@ class MobileLogInComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      countryCode: "+1",
+      regionCode: "US",
       mobileNumber: "",
       confirmationCode: "",
       submittingPhoneNumber: false,
@@ -114,15 +119,52 @@ class MobileLogInComponent extends React.Component<Props, State> {
     }
   }
 
-  private updateMobileNumber = (value: string) => {
-    const formatter = new AsYouTypeFormatter("US");
-    let formatted = "";
-    for (const num of value) {
-      formatted = formatter.inputDigit(num);
+  private updateCountryCode = (value: string) => {
+    let regionCode;
+    let countryCode;
+    let countryCodeError;
+    if (value.length > 0) {
+      countryCode = value[0] === "+" ? value : `+${value}`;
+      const numericCountryCode = Number(countryCode.slice(1));
+      if (Number.isNaN(numericCountryCode)) {
+        countryCodeError = "Invalid country code.";
+      } else {
+        const phoneNumberUtil = PhoneNumberUtil.getInstance();
+        regionCode = phoneNumberUtil.getRegionCodeForCountryCode(
+          numericCountryCode
+        );
+        // The ZZ magic value comes from https://github.com/googlei18n/libphonenumber/blob/c47097bc6cfa3f5ef50997c8cd28530cd3ef5955/java/libphonenumber/src/com/google/i18n/phonenumbers/PhoneNumberUtil.java#L2329
+        if (regionCode === "ZZ") {
+          countryCodeError = "Invalid country code.";
+        }
+      }
+    } else {
+      countryCodeError = "Country code cannot be empty.";
     }
+
     this.setState({
-      mobileNumber: formatted
+      countryCode,
+      regionCode,
+      countryCodeError
     });
+  };
+
+  private updateMobileNumber = (value: string) => {
+    const { regionCode } = this.state;
+    if (regionCode) {
+      const formatter = new AsYouTypeFormatter(regionCode);
+      let formatted = "";
+      for (const num of value) {
+        formatted = formatter.inputDigit(num);
+      }
+      this.setState({
+        mobileNumber: formatted
+      });
+    } else {
+      this.setState({
+        mobileNumber: value
+      });
+    }
   };
 
   private validatePhoneNumber = async (mobileNumber: string) => {
@@ -131,7 +173,7 @@ class MobileLogInComponent extends React.Component<Props, State> {
 
   private submitPhoneNumber = async () => {
     const phoneNumberUtil = PhoneNumberUtil.getInstance();
-    const mobileNumber = this.state.mobileNumber;
+    const { mobileNumber, countryCode } = this.state;
     let parsedMobileNumber;
 
     this.setState({ submittingPhoneNumber: true });
@@ -141,7 +183,7 @@ class MobileLogInComponent extends React.Component<Props, State> {
       parsedMobileNumber = phoneNumberUtil.parse(mobileNumber);
     } catch {
       try {
-        parsedMobileNumber = phoneNumberUtil.parse("+1" + mobileNumber);
+        parsedMobileNumber = phoneNumberUtil.parse(countryCode + mobileNumber);
       } catch (e) {
         this.setState({
           phoneNumberError: "Phone number format is invalid.",
@@ -233,7 +275,9 @@ class MobileLogInComponent extends React.Component<Props, State> {
 
   private _renderContent() {
     const recaptchaStyle =
-      this.state.waitingForRecaptchaVerification && !this.state.phoneNumberError
+      this.state.waitingForRecaptchaVerification &&
+      !this.state.phoneNumberError &&
+      !this.state.countryCodeError
         ? { display: "block" }
         : { display: "none" };
 
@@ -280,10 +324,19 @@ class MobileLogInComponent extends React.Component<Props, State> {
           </p>
           <div style={{ display: "flex", alignItems: "center" }}>
             <TextInput
+              onTextChange={this.updateCountryCode}
+              type="tel"
+              value={this.state.countryCode}
+              placeholder="+1"
+              style={{ margin: 4, width: 50 }}
+              disabled={this.state.submittingPhoneNumber}
+            />
+            <TextInput
               onTextChange={this.updateMobileNumber}
               type="tel"
               value={this.state.mobileNumber}
               placeholder="(123) 444-5555"
+              style={{ margin: 4 }}
               disabled={this.state.submittingPhoneNumber}
             />
             {this.state.waitingForRecaptchaVerification && (
@@ -291,7 +344,7 @@ class MobileLogInComponent extends React.Component<Props, State> {
                 size={ButtonSize.LARGE}
                 type={ButtonType.PRIMARY}
                 onClick={this.submitPhoneNumber}
-                style={{ margin: 8 }}
+                style={{ margin: 4 }}
                 disabled={this.state.submittingPhoneNumber}
               >
                 Submit
@@ -303,6 +356,9 @@ class MobileLogInComponent extends React.Component<Props, State> {
             style={recaptchaStyle}
             ref={container => (this.recaptchaContainer = container)}
           />
+          {this.state.countryCodeError && (
+            <p style={styles.errorText}>{this.state.countryCodeError}</p>
+          )}
           {this.state.phoneNumberError && (
             <p style={styles.errorText}>{this.state.phoneNumberError}</p>
           )}
