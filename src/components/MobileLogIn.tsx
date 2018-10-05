@@ -150,8 +150,9 @@ class MobileLogInComponent extends React.Component<Props, State> {
   };
 
   private updateMobileNumber = (value: string) => {
-    if (this.state.regionCode) {
-      const formatter = new AsYouTypeFormatter("US");
+    const { regionCode } = this.state;
+    if (regionCode) {
+      const formatter = new AsYouTypeFormatter(regionCode);
       let formatted = "";
       for (const num of value) {
         formatted = formatter.inputDigit(num);
