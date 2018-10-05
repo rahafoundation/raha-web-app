@@ -25,6 +25,8 @@ import { Loading } from "./Loading";
 import { Member } from "../reducers/membersNew";
 // tslint:disable-next-line:no-var-requires
 const CONFIG = require("../data/config.json");
+// tslint:disable-next-line:no-var-requires
+const COUNTRIES_DATA = require("../data/countries.json");
 
 interface OwnProps {
   signInSuccessCallback?: () => boolean;
@@ -314,6 +316,8 @@ class MobileLogInComponent extends React.Component<Props, State> {
 
     // Render mobile log in
     if (this.props.authIsLoaded) {
+      const { regionCode } = this.state;
+
       return (
         <React.Fragment>
           <p>
@@ -322,7 +326,21 @@ class MobileLogInComponent extends React.Component<Props, State> {
               Note: standard text message rates will apply.
             </span>
           </p>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap"
+            }}
+          >
+            {regionCode &&
+              COUNTRIES_DATA[regionCode] && (
+                <img
+                  src={COUNTRIES_DATA[regionCode].flag}
+                  style={{ margin: 4 }}
+                />
+              )}
             <TextInput
               onTextChange={this.updateCountryCode}
               type="tel"
