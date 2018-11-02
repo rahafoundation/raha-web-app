@@ -162,9 +162,11 @@ class AccountMigrationComponent extends React.Component<Props, State> {
       await this.validatePhoneNumber(formattedMobileNumber);
     } catch (e) {
       this.setState({
-        phoneNumberError: e.message
-          ? (e.message as string)
-          : "An error occurred submitting your phone number. Please try again.",
+        phoneNumberError:
+          "We couldn't validate your phone number. Please ensure your phone number is not a VOIP number and try again.\n" +
+          e.message
+            ? (e.message as string)
+            : "",
         submittingPhoneNumber: false
       });
       return;
