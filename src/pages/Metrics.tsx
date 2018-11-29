@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import { Map } from "immutable";
+import Big from "big.js";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
   Operation,
@@ -8,7 +9,7 @@ import {
 } from "@raha/api-shared/dist/models/Operation";
 import { AppState } from "../store";
 import { Loading } from "../components/Loading";
-import { Member } from "../reducers/membersNew";
+import { Member, MembersState, applyOperation } from "../reducers/membersNew";
 
 interface OwnProps {}
 
@@ -64,6 +65,16 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
     name: 'Remote Invite Success',
     desc: 'Success rate for all remote invites',
     fn: (args: MetricArgs) => getInviteSuccess(args.operations, args.durationDays, args.end, false)
+  },
+  {
+    name: 'Bottom 50% Gross Income Share',
+    desc: 'Of the bottom 40% by gross income made in the last time period, what percent of total gross income went to them?',
+    fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
+  },
+  {
+    name: 'Raha In Circulation',
+    desc: 'How much Raha is in circulation? The change gives us inflation rate',
+    fn: (args: MetricArgs) => [+getCirculationByOperations(args.operations, args.end), null]
   }
 ];
 
@@ -86,6 +97,71 @@ function getOperationsBetween(
   end: Date,
 ) {
   return operations.filter(o => new Date(o.created_at) >= start && new Date(o.created_at) < end);
+}
+
+function getIncomeByMember(
+  operations: Operation[],
+  durationDays: number,
+  end: Date,
+  grossIncome: boolean  // If true measure gross income, else measure net
+) {
+  let membersCurr: MembersState = {byMemberId: Map(), byMemberUsername: Map()};
+  const incomeByMember: { [index: string]: Big } = {};
+  const start = getDaysAgo(durationDays, end);
+  const INCOME_OP_TYPES = new Set([
+    OperationType.MINT,
+    OperationType.GIVE
+  ])
+  for (const op of operations) {
+    const membersNext = applyOperation(membersCurr, op);
+    if (new Date(op.created_at) >= end) {
+      break;
+    }
+    if (new Date(op.created_at) >= start && INCOME_OP_TYPES.has(op.op_code)) {
+      for (const id of [op.creator_uid, (op.data as any).to_uid]) {
+        if (id) {
+          const [balCurr, balNext] = [membersCurr, membersNext].map(memState => {
+            const mem = memState.byMemberId.get(id);
+            if (!mem) {
+              throw new Error(`Bad mid ${id} for op type ${op.op_code}`);
+            }
+            return mem.get("balance");
+          });
+          const totalIncome = incomeByMember[id] || Big(0);
+          const income = balNext.minus(balCurr);
+          if (!grossIncome || income.gt(0)) {
+            incomeByMember[id] = totalIncome.plus(income);
+          }
+        }
+      }
+    }
+    membersCurr = membersNext;
+  }
+  return incomeByMember;
+}
+
+/**
+ * Get the total gross incomes share for the bottom of the given quantile.
+ * On Raha the bottom 50% tends to get well over 10% of the total gross
+ * income share, compared to globally by market exchange rates it's
+ * usually about 6% - see https://wir2018.wid.world/part-2.html.
+ * We use gross income because it's more similar to the pre-tax incomes
+ * estimates used in the WID figure. One disadvantage of using gross income
+ * is that high velocity cycles between 2 or more individuals could distort
+ * this measure, ideally we would not count fast cyclical transfers over.
+ */
+function getQuantileIncome(
+  operations: Operation[],
+  durationDays: number,
+  end: Date,
+  quantile: number
+): [number, string] {
+  const incomes = Object.values(getIncomeByMember(operations, durationDays, end, true));
+  incomes.sort((a, b) => +a.minus(b));
+  const index = incomes.length * quantile;
+  const bottom = incomes.slice(0, index);
+  const [bottomSum, total] = [bottom, incomes].map(x => x.reduce((a, b) => a.plus(b)));
+  return [+bottomSum.div(total), `(${bottomSum} / ${total})`];
 }
 
 function getInviteSuccess(
@@ -174,6 +250,27 @@ function alertIfNotChronological(operations: Operation[]) {
   }
 }
 
+function alertIfCirculationNotMatch(
+  operations: Operation[],
+  members: Map<MemberId, Member>
+) {
+  const circOp = getCirculationByOperations(operations, new Date());
+  const circMemb = getCirculationByMember(members);
+  if (!circMemb.eq(circOp)) {
+    alert(
+      `Sorry getting conflicting reports for circultation, ${circMemb} != ${circOp} (ops). Please email bugs@raha.app.`
+    );
+  }
+}
+
+function getCirculationByMember(members: Map<MemberId, Member>) {
+  return members.valueSeq().toArray().map(m => m.get("balance")).reduce((a, b) => a.plus(b));
+}
+
+function getCirculationByOperations(operations: Operation[], end: Date) {
+  return Object.values(getIncomeByMember(operations, 10 * 1000 * 1000, end, false)).reduce((a, b) => a.plus(b));
+}
+
 function getRetention(
   operations: Operation[],
   members: Map<MemberId, Member>,
@@ -209,6 +306,7 @@ const MetricsView: React.StatelessComponent<Props> = props => {
     return <Loading />;
   }
   alertIfNotChronological(operations);
+  alertIfCirculationNotMatch(operations, members);
   const now = new Date();
   const metricFrags = [];
   for (const durationDays of METRIC_DAYS) {
