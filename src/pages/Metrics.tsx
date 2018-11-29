@@ -148,7 +148,7 @@ function getIncomeByMember(
  * We use gross income because it's more similar to the pre-tax incomes
  * estimates used in the WID figure. One disadvantage of using gross income
  * is that high velocity cycles between 2 or more individuals could distort
- * this measure, ideally we would not count fast cyclical transfers over.
+ * this measure, ideally we would not count fast cyclical transfers.
  */
 function getQuantileIncome(
   operations: Operation[],
