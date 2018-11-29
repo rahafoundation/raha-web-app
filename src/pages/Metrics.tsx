@@ -137,8 +137,6 @@ function getInviteSuccessChart(
 }
 
 /**
- * TODO this calculation should really be a cached (reselect?) connector.
- *
  * Returns "active creators" over a given duration which
  * means the number of verified users who have created a
  * public operation within the last 30 days.
@@ -177,6 +175,15 @@ function getActiveCreators(
     }
   }
   return memberIdSet;
+}
+
+function getAC(
+  operations: Operation[],
+  members: Map<MemberId, Member>,
+  durationDays: number,
+  endDate: Date,
+) {
+  return null;
 }
 
 function alertIfNotChronological(operations: Operation[]) {
@@ -222,6 +229,73 @@ function getCurrAndLastActiveCreators(
   return [curr, last, change, description];
 }
 
+interface MetricTemplate {
+  name: string;
+  desc: string;
+  fn: (args: MetricArgs) => [number, any];
+}
+
+interface MetricArgs {
+  operations: Operation[];
+  members: Map<MemberId, Member>;
+  durationDays: number;
+  end: Date;
+}
+
+const METRIC_TEMPLATES: MetricTemplate[] = [
+  {
+    name: 'Active Creators',
+    desc: 'How many verified members have created at lease one "active" operation?',
+    fn: (args: MetricArgs) => [getActiveCreators(args.operations, args.members, args.durationDays, args.end, false, true).size, null]
+  },
+  {
+    name: 'Operation Creators',
+    desc: 'How many members have created at lease one operation?',
+    fn: (args: MetricArgs) => [getActiveCreators(args.operations, args.members, args.durationDays, args.end, false, false).size, null]
+  },
+  {
+    name: 'Member Retention',
+    desc: 'How many members have created at lease one operation?',
+    fn: (args: MetricArgs) => getRetention2(args.operations, args.members, args.durationDays, args.end, false)
+  },
+  {
+    name: 'New Member Retention',
+    desc: 'How many members have created at lease one operation?',
+    fn: (args: MetricArgs) => getRetention2(args.operations, args.members, args.durationDays, args.end, true)
+  }
+];
+
+const METRIC_DAYS = [7, 30];
+
+function getRetention2(
+  operations: Operation[],
+  members: Map<MemberId, Member>,
+  durationDays: number,
+  end: Date,
+  onlyNew: boolean
+): [number, any] {
+  const currActive = getActiveCreators(
+    operations,
+    members,
+    durationDays,
+    end,
+    false,
+    true
+  );
+  const prevActive = getActiveCreators(
+    operations,
+    members,
+    durationDays,
+    getDaysAgo(durationDays, end),
+    onlyNew,
+    true
+  );
+  const retainedMemberIds = [...currActive].filter(x => prevActive.has(x));
+  const numRetained = retainedMemberIds.length;
+  const retained = numRetained / prevActive.size;
+  return [retained, `(${retainedMemberIds.length} / ${prevActive.size})`];
+}
+
 function getRetention(
   operations: Operation[],
   members: Map<MemberId, Member>,
@@ -246,23 +320,6 @@ function getRetention(
     true
   );
   const retainedMemberIds = [...curr].filter(x => prevNew.has(x));
-  // tslint:disable-next-line
-  console.log(
-    "Retained: ",
-    retainedMemberIds.map(x => {
-      const m = members.get(x);
-      return m && m.get("fullName");
-    })
-  );
-  // tslint:disable-next-line
-  console.log(
-    "Lost: ",
-    [...prevNew].filter(x => !curr.has(x)).map(x => {
-      const m = members.get(x);
-      return m && m.get("fullName");
-    })
-  );
-  // console.log('Retained: ', curr.map());
   const numRetained = retainedMemberIds.length;
   const change = `${(numRetained / prevNew.size * 100).toFixed(2)}%`;
   const description = `How many active ${
@@ -305,6 +362,29 @@ const MetricsView: React.StatelessComponent<Props> = props => {
     return <Loading />;
   }
   alertIfNotChronological(operations);
+  const now = new Date();
+  const metricFrags = [];
+  for (const durationDays of METRIC_DAYS) {
+    metricFrags.push(<h4>Last {durationDays} days:</h4>);
+    for (const metricTemplate of METRIC_TEMPLATES) {
+      const [[last, _], [curr, curr_m]] = [getDaysAgo(durationDays, now), now].map(end => {
+        const metricArgs = {
+          operations,
+          members,
+          durationDays,
+          end
+        }
+        return metricTemplate.fn(metricArgs);
+      });
+      const change = `${((curr / last - 1.0) * 100).toFixed(2)}%`;
+      const [lastDis, currDisp]  = [last, curr].map(x => x <= 1.0 && x > 0.0 ? `${(x * 100).toFixed(2)}%` : x);
+      metricFrags.push(
+        <div title={metricTemplate.desc}>
+          {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {metricTemplate.name} (a {change} change from last val of {lastDis})
+        </div>
+      );
+    }
+  }
   const [currMac, lastMac, changeMac, descMac] = getCurrAndLastActiveCreators(
     operations,
     members,
@@ -325,6 +405,7 @@ const MetricsView: React.StatelessComponent<Props> = props => {
   );
   return (
     <section style={{ margin: "20px" }}>
+      {metricFrags}
       <h1 title={descWok as string}>
         {currWoc} WOC Weekly Op Creators - {changeWoc} change from last week ({
           lastWoc
