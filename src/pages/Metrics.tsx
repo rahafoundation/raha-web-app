@@ -142,9 +142,9 @@ function getIncomeByMember(
 
 /**
  * Get the total gross incomes share for the bottom of the given quantile.
- * On Raha the bottom 50% tends to get well over 10% of the total gross
+ * On Raha the bottom 50% tends to get well over 12% of the total gross
  * income share, compared to globally by market exchange rates it's
- * usually about 6% - see https://wir2018.wid.world/part-2.html.
+ * usually about 6% - see Figure 2.1.9 of https://wir2018.wid.world/part-2.html.
  * We use gross income because it's more similar to the pre-tax incomes
  * estimates used in the WID figure. One disadvantage of using gross income
  * is that high velocity cycles between 2 or more individuals could distort
