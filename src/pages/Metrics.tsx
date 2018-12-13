@@ -53,7 +53,7 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
   },
   {
     name: 'New Member Retention',
-    desc: 'Member retention for brand new members',
+    desc: 'Of all new members active during the last period (week/month), how many are active this most recent period?',
     fn: (args: MetricArgs) => getRetention(args.operations, args.members, args.durationDays, args.end, true)
   },
   {
@@ -68,7 +68,7 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
   },
   {
     name: 'Bottom 50% Gross Income Share',
-    desc: 'Of the bottom 40% by gross income made in the last time period, what percent of total gross income went to them?',
+    desc: 'Of the bottom 50% by gross income made in the last time period, what percent of total gross income went to them?',
     fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
   },
   {
@@ -300,43 +300,64 @@ function getRetention(
   return [retained, `(${retainedMemberIds.length} / ${prevActive.size})`];
 }
 
-const MetricsView: React.StatelessComponent<Props> = props => {
-  const { members, operations } = props;
-  if (!operations || operations.length === 0) {
-    return <Loading />;
-  }
-  alertIfNotChronological(operations);
-  alertIfCirculationNotMatch(operations, members);
-  const now = new Date();
-  const metricFrags = [];
-  for (const durationDays of METRIC_DAYS) {
-    metricFrags.push(<h4 key={`${durationDays}D`}>Last {durationDays} days:</h4>);
-    for (const metricTemplate of METRIC_TEMPLATES) {
-      const [[last, _], [curr, curr_m]] = [getDaysAgo(durationDays, now), now].map(end => {
-        const metricArgs = {
-          operations,
-          members,
-          durationDays,
-          end
-        }
-        return metricTemplate.fn(metricArgs);
-      });
-      const change = (curr / last - 1.0) * 100;
-      const changeStyle = change >= 0 ? {color: 'green'} : {color: 'red'};
-      const [lastDis, currDisp]  = [last, curr].map(x => x <= 1.0 && x > 0.0 ? `${(x * 100).toFixed(2)}%` : x);
-      metricFrags.push(
-        <div title={metricTemplate.desc} key={`${durationDays}D${metricTemplate.name}M`}>
-          {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {metricTemplate.name}, <span style={changeStyle}>{`${change.toFixed(2)}%`}</span> from last ({lastDis})
-        </div>
-      );
+class MetricsView extends React.Component<Props, { [key: string]: boolean }> {
+
+  public state = {} as { [key: string]: boolean }
+
+  public render() {
+    const { members, operations } = this.props;
+    if (!operations || operations.length === 0) {
+      return <Loading />;
     }
+    alertIfNotChronological(operations);
+    alertIfCirculationNotMatch(operations, members);
+    const now = new Date();
+    const metricFrags = [];
+    for (const durationDays of METRIC_DAYS) {
+      metricFrags.push(<h4 key={`${durationDays}D`}>Last {durationDays} days:</h4>);
+      for (const metricTemplate of METRIC_TEMPLATES) {
+        const [[last, _], [curr, curr_m]] = [getDaysAgo(durationDays, now), now].map(end => {
+          const metricArgs = {
+            operations,
+            members,
+            durationDays,
+            end
+          }
+          return metricTemplate.fn(metricArgs);
+        });
+        const change = curr / last - 1.0;
+        const changeStyle = {color: change > 0 ? 'green' : (change < 0 ? 'red' : 'gray')};
+        const [lastDis, currDisp, changeDisp]  = [last, curr, change].map((x, i) => isNaN(x) ? '--' : (i === 2 || curr_m ? `${(x * 100).toFixed(2)}%` : x));
+        const { name, desc } = metricTemplate;
+        const key = `${durationDays}D${name}M`;
+        const showHelp = this.state[key];
+        metricFrags.push(
+          <div style={styles.metric} title={desc} key={key}>
+            {showHelp && <div>{desc}</div>}
+            {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {name}, <span style={changeStyle}>{`${change > 0 ? '+' : ''}${changeDisp}`}</span> from {lastDis} <span onClick={() => this.setState(s => ({[key]: !s[key]}))} style={styles.circle}>{showHelp ? '-' : '?'}</span>
+          </div>
+        );
+      }
+    }
+    return (
+      <section style={{ margin: "20px" }}>
+        {metricFrags}
+      </section>
+    );
   }
-  return (
-    <section style={{ margin: "20px" }}>
-      {metricFrags}
-    </section>
-  );
-};
+}
+
+const styles = {
+  circle: {
+    borderRadius: '50%',
+    padding: '2px',
+    border: '2px solid #666',
+    color: '#666'
+  },
+  metric: {
+    margin: '8px 0'
+  }
+}
 
 const mapStateToProps: MapStateToProps<
   StateProps,
