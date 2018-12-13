@@ -35,7 +35,18 @@ interface MetricArgs {
 
 const METRIC_DAYS = [30, 7];
 
+// TODO all of these really need to get cached via reselect so that aren't calculated each render
 const METRIC_TEMPLATES: MetricTemplate[] = [
+  {
+    name: 'Bottom 50% Gross Income Share',
+    desc: 'What percent of total gross income went to the bottom 50% of earners?',
+    fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
+  },
+  {
+    name: 'Raha In Circulation',
+    desc: 'How much Raha is in circulation? The change gives us inflation rate.',
+    fn: (args: MetricArgs) => [+getCirculationByOperations(args.operations, args.end), null]
+  },
   {
     name: 'Active Creators',
     desc: 'How many verified members have created at lease one "active" operation?',
@@ -65,16 +76,6 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
     name: 'Remote Invite Success',
     desc: 'Success rate for all remote invites',
     fn: (args: MetricArgs) => getInviteSuccess(args.operations, args.durationDays, args.end, false)
-  },
-  {
-    name: 'Bottom 50% Gross Income Share',
-    desc: 'Of the bottom 50% by gross income made in the last time period, what percent of total gross income went to them?',
-    fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
-  },
-  {
-    name: 'Raha In Circulation',
-    desc: 'How much Raha is in circulation? The change gives us inflation rate',
-    fn: (args: MetricArgs) => [+getCirculationByOperations(args.operations, args.end), null]
   }
 ];
 
@@ -302,7 +303,7 @@ function getRetention(
 
 class MetricsView extends React.Component<Props, { [key: string]: boolean }> {
 
-  public state = {} as { [key: string]: boolean }
+  public state = {} as { [key: string]: boolean } // Metric keys for which to show description
 
   public render() {
     const { members, operations } = this.props;
@@ -330,11 +331,11 @@ class MetricsView extends React.Component<Props, { [key: string]: boolean }> {
         const [lastDis, currDisp, changeDisp]  = [last, curr, change].map((x, i) => isNaN(x) ? '--' : (i === 2 || curr_m ? `${(x * 100).toFixed(2)}%` : x));
         const { name, desc } = metricTemplate;
         const key = `${durationDays}D${name}M`;
-        const showHelp = this.state[key];
+        const showDesc = this.state[key];
         metricFrags.push(
           <div style={styles.metric} title={desc} key={key}>
-            {showHelp && <div>{desc}</div>}
-            {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {name}, <span style={changeStyle}>{`${change > 0 ? '+' : ''}${changeDisp}`}</span> from {lastDis} <span onClick={() => this.setState(s => ({[key]: !s[key]}))} style={styles.circle}>{showHelp ? '-' : '?'}</span>
+            {showDesc && <div>{desc}</div>}
+            {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {name}, <span style={changeStyle}>{`${change > 0 ? '+' : ''}${changeDisp}`}</span> from {lastDis} <span onClick={() => this.setState(s => ({[key]: !s[key]}))} style={styles.circle}>{showDesc ? '-' : '?'}</span>
           </div>
         );
       }
