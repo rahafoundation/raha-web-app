@@ -37,6 +37,16 @@ const METRIC_DAYS = [30, 7];
 
 const METRIC_TEMPLATES: MetricTemplate[] = [
   {
+    name: 'Bottom 50% Gross Income Share',
+    desc: 'What percent of total gross income went to the bottom 50% of earners?',
+    fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
+  },
+  {
+    name: 'Raha In Circulation',
+    desc: 'How much Raha is in circulation? The change gives us inflation rate.',
+    fn: (args: MetricArgs) => [+getCirculationByOperations(args.operations, args.end), null]
+  },
+  {
     name: 'Active Creators',
     desc: 'How many verified members have created at lease one "active" operation?',
     fn: (args: MetricArgs) => [getActiveCreators(args.operations, args.members, args.durationDays, args.end, false, true).size, null]
@@ -53,7 +63,7 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
   },
   {
     name: 'New Member Retention',
-    desc: 'Member retention for brand new members',
+    desc: 'Of all new members active during the last period (week/month), how many are active this most recent period?',
     fn: (args: MetricArgs) => getRetention(args.operations, args.members, args.durationDays, args.end, true)
   },
   {
@@ -65,16 +75,6 @@ const METRIC_TEMPLATES: MetricTemplate[] = [
     name: 'Remote Invite Success',
     desc: 'Success rate for all remote invites',
     fn: (args: MetricArgs) => getInviteSuccess(args.operations, args.durationDays, args.end, false)
-  },
-  {
-    name: 'Bottom 50% Gross Income Share',
-    desc: 'Of the bottom 40% by gross income made in the last time period, what percent of total gross income went to them?',
-    fn: (args: MetricArgs) => getQuantileIncome(args.operations, args.durationDays, args.end, 0.5)
-  },
-  {
-    name: 'Raha In Circulation',
-    desc: 'How much Raha is in circulation? The change gives us inflation rate',
-    fn: (args: MetricArgs) => [+getCirculationByOperations(args.operations, args.end), null]
   }
 ];
 
@@ -300,8 +300,21 @@ function getRetention(
   return [retained, `(${retainedMemberIds.length} / ${prevActive.size})`];
 }
 
-const MetricsView: React.StatelessComponent<Props> = props => {
-  const { members, operations } = props;
+class Metric extends React.Component<{title: string}, { showTitle: boolean }> {
+  public state = { showTitle: false }
+
+  public render() {
+    return (
+      <div onClick={() => this.setState(s => ({ showTitle: !s.showTitle }))} style={styles.metric} title={this.props.title}>
+        {this.state.showTitle && <div>{this.props.title}</div>}
+        {this.props.children}
+        {!this.state.showTitle && <span> <span style={styles.circle}>?</span></span>}
+      </div>
+    )
+  }
+}
+
+const MetricsView: React.StatelessComponent<Props> = ({ members, operations }) => {
   if (!operations || operations.length === 0) {
     return <Loading />;
   }
@@ -312,7 +325,7 @@ const MetricsView: React.StatelessComponent<Props> = props => {
   for (const durationDays of METRIC_DAYS) {
     metricFrags.push(<h4 key={`${durationDays}D`}>Last {durationDays} days:</h4>);
     for (const metricTemplate of METRIC_TEMPLATES) {
-      const [[last, _], [curr, curr_m]] = [getDaysAgo(durationDays, now), now].map(end => {
+      const [[last, _], [curr, currMeta]] = [getDaysAgo(durationDays, now), now].map(end => {
         const metricArgs = {
           operations,
           members,
@@ -321,13 +334,15 @@ const MetricsView: React.StatelessComponent<Props> = props => {
         }
         return metricTemplate.fn(metricArgs);
       });
-      const change = (curr / last - 1.0) * 100;
-      const changeStyle = change >= 0 ? {color: 'green'} : {color: 'red'};
-      const [lastDis, currDisp]  = [last, curr].map(x => x <= 1.0 && x > 0.0 ? `${(x * 100).toFixed(2)}%` : x);
+      const change = curr / last - 1.0;
+      const changeStyle = {color: change > 0 ? 'green' : (change < 0 ? 'red' : 'gray')};
+      const [lastDis, currDisp, changeDisp]  = [last, curr, change].map((x, i) => isNaN(x) ? '--' : (i === 2 || currMeta ? `${(x * 100).toFixed(2)}%` : x));
+      const { name, desc } = metricTemplate;
+      const key = `${durationDays}D${name}M`;
       metricFrags.push(
-        <div title={metricTemplate.desc} key={`${durationDays}D${metricTemplate.name}M`}>
-          {currDisp}{curr_m ? ` ${curr_m} ` : ' '} {metricTemplate.name}, <span style={changeStyle}>{`${change.toFixed(2)}%`}</span> from last ({lastDis})
-        </div>
+        <Metric title={desc} key={key}>
+          {currDisp}{currMeta ? ` ${currMeta} ` : ' '} {name}, <span style={changeStyle}>{`${change > 0 ? '+' : ''}${changeDisp}`}</span> from {lastDis}
+        </Metric>
       );
     }
   }
@@ -336,7 +351,26 @@ const MetricsView: React.StatelessComponent<Props> = props => {
       {metricFrags}
     </section>
   );
-};
+}
+
+const CIRCLE_SIZE = '20px';
+
+const styles = {
+  circle: {
+    borderRadius: '50%',
+    display: 'inline-block',
+    height: CIRCLE_SIZE,
+    width: CIRCLE_SIZE,
+    lineHeight: CIRCLE_SIZE,
+    textAlign: 'center',
+    border: '2px solid #666',
+    color: '#666'
+  } as any,  // Typescript weirdness
+  metric: {
+    margin: '8px 0',
+    cursor: 'pointer'
+  }
+}
 
 const mapStateToProps: MapStateToProps<
   StateProps,
