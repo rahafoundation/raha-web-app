@@ -31,7 +31,7 @@
     "immutable": "^4.0.0-rc.9",
     "material-ui": "^0.20.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.8.6",
     "react-firebaseui": "^1.0.10",
     "react-intl": "^2.4.0",
     "react-redux": "^5.0.7",
