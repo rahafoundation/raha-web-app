@@ -47,7 +47,7 @@
     "@types/big.js": "^4.0.4",
     "@types/classnames": "^2.2.3",
     "@types/enzyme": "^3.1.9",
-    "@types/enzyme-adapter-react-16": "^1.0.2",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/google-libphonenumber": "^7.4.16",
     "@types/history": "^4.6.2",
     "@types/jest": "^22.2.2",
