@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This repo is inactive and not being monitored for security and functionality updates.
+
 ## Develop locally
 
 1.  For Mac users, use [`homebrew`](https://brew.sh/) to [install `yarn`](https://yarnpkg.com/lang/en/docs/install/).
